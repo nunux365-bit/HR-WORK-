@@ -1,0 +1,562 @@
+/* ==========================================================================
+   HR FLOW — Enterprise Executive Login Styles
+   ========================================================================== */
+
+:root {
+    --navy-950: #060b19;
+    --navy-900: #0f172a;
+    --navy-800: #1e293b;
+    --slate-700: #334155;
+    --slate-500: #64748b;
+    --slate-400: #94a3b8;
+    --slate-200: #e2e8f0;
+    --slate-100: #f1f5f9;
+    --slate-50:  #f8fafc;
+    --blue-600:  #2563eb;
+    --blue-500:  #3b82f6;
+    --emerald-500: #10b981;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #090e1a;
+    color: var(--navy-900);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Full viewport centered shell */
+.page-shell {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px;
+    overflow: hidden;
+}
+
+/* Subtle ambient background */
+.bg-glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.glow-1 {
+    width: 550px;
+    height: 550px;
+    background: rgba(37, 99, 235, 0.22);
+    top: -120px;
+    left: -100px;
+}
+
+.glow-2 {
+    width: 500px;
+    height: 500px;
+    background: rgba(16, 185, 129, 0.14);
+    bottom: -120px;
+    right: -80px;
+}
+
+.bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 36px 36px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Centered Twin-Panel Executive Card */
+.login-container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 980px;
+    min-height: 580px;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 
+        0 25px 60px -15px rgba(0, 0, 0, 0.65),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    display: grid;
+    grid-template-columns: 1.08fr 0.92fr;
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Left Side: Authentication Form
+   ========================================================================== */
+.auth-card {
+    padding: 48px 52px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #ffffff;
+}
+
+.brand-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+.brand-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--navy-900) 0%, #1e3a8a 100%);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
+}
+
+.brand-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.brand-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--navy-900);
+}
+
+.brand-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 3px 7px;
+    border-radius: 4px;
+    background: #eff6ff;
+    color: var(--blue-600);
+    border: 1px solid #bfdbfe;
+}
+
+.auth-header {
+    margin-bottom: 28px;
+}
+
+.auth-header h1 {
+    font-size: 1.65rem;
+    font-weight: 700;
+    color: var(--navy-900);
+    letter-spacing: -0.025em;
+    margin-bottom: 8px;
+}
+
+.auth-header p {
+    font-size: 0.92rem;
+    color: var(--slate-500);
+    line-height: 1.5;
+}
+
+/* Form Controls */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.auth-alert {
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 0.84rem;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.auth-alert.error {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+.auth-alert.success {
+    background: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+}
+
+.field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.field-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--slate-700);
+}
+
+.security-hint {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--slate-500);
+    background: var(--slate-100);
+    padding: 2px 8px;
+    border-radius: 99px;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 14px;
+    color: var(--slate-400);
+    pointer-events: none;
+    z-index: 2;
+    transition: color 0.2s ease;
+}
+
+.input-wrapper input {
+    width: 100%;
+    height: 46px;
+    padding: 0 42px 0 42px;
+    font-size: 0.94rem;
+    font-family: inherit;
+    color: var(--navy-900);
+    background-color: var(--slate-50);
+    border: 1.5px solid var(--slate-200);
+    border-radius: 10px;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.input-wrapper input::placeholder {
+    color: var(--slate-400);
+}
+
+.input-wrapper input:hover {
+    border-color: #cbd5e1;
+    background-color: #ffffff;
+}
+
+.input-wrapper input:focus {
+    background-color: #ffffff;
+    border-color: var(--blue-600);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.input-wrapper:focus-within .input-icon {
+    color: var(--blue-600);
+}
+
+/* Fix Chrome/Edge Autofill overlap & ugly background */
+.input-wrapper input:-webkit-autofill,
+.input-wrapper input:-webkit-autofill:hover,
+.input-wrapper input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--navy-900);
+    -webkit-box-shadow: 0 0 0px 1000px #f8fafc inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    color: var(--slate-400);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: color 0.2s;
+}
+
+.toggle-password:hover {
+    color: var(--navy-900);
+}
+
+.form-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.83rem;
+    margin-top: -2px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--slate-700);
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox-label input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--blue-600);
+    cursor: pointer;
+}
+
+.help-link {
+    color: var(--blue-600);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.help-link:hover {
+    text-decoration: underline;
+}
+
+.submit-btn {
+    height: 48px;
+    margin-top: 4px;
+    background: linear-gradient(135deg, var(--navy-900) 0%, #1e293b 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 8px 20px -6px rgba(15, 23, 42, 0.45);
+    transition: all 0.2s ease;
+}
+
+.submit-btn:hover {
+    background: linear-gradient(135deg, var(--blue-600) 0%, #1d4ed8 100%);
+    box-shadow: 0 10px 24px -6px rgba(37, 99, 235, 0.5);
+    transform: translateY(-1px);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+.trust-footer {
+    margin-top: 28px;
+    padding-top: 18px;
+    border-top: 1px solid var(--slate-100);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.76rem;
+    color: var(--slate-400);
+}
+
+.trust-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.trust-item svg {
+    color: var(--emerald-500);
+}
+
+/* ==========================================================================
+   Right Side: Executive Platform Preview
+   ========================================================================== */
+.preview-panel {
+    background: linear-gradient(160deg, #0f172a 0%, #090d16 100%);
+    color: #ffffff;
+    padding: 44px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    border-left: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.preview-panel::before {
+    content: '';
+    position: absolute;
+    top: -80px;
+    right: -80px;
+    width: 280px;
+    height: 280px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.22) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: #cbd5e1;
+}
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--emerald-500);
+    box-shadow: 0 0 8px var(--emerald-500);
+}
+
+/* Mini Workflow Architecture Card */
+.workflow-preview-card {
+    background: rgba(30, 41, 59, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    padding: 20px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
+    margin: 24px 0;
+}
+
+.wf-title-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #e2e8f0;
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.wf-version {
+    font-size: 0.65rem;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.wf-nodes-mini {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.mini-node {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 9px;
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.mini-node div {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.mini-node strong {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #f8fafc;
+}
+
+.mini-node small {
+    font-size: 0.7rem;
+    color: var(--slate-400);
+    margin-top: 2px;
+}
+
+.mini-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.mini-node.trigger .mini-dot { background: #10b981; }
+.mini-node.data .mini-dot { background: #3b82f6; }
+.mini-node.action .mini-dot { background: #8b5cf6; }
+
+.mini-check {
+    font-size: 0.75rem;
+    color: #34d399;
+    font-weight: 700;
+}
+
+.mini-badge {
+    font-size: 0.62rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+}
+
+.mini-connector {
+    width: 2px;
+    height: 14px;
+    background: rgba(255, 255, 255, 0.15);
+    margin-left: 22px;
+}
+
+.preview-quote p {
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: #cbd5e1;
+    font-style: italic;
+    margin-bottom: 10px;
+}
+
+.quote-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.74rem;
+    color: var(--slate-400);
+    font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+    .login-container {
+        grid-template-columns: 1fr;
+        max-width: 460px;
+    }
+    .preview-panel {
+        display: none;
+    }
+    .auth-card {
+        padding: 36px 28px;
+    }
+}
