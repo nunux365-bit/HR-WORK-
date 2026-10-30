@@ -1,0 +1,791 @@
+{
+  "categories": {
+    "ATTENDANCE": {
+      "code": "ATTENDANCE",
+      "display_name": "Attendance",
+      "specialized_model": true,
+      "workflow_id": null,
+      "workflow_name": null,
+      "keywords_strong": [
+        "attendance correction",
+        "attendance issue",
+        "attendance regularization",
+        "regularize attendance",
+        "regularise attendance",
+        "marked absent",
+        "showing absent",
+        "wrong check-in",
+        "wrong check in",
+        "wrong check-out",
+        "missed punch",
+        "biometric",
+        "punch in",
+        "punch out",
+        "check-in time",
+        "check-out time",
+        "swipe missing",
+        "wfh attendance",
+        "attendance discrepancy"
+      ],
+      "keywords_weak": [
+        "attendance",
+        "absent",
+        "present",
+        "check-in",
+        "check-out",
+        "checkin",
+        "checkout",
+        "punch",
+        "shift",
+        "timesheet",
+        "working from home"
+      ],
+      "required_fields": [
+        "employee_id",
+        "date",
+        "issue_type"
+      ],
+      "optional_fields": [
+        "check_in",
+        "check_out",
+        "shift",
+        "description",
+        "attachment"
+      ],
+      "require_attachment": false
+    },
+    "LEAVE": {
+      "code": "LEAVE",
+      "display_name": "Leave Request",
+      "specialized_model": true,
+      "workflow_id": null,
+      "workflow_name": null,
+      "keywords_strong": [
+        "leave",
+        "sick leave",
+        "casual leave",
+        "earned leave",
+        "vacation",
+        "pto"
+      ],
+      "keywords_weak": [
+        "leave"
+      ],
+      "required_fields": [
+        "employee_id",
+        "leave_type",
+        "start_date",
+        "end_date"
+      ],
+      "optional_fields": [
+        "duration_days",
+        "attachment"
+      ],
+      "require_attachment": false
+    },
+    "RESIGNATION": {
+      "code": "RESIGNATION",
+      "display_name": "Resignation",
+      "specialized_model": false,
+      "workflow_id": null,
+      "workflow_name": null,
+      "keywords_strong": [
+        "formal resignation",
+        "resignation letter",
+        "submitting my resignation",
+        "submit my resignation",
+        "tender my resignation",
+        "last working day",
+        "notice period",
+        "relieving letter",
+        "exit clearance",
+        "stepping down from my role"
+      ],
+      "keywords_weak": [
+        "resign",
+        "resignation",
+        "resigning",
+        "lwd",
+        "exit",
+        "relieving",
+        "full and final",
+        "fnf"
+      ],
+      "required_fields": [
+        "employee_id",
+        "resignation_date",
+        "last_working_day",
+        "reason"
+      ],
+      "optional_fields": [
+        "notice_period",
+        "documents"
+      ],
+      "require_attachment": false
+    },
+    "BGV": {
+      "code": "BGV",
+      "display_name": "BGV",
+      "specialized_model": false,
+      "workflow_id": null,
+      "workflow_name": null,
+      "keywords_strong": [
+        "background verification",
+        "bgv verification",
+        "bgv check",
+        "bgv documents",
+        "bgv status",
+        "employment verification",
+        "reference check",
+        "police verification",
+        "education verification",
+        "address verification"
+      ],
+      "keywords_weak": [
+        "bgv",
+        "background check",
+        "verification",
+        "verifier",
+        "antecedent"
+      ],
+      "required_fields": [
+        "employee_id",
+        "verification_type"
+      ],
+      "optional_fields": [
+        "candidate_name",
+        "documents",
+        "agency_name"
+      ],
+      "require_attachment": false
+    },
+    "PAYROLL": {
+      "code": "PAYROLL",
+      "display_name": "Payroll Operations HR",
+      "specialized_model": true,
+      "workflow_id": null,
+      "workflow_name": null,
+      "keywords_strong": [
+        "salary not credited",
+        "salary not received",
+        "incorrect salary amount",
+        "salary discrepancy",
+        "payslip not received",
+        "payslip error",
+        "payroll issue",
+        "payroll discrepancy",
+        "salary deduction issue",
+        "unexpected salary deduction",
+        "tax deduction issue",
+        "tds deduction issue",
+        "bonus payment issue",
+        "incentive payment issue",
+        "arrears payment",
+        "reimbursement not credited",
+        "salary credit issue",
+        "salary credit",
+        "salary amount",
+        "salary slip",
+        "salary deduction",
+        "tds amount",
+        "expense reimbursement",
+        "bank account",
+        "bank details",
+        "monthly payroll"
+      ],
+      "keywords_weak": [
+        "salary",
+        "payroll",
+        "payslip",
+        "payment",
+        "deduction",
+        "tax",
+        "tds",
+        "bonus",
+        "incentive",
+        "arrears",
+        "reimbursement",
+        "compensation",
+        "wages",
+        "earnings",
+        "allowance",
+        "credit",
+        "received",
+        "amount",
+        "expected",
+        "calculation",
+        "slip",
+        "portal"
+      ],
+      "required_fields": [
+        "employee_id",
+        "date",
+        "description"
+      ],
+      "optional_fields": [
+        "pay_period",
+        "description",
+        "attachment"
+      ],
+      "require_attachment": false
+    },
+    "ONBOARDING": {
+      "code": "ONBOARDING",
+      "display_name": "Onboarding",
+      "specialized_model": false,
+      "workflow_id": null,
+      "workflow_name": null,
+      "keywords_strong": [
+        "new hire onboarding",
+        "joining formalities",
+        "pre-boarding",
+        "onboarding documents",
+        "date of joining",
+        "offer acceptance",
+        "induction schedule",
+        "welcome kit"
+      ],
+      "keywords_weak": [
+        "onboarding",
+        "joining",
+        "new joiner",
+        "orientation",
+        "induction",
+        "doj"
+      ],
+      "required_fields": [
+        "employee_id",
+        "joining_date"
+      ],
+      "optional_fields": [
+        "department",
+        "documents"
+      ],
+      "require_attachment": false
+    },
+    "DOCUMENTS": {
+      "code": "DOCUMENTS",
+      "display_name": "Documents",
+      "specialized_model": false,
+      "workflow_id": null,
+      "workflow_name": null,
+      "keywords_strong": [
+        "bonafide certificate",
+        "employment certificate",
+        "address proof letter",
+        "experience letter",
+        "noc letter",
+        "visa letter",
+        "employment verification letter"
+      ],
+      "keywords_weak": [
+        "certificate",
+        "letter request",
+        "bonafide",
+        "noc",
+        "document request"
+      ],
+      "required_fields": [
+        "employee_id",
+        "document_type"
+      ],
+      "optional_fields": [
+        "reason",
+        "attachment"
+      ],
+      "require_attachment": false
+    },
+    "ASSET_IT": {
+      "code": "ASSET_IT",
+      "display_name": "Asset / IT",
+      "specialized_model": false,
+      "workflow_id": null,
+      "workflow_name": null,
+      "keywords_strong": [
+        "laptop issue",
+        "laptop replacement",
+        "laptop repair",
+        "macbook issue",
+        "charger not working",
+        "vpn access",
+        "system crash",
+        "it asset",
+        "hardware issue",
+        "id card replacement",
+        "access card"
+      ],
+      "keywords_weak": [
+        "laptop",
+        "asset",
+        "hardware",
+        "monitor",
+        "keyboard",
+        "headset",
+        "vpn",
+        "it helpdesk"
+      ],
+      "required_fields": [
+        "employee_id",
+        "asset_type",
+        "issue_description"
+      ],
+      "optional_fields": [
+        "asset_id",
+        "attachment"
+      ],
+      "require_attachment": false
+    },
+    "EMPLOYEE_PROFILE": {
+      "code": "EMPLOYEE_PROFILE",
+      "display_name": "Employee Profile",
+      "specialized_model": false,
+      "workflow_id": null,
+      "workflow_name": null,
+      "keywords_strong": [
+        "update bank details",
+        "change emergency contact",
+        "update mobile number",
+        "update address",
+        "marital status update",
+        "name correction in hrms",
+        "reporting manager change"
+      ],
+      "keywords_weak": [
+        "profile update",
+        "bank account",
+        "pan update",
+        "aadhaar update",
+        "nominee update"
+      ],
+      "required_fields": [
+        "employee_id",
+        "update_type"
+      ],
+      "optional_fields": [
+        "description",
+        "attachment"
+      ],
+      "require_attachment": false
+    },
+    "BENEFITS": {
+      "code": "BENEFITS",
+      "display_name": "Benefits",
+      "specialized_model": false,
+      "workflow_id": null,
+      "workflow_name": null,
+      "keywords_strong": [
+        "health insurance",
+        "medical insurance",
+        "mediclaim",
+        "insurance card",
+        "add dependent",
+        "parental insurance",
+        "gym reimbursement",
+        "wellness benefit"
+      ],
+      "keywords_weak": [
+        "insurance",
+        "benefit",
+        "benefits",
+        "tpa",
+        "cashless claim",
+        "dependent"
+      ],
+      "required_fields": [
+        "employee_id",
+        "benefit_type"
+      ],
+      "optional_fields": [
+        "description",
+        "attachment"
+      ],
+      "require_attachment": false
+    },
+    "PERFORMANCE": {
+      "code": "PERFORMANCE",
+      "display_name": "Performance",
+      "specialized_model": false,
+      "workflow_id": null,
+      "workflow_name": null,
+      "keywords_strong": [
+        "performance appraisal",
+        "annual appraisal",
+        "kra review",
+        "kpi target",
+        "okr submission",
+        "self assessment",
+        "promotion cycle",
+        "pip review"
+      ],
+      "keywords_weak": [
+        "appraisal",
+        "performance review",
+        "kra",
+        "okr",
+        "goal setting",
+        "rating"
+      ],
+      "required_fields": [
+        "employee_id",
+        "review_cycle"
+      ],
+      "optional_fields": [
+        "description"
+      ],
+      "require_attachment": false
+    },
+    "GENERAL_HR": {
+      "code": "GENERAL_HR",
+      "display_name": "General HR",
+      "specialized_model": false,
+      "workflow_id": null,
+      "workflow_name": null,
+      "keywords_strong": [
+        "hr policy query",
+        "holiday calendar",
+        "dress code policy",
+        "posh policy",
+        "company policy clarification",
+        "transfer request",
+        "relocation policy"
+      ],
+      "keywords_weak": [
+        "hr policy",
+        "policy query",
+        "handbook",
+        "hr helpdesk",
+        "grievance"
+      ],
+      "required_fields": [
+        "employee_id"
+      ],
+      "optional_fields": [
+        "description"
+      ],
+      "require_attachment": false
+    },
+    "UNKNOWN": {
+      "code": "UNKNOWN",
+      "display_name": "Unknown",
+      "specialized_model": false,
+      "workflow_id": null,
+      "workflow_name": null,
+      "keywords_strong": [],
+      "keywords_weak": [],
+      "required_fields": [],
+      "optional_fields": [
+        "description"
+      ],
+      "require_attachment": false
+    },
+    "PEOPLEDESK": {
+      "code": "PEOPLEDESK",
+      "display_name": "PeopleDesk",
+      "specialized_model": true,
+      "workflow_id": "WF-PEOPLEDESK-001",
+      "workflow_name": "Peopledesk Workflow",
+      "keywords_strong": [
+        "salary not received",
+        "salary nahi aayi",
+        "salary amount incorrect",
+        "salary kam aayi",
+        "payslip required",
+        "payslip chahiye",
+        "leave application help",
+        "leave apply karni hai",
+        "attendance record correction",
+        "attendance galat mark hui hai",
+        "employee benefits query",
+        "insurance coverage details",
+        "joining formalities pending",
+        "employee id nahi mila",
+        "joining documents submit",
+        "employee details update",
+        "bank details update karni hain",
+        "performance review process",
+        "promotion process clarification",
+        "location transfer request",
+        "company hr policy",
+        "employment verification letter",
+        "experience letter chahiye",
+        "resignation submission process",
+        "notice period clarification",
+        "final settlement pending",
+        "mera pf kat gaya",
+        "workplace issue discuss karna hai"
+      ],
+      "keywords_weak": [
+        "payroll",
+        "salary",
+        "payslip",
+        "leave",
+        "chhutti",
+        "attendance",
+        "employee",
+        "onboarding",
+        "joining",
+        "benefits",
+        "insurance",
+        "performance",
+        "appraisal",
+        "promotion",
+        "transfer",
+        "resignation",
+        "notice",
+        "settlement",
+        "policy",
+        "employment",
+        "pf",
+        "gratuity"
+      ],
+      "required_fields": [
+        "employee_id",
+        "description",
+        "date"
+      ],
+      "optional_fields": [
+        "description",
+        "attachment"
+      ],
+      "require_attachment": false
+    },
+    "TEST_TEMP_OPS_DE": {
+      "code": "TEST_TEMP_OPS_DE",
+      "display_name": "Test Temp Ops De",
+      "specialized_model": false,
+      "workflow_id": "WF-TEST_TEMP_OPS_DE-001",
+      "workflow_name": "Test Temp Ops De Workflow",
+      "keywords_strong": [
+        "test temp ops de",
+        "test temp ops desk"
+      ],
+      "keywords_weak": [
+        "test_temp_ops_de",
+        "operational",
+        "desk",
+        "test",
+        "temp",
+        "desk"
+      ],
+      "required_fields": [
+        "employee_id"
+      ],
+      "optional_fields": [
+        "description",
+        "attachment"
+      ],
+      "require_attachment": false
+    },
+    "QA_TESTING_DESK": {
+      "code": "QA_TESTING_DESK",
+      "display_name": "Qa Testing Desk",
+      "specialized_model": false,
+      "workflow_id": "WF-QA_TESTING_DESK-001",
+      "workflow_name": "Qa Testing Desk Workflow",
+      "keywords_strong": [
+        "qa testing desk",
+        "qa testing desk"
+      ],
+      "keywords_weak": [
+        "qa_testing_desk",
+        "operational",
+        "desk",
+        "testing",
+        "desk"
+      ],
+      "required_fields": [
+        "employee_id"
+      ],
+      "optional_fields": [
+        "description",
+        "attachment"
+      ],
+      "require_attachment": false
+    },
+    "ALL_HR": {
+      "code": "ALL_HR",
+      "display_name": "PeopleDesk",
+      "specialized_model": true,
+      "workflow_id": "WF-ALL_HR-001",
+      "workflow_name": "All Hr Workflow",
+      "keywords_strong": [
+        "salary not received",
+        "salary amount incorrect",
+        "salary nahi aayi",
+        "salary kam aayi",
+        "payslip required",
+        "payslip chahiye",
+        "leave application help",
+        "leave apply karni hai",
+        "attendance correction request",
+        "attendance galat mark hui hai",
+        "joining formalities pending",
+        "employee id nahi mila",
+        "employee details update",
+        "bank details update karni hain",
+        "employee benefits inquiry",
+        "health insurance details",
+        "company hr policy clarification",
+        "employment verification letter",
+        "performance review process",
+        "internal transfer request",
+        "resignation submission process",
+        "notice period clarification",
+        "final settlement pending",
+        "hr se help chahiye",
+        "people desk se guidance chahiye",
+        "joining documents submit karne hain",
+        "guidance chahiye",
+        "aayi hai"
+      ],
+      "keywords_weak": [
+        "payroll",
+        "salary",
+        "payslip",
+        "leave",
+        "chhutti",
+        "attendance",
+        "employee",
+        "onboarding",
+        "joining",
+        "benefits",
+        "insurance",
+        "performance",
+        "appraisal",
+        "promotion",
+        "transfer",
+        "resignation",
+        "notice",
+        "settlement",
+        "policy",
+        "employment",
+        "gratuity",
+        "pf"
+      ],
+      "required_fields": [
+        "employee_id",
+        "description",
+        "date"
+      ],
+      "optional_fields": [
+        "description",
+        "attachment"
+      ],
+      "require_attachment": false
+    },
+    "RECRUITING": {
+      "code": "RECRUITING",
+      "display_name": "Recruiting",
+      "specialized_model": false,
+      "workflow_id": "WF-RECRUITING-001",
+      "workflow_name": "Recruiting Workflow",
+      "keywords_strong": [
+        "recruiting",
+        "talent acquisition & recruiting"
+      ],
+      "keywords_weak": [
+        "recruiting",
+        "handles",
+        "end-to-end",
+        "recruitment",
+        "interview",
+        "scheduling",
+        "offer"
+      ],
+      "required_fields": [
+        "employee_id"
+      ],
+      "optional_fields": [
+        "description",
+        "attachment"
+      ],
+      "require_attachment": false
+    },
+    "INTERVIEWS": {
+      "code": "INTERVIEWS",
+      "display_name": "Interviews",
+      "specialized_model": false,
+      "workflow_id": "WF-INTERVIEWS-001",
+      "workflow_name": "Interviews Workflow",
+      "keywords_strong": [
+        "interviews",
+        "talent acquisition & recruiting"
+      ],
+      "keywords_weak": [
+        "interviews",
+        "handles",
+        "end-to-end",
+        "recruitment",
+        "interview",
+        "scheduling",
+        "offer"
+      ],
+      "required_fields": [
+        "employee_id"
+      ],
+      "optional_fields": [
+        "description",
+        "attachment"
+      ],
+      "require_attachment": false
+    },
+    "LEGAL": {
+      "code": "LEGAL",
+      "display_name": "Legal & Compliance Desk",
+      "specialized_model": false,
+      "workflow_id": "WF-LEGAL-001",
+      "workflow_name": "Legal Workflow",
+      "keywords_strong": [
+        "legal notice",
+        "nda review",
+        "non-disclosure",
+        "employment contract",
+        "compliance audit"
+      ],
+      "keywords_weak": [
+        "legal",
+        "contract",
+        "agreement",
+        "compliance",
+        "statute",
+        "lawyer"
+      ],
+      "required_fields": [
+        "employee_id"
+      ],
+      "optional_fields": [
+        "description",
+        "attachment"
+      ],
+      "require_attachment": false
+    },
+    "COMPLIANCE": {
+      "code": "COMPLIANCE",
+      "display_name": "Compliance",
+      "specialized_model": false,
+      "workflow_id": "WF-COMPLIANCE-001",
+      "workflow_name": "Compliance Workflow",
+      "keywords_strong": [
+        "compliance",
+        "legal & compliance desk"
+      ],
+      "keywords_weak": [
+        "compliance",
+        "handles",
+        "employment",
+        "ndas",
+        "contract",
+        "reviews",
+        "statutory"
+      ],
+      "required_fields": [
+        "employee_id"
+      ],
+      "optional_fields": [
+        "description",
+        "attachment"
+      ],
+      "require_attachment": false
+    }
+  }
+}

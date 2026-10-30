@@ -1,0 +1,130 @@
+{
+  "routing_rules": {
+    "ATTENDANCE": {
+      "team": "PeopleDesk",
+      "priority": "MEDIUM",
+      "sla_hours": 48,
+      "auto_create_case": true
+    },
+    "LEAVE": {
+      "team": "PeopleDesk",
+      "priority": "MEDIUM",
+      "sla_hours": 48,
+      "auto_create_case": true
+    },
+    "PAYROLL": {
+      "team": "PeopleDesk",
+      "priority": "MEDIUM",
+      "sla_hours": 48,
+      "auto_create_case": true
+    },
+    "RESIGNATION": {
+      "team": "PeopleDesk",
+      "priority": "MEDIUM",
+      "sla_hours": 48,
+      "auto_create_case": true
+    },
+    "BGV": {
+      "team": "PeopleDesk",
+      "priority": "MEDIUM",
+      "sla_hours": 48,
+      "auto_create_case": true
+    },
+    "ONBOARDING": {
+      "team": "PeopleDesk",
+      "priority": "MEDIUM",
+      "sla_hours": 48,
+      "auto_create_case": true
+    },
+    "DOCUMENTS": {
+      "team": "PeopleDesk",
+      "priority": "MEDIUM",
+      "sla_hours": 48,
+      "auto_create_case": true
+    },
+    "ASSET_IT": {
+      "team": "PeopleDesk",
+      "priority": "MEDIUM",
+      "sla_hours": 48,
+      "auto_create_case": true
+    },
+    "EMPLOYEE_PROFILE": {
+      "team": "PeopleDesk",
+      "priority": "MEDIUM",
+      "sla_hours": 48,
+      "auto_create_case": true
+    },
+    "BENEFITS": {
+      "team": "PeopleDesk",
+      "priority": "MEDIUM",
+      "sla_hours": 48,
+      "auto_create_case": true
+    },
+    "PERFORMANCE": {
+      "team": "PeopleDesk",
+      "priority": "MEDIUM",
+      "sla_hours": 48,
+      "auto_create_case": true
+    },
+    "GENERAL_HR": {
+      "team": "PeopleDesk",
+      "priority": "MEDIUM",
+      "sla_hours": 48,
+      "auto_create_case": true
+    },
+    "UNKNOWN": {
+      "team": "HR Triage Team",
+      "priority": "MEDIUM",
+      "sla_hours": 48,
+      "auto_create_case": false
+    },
+    "PEOPLEDESK": {
+      "team": "PeopleDesk",
+      "priority": "MEDIUM",
+      "sla_hours": 48,
+      "auto_create_case": true
+    },
+    "TEST_TEMP_OPS_DE": {
+      "team": "Test Temp Ops Desk",
+      "priority": "MEDIUM",
+      "sla_hours": 48,
+      "auto_create_case": true
+    },
+    "QA_TESTING_DESK": {
+      "team": "QA Testing Desk",
+      "priority": "MEDIUM",
+      "sla_hours": 48,
+      "auto_create_case": true
+    },
+    "ALL_HR": {
+      "team": "PeopleDesk",
+      "priority": "MEDIUM",
+      "sla_hours": 48,
+      "auto_create_case": true
+    },
+    "RECRUITING": {
+      "team": "Talent Acquisition & Recruiting",
+      "priority": "HIGH",
+      "sla_hours": 24,
+      "auto_create_case": true
+    },
+    "INTERVIEWS": {
+      "team": "Talent Acquisition & Recruiting",
+      "priority": "HIGH",
+      "sla_hours": 24,
+      "auto_create_case": true
+    },
+    "LEGAL": {
+      "team": "Legal & Compliance Desk",
+      "priority": "CRITICAL",
+      "sla_hours": 48,
+      "auto_create_case": true
+    },
+    "COMPLIANCE": {
+      "team": "Legal & Compliance Desk",
+      "priority": "CRITICAL",
+      "sla_hours": 48,
+      "auto_create_case": true
+    }
+  }
+}
