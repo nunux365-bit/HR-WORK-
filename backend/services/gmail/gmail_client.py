@@ -574,10 +574,31 @@ def send_gmail_smtp_email(
     if not smtp_host or smtp_host == "smtp.gmail.com":
         prov_name, _, _, smtp_host, smtp_port = resolve_email_provider_hosts(sender_email, explicit_provider=prov_name)
 
+    # Attempt 1: Port 465 (SSL), Fallback: Port 587 (STARTTLS)
+    sent_successfully = False
+    last_smtp_error = None
+
     try:
-        with smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=20) as smtp:
+        with smtplib.SMTP_SSL(smtp_host, 465, timeout=12) as smtp:
             smtp.login(sender_email, app_password)
             smtp.send_message(msg)
+        sent_successfully = True
+    except Exception as exc_ssl:
+        last_smtp_error = exc_ssl
+        logger.debug(f"{prov_name} SMTP_SSL (465) failed ({exc_ssl}), trying STARTTLS on 587...")
+        try:
+            with smtplib.SMTP(smtp_host, 587, timeout=12) as smtp:
+                smtp.ehlo()
+                smtp.starttls()
+                smtp.ehlo()
+                smtp.login(sender_email, app_password)
+                smtp.send_message(msg)
+            sent_successfully = True
+        except Exception as exc_tls:
+            last_smtp_error = exc_tls
+            logger.warning(f"{prov_name} SMTP (587 STARTTLS) also failed ({exc_tls})")
+
+    if sent_successfully:
         logger.info(f"Sent {prov_name} SMTP dispatch from {sender_email} to {to_addr}: {subject}")
         return {
             "sent": True,
@@ -587,15 +608,15 @@ def send_gmail_smtp_email(
             "recipient": to_addr,
             "message": f"Dispatched via {prov_name.title()} SMTP ({sender_email} → {to_addr})",
         }
-    except Exception as exc:
-        logger.warning(f"{prov_name} SMTP send failed ({sender_email} -> {to_addr}): {exc}")
+    else:
+        logger.warning(f"{prov_name} SMTP dispatch failed ({sender_email} -> {to_addr}): {last_smtp_error}")
         return {
             "sent": False,
             "status": "SMTP_ERROR_LOGGED",
             "sender": sender_email,
             "provider": prov_name,
             "recipient": to_addr,
-            "error": str(exc),
-            "message": f"Recorded in Case Communications (SMTP warning: {exc})",
+            "error": str(last_smtp_error),
+            "message": f"Recorded in Case Communications (SMTP warning: {last_smtp_error})",
         }
 
