@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# HR FLOW — Native PC Desktop Application Launcher
+# Double-click to launch HR Flow like an Adobe or Desktop PC App
+# [Zero Admin Password / No Sudo Required]
+# ==============================================================================
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+PYTHON_BIN="$DIR/.venv/bin/python3"
+if [ ! -f "$PYTHON_BIN" ]; then
+    PYTHON_BIN="python3"
+fi
+
+cd "$DIR"
+exec "$PYTHON_BIN" "$DIR/desktop_app.py" "$@"
+

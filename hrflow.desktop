@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=HR Flow
+Comment=Autonomous HR Service Desk & Workforce Operations
+Exec=/home/vaibhav/Desktop/HRWork/run_desktop.sh
+Icon=/home/vaibhav/Desktop/HRWork/frontend/img/nexus-logo-512.png
+Terminal=false
+Categories=Office;Development;Utility;
+StartupNotify=true
+StartupWMClass=hrflow
