@@ -1,0 +1,132 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R 4 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 5 0 R /F2 6 0 R /F3 7 0 R >> >> /Contents 8 0 R >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 5 0 R /F2 6 0 R /F3 7 0 R >> >> /Contents 9 0 R >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+7 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+8 0 obj
+<< /Length 4794 >>
+stream
+0.11 0.30 0.85 rg 36 780 540 36 re f
+BT /F2 13 Tf 1 1 1 rg 48 793.0 Td (HR FLOW - ENTERPRISE AI DOCUMENTATION & SOP) Tj ET
+BT /F2 10 Tf 0.15 0.23 0.35 rg 36 761.0 Td (How to Add a New HR Department & Train Its 2-Stage AI Model \(English + Hinglish\)) Tj ET
+0.82 0.87 0.95 RG 1 w 36 747.0 m 576 747.0 l S
+BT /F2 11 Tf 0.11 0.30 0.85 rg 36 731.0 Td (1. EXECUTIVE OVERVIEW: 2-STAGE AI CLASSIFICATION ARCHITECTURE) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 715.0 Td (Whenever an employee sends an email to the HR Inbox, HR Flow processes the email through a) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 702.5 Td (two-stage machine learning and rule pipeline matching the exact architecture of LEAVE and) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 690.0 Td (ATTENDANCE:) Tj ET
+BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 677.5 Td (Stage 1 - Department Detection Router \(backend/classification/category_classifier.py\):) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 664.5 Td (Scans the email Subject and Body against each department Strong Multi-Word Phrases) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 652.0 Td (\(keywords_strong\) and Weak Single-Word Keywords \(keywords_weak\) stored in) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 639.5 Td (backend/data/categories.json.) Tj ET
+BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 627.0 Td (   * Strong Multi-Word Phrase Match: +3.2 points in Subject | +2.2 points in Body) Tj ET
+BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 614.0 Td (   * Weak Single-Word Keyword Match: +1.5 points in Subject | +0.8 points in Body) Tj ET
+BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 601.0 Td (   * Minimum Routing Threshold: >= 1.5 points routes the email to that HR Department.) Tj ET
+BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 582.0 Td (Stage 2 - Specialized Intent Model \(backend/classification/intent_model_service.py\):) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 569.0 Td (Once Stage 1 detects the department \(e.g., LEAVE, ATTENDANCE, PAYROLL, BGV, RESIGNATION, or) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 556.5 Td (any newly created department\), Stage 2 executes that department dedicated scikit-learn model) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 544.0 Td (files stored in backend/classification/models/<category_lower>/:) Tj ET
+BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 531.5 Td (   * <dept>_tfidf_vectorizer.pkl : TfidfVectorizer\(lowercase=True, ngram_range=\(1, 2\),) Tj ET
+BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 518.5 Td (min_df=1, max_df=0.95, sublinear_tf=True\)) Tj ET
+BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 505.5 Td (   * <dept>_linear_svm.pkl       : LinearSVC\(C=1.0, random_state=42\)) Tj ET
+BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 492.5 Td (   * <dept>_intents.json         : Maps 8 Intent Codes \(e.g., PA01..PA08\) to Intent) Tj ET
+BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 479.5 Td (Names) Tj ET
+BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 466.5 Td (   * training_dataset.json       : Stores the 400 English + Hinglish labeled email) Tj ET
+BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 453.5 Td (samples) Tj ET
+BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 440.5 Td (   * model_metadata.json         : Stores version, accuracy %, TF-IDF feature count, and) Tj ET
+BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 427.5 Td (timestamp) Tj ET
+0.82 0.87 0.95 RG 1 w 36 414.5 m 576 414.5 l S
+BT /F2 11 Tf 0.11 0.30 0.85 rg 36 398.5 Td (2. STEP-BY-STEP GUIDE FOR HR ADMINISTRATORS) Tj ET
+BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 382.5 Td (STEP 1: Create the New HR Department Desk) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 369.5 Td (1. Open HR Departments from the left sidebar \(http://127.0.0.1:5000/inbox.html#departments\).) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 357.0 Td (2. Click + Add New HR Department in the top-right header.) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 344.5 Td (3. Enter Department Name, Shared Gmail, SLA Target Hours, Default Priority, and Description.) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 332.0 Td (Notice Department Code and Primary Category Code auto-populate.) Tj ET
+BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 313.5 Td (STEP 2: Configure Stage 1 Department Detection Keywords \(Via ChatGPT\)) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 300.5 Td (1. Inside the Create Department form \(or inside any card Train AI drawer under Stage 1\),) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 288.0 Td (click Copy ChatGPT Prompt for Department Keywords.) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 275.5 Td (2. Paste the prompt into ChatGPT. It generates 20-28 Strong Multi-Word Phrases and 15-22) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 263.0 Td (Weak Single-Word Keywords covering both English and Indian workplace Hinglish.) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 250.5 Td (3. Paste those comma-separated lists into Strong Multi-Word Phrases and Weak Single-Word) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 238.0 Td (Keywords and click Save / Create Department.) Tj ET
+endstream
+endobj
+9 0 obj
+<< /Length 4159 >>
+stream
+0.11 0.30 0.85 rg 36 780 540 36 re f
+BT /F2 13 Tf 1 1 1 rg 48 793.0 Td (HR FLOW - STAGE 2 INTENT TRAINING & JSON SCHEMA) Tj ET
+BT /F2 10 Tf 0.15 0.23 0.35 rg 36 761.0 Td (Training 400 English + Hinglish Samples \(.pkl + TF-IDF\) & Live Testing) Tj ET
+0.82 0.87 0.95 RG 1 w 36 747.0 m 576 747.0 l S
+BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 731.0 Td (STEP 3: Train Stage 2 Intent Identification Model \(400 English + Hinglish Samples\)) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 718.0 Td (1. On the department card, click Train AI to open the AI Department Detection & Intent) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 705.5 Td (Trainer Studio.) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 693.0 Td (2. Under Stage 2 - Intent Identification Model Training, click Copy ChatGPT Intent &) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 680.5 Td (Training Prompt.) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 668.0 Td (3. Paste the prompt into ChatGPT. It generates a single JSON object with 8 Intent Codes \(01) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 655.5 Td (to 08\) and 400 realistic employee emails \(~65% English + ~35% Hinglish, ~50 emails per) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 643.0 Td (intent\).) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 630.5 Td (4. Paste ChatGPT JSON output into the Stage 2 textarea. Verify the green indicator: Valid) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 618.0 Td (JSON Ready.) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 605.5 Td (5. Click Train Stage 2 Intent Model Now \(.pkl + TF-IDF Vectorizer\). The backend trains the) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 593.0 Td (LinearSVC + TF-IDF model, writes the .pkl files, and hot-reloads the model immediately.) Tj ET
+BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 574.5 Td (STEP 4: Live Email Verification \(Stage 3 Tester\)) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 561.5 Td (1. In Stage 3 - Live Email Verification, enter a test Email Subject and Body \(in English or) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 549.0 Td (Hinglish\).) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 536.5 Td (2. Click Test Stage 1 Department Detection & Stage 2 Intent Prediction.) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 524.0 Td (3. Verify the Stage 1 Detected Department + Confidence %, Stage 2 Predicted Intent Code +) Tj ET
+BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 511.5 Td (Name + SVM Score + Margin, and Routed HR Desk.) Tj ET
+0.82 0.87 0.95 RG 1 w 36 499.0 m 576 499.0 l S
+BT /F2 11 Tf 0.11 0.30 0.85 rg 36 483.0 Td (3. CHATGPT TRAINING JSON SCHEMA EXAMPLE) Tj ET
+BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 467.0 Td ({) Tj ET
+BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 455.5 Td (  "category_code": "PAYROLL",) Tj ET
+BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 444.0 Td (  "display_name": "Payroll Operations HR",) Tj ET
+BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 432.5 Td (  "keywords_strong": ["salary slip", "salary not credited", "salary nahi aayi", "payslip chahiye"],) Tj ET
+BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 421.0 Td (  "keywords_weak": ["payroll", "salary", "payslip", "tds", "pf", "reimbursement"],) Tj ET
+BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 409.5 Td (  "required_fields": ["employee_id", "date", "description"],) Tj ET
+BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 398.0 Td (  "default_intent_id": "PA01",) Tj ET
+BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 386.5 Td (  "intents": {) Tj ET
+BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 375.0 Td (    "PA01": "Salary Not Credited or Delayed",) Tj ET
+BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 363.5 Td (    "PA02": "Salary Deduction or Discrepancy",) Tj ET
+BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 352.0 Td (    "PA03": "Payslip Request or Payslip Issue") Tj ET
+BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 340.5 Td (  },) Tj ET
+BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 329.0 Td (  "training_samples": [) Tj ET
+BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 317.5 Td (    {"text": "Subject: Salary not credited\\nHi HR, EMP1002 here, October salary not credited.", "intent": "PA01"},) Tj ET
+BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 306.0 Td (    {"text": "Subject: Salary abhi tak nahi aayi\\nMera ID EMP1008 hai, salary bank me nahi aayi.", "intent": "PA01"}) Tj ET
+BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 294.5 Td (  ]) Tj ET
+BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 283.0 Td (}) Tj ET
+endstream
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000121 00000 n 
+0000000267 00000 n 
+0000000413 00000 n 
+0000000483 00000 n 
+0000000558 00000 n 
+0000000626 00000 n 
+0000005472 00000 n 
+trailer
+<< /Size 10 /Root 1 0 R >>
+startxref
+9683
+%%EOF

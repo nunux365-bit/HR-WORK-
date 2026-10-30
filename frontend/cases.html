@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Flow — Executive Operational Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/dashboard.css?v=20261008_standalone_v7">
+    <link rel="stylesheet" href="css/inbox.css?v=20261008_standalone_v7">
+</head>
+<body>
+
+    <div class="app-shell">
+        <!-- Shared Sidebar (loaded from js/sidebar.js?v=20261008_standalone_v7 -->
+        <div id="sidebarContainer"></div>
+        <script src="js/sidebar.js?v=20261008_standalone_v7"></script>
+
+        <!-- ==================================================================
+             MAIN WORKSPACE AREA
+             ================================================================== -->
+        <div class="main-area inbox-main-area" style="display: flex; flex-direction: column; height: 100vh; overflow: hidden; background: linear-gradient(135deg, rgba(248, 250, 252, 0.9) 0%, rgba(226, 232, 240, 0.5) 100%);">
+            
+            <header class="topbar" style="flex-shrink: 0; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px);">
+                <div class="search-container">
+                    <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="caseSearch" placeholder="Search HR cases by ID, employee, or status...">
+                </div>
+                <div class="topbar-actions">
+                    <h3 style="margin: 0; color: var(--navy-900); font-weight: 600;">Case Management Module</h3>
+                </div>
+            </header>
+
+            <div id="moduleCasesView" style="display:flex; flex-direction:column; flex:1; min-height:0;">
+                <section class="inbox-top-section" style="padding: 20px 24px 0 24px;">
+                    <div class="inbox-stats-grid">
+                        <div class="stat-compact-card blue" data-quick-status="ALL">
+                            <div class="stat-num" id="statTotalActive">--</div>
+                            <div class="stat-info">
+                                <strong>Total Active</strong>
+                                <span>Active cases in progress</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-compact-card amber" data-quick-status="CRITICAL">
+                            <div class="stat-num" id="statCritical">--</div>
+                            <div class="stat-info">
+                                <strong>Critical Priority</strong>
+                                <span>Requires immediate attention</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-compact-card emerald" data-quick-status="AVG">
+                            <div class="stat-num">2.4d</div>
+                            <div class="stat-info">
+                                <strong>Avg Resolution</strong>
+                                <span>Average time to resolve</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="inbox-three-zones" style="margin-top: 16px;">
+                    <div class="zone-email-list">
+                        <div class="list-controls">
+                            <div class="list-search-box">
+                                <svg class="list-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                                <input type="text" id="caseListSearch" placeholder="Search case by ID, employee...">
+                                <span class="list-count-chip" id="caseListCountBadge">0</span>
+                            </div>
+                            <div class="list-filter-row">
+                                <select id="filterCategory" aria-label="Filter by category">
+                                    <option value="ALL">All Categories</option>
+                                    <option value="ATTENDANCE">Attendance</option>
+                                    <option value="LEAVE">Leave</option>
+                                    <option value="RESIGNATION">Resignation</option>
+                                    <option value="BGV">BGV</option>
+                                    <option value="PAYROLL">Payroll</option>
+                                    <option value="ONBOARDING">Onboarding</option>
+                                </select>
+                                <select id="filterStatus" aria-label="Filter by status">
+                                    <option value="ALL">All Status</option>
+                                    <option value="NEW">New</option>
+                                    <option value="IN_PROGRESS">In Progress</option>
+                                    <option value="WAITING">Waiting</option>
+                                    <option value="RESOLVED">Resolved</option>
+                                    <option value="CLOSED">Closed</option>
+                                </select>
+                                <select id="filterTime" aria-label="Filter by time">
+                                    <option value="ALL">All Time</option>
+                                    <option value="TODAY">Today</option>
+                                    <option value="WEEK">This Week</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="email-list-scroll" id="casesList">
+                            <div class="modal-loader" style="display: flex; justify-content: center; padding: 40px;">
+                                <div class="pulse-dot" style="width: 12px; height: 12px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ZONE 2: CASE READER -->
+                    <div class="zone-email-reader" id="detailBodyMain">
+                        <div style="text-align: center; color: var(--slate-400); margin-top: 60px;">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px; opacity: 0.5;">
+                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                            </svg>
+                            <p>Select a case from the list</p>
+                        </div>
+                    </div>
+
+                    <!-- ZONE 3: HR PANEL -->
+                    <aside class="zone-hr-panel" id="detailBodySidebar" style="display: none; padding: 20px; background: rgba(255,255,255,0.7); backdrop-filter: blur(16px); overflow-y: auto;">
+                    </aside>
+                </section>
+            </div>
+    </div>
+
+    <script>
+        var BACKEND_API_BASE =
+            (window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost") &&
+            window.location.port &&
+            window.location.port !== "5000"
+                ? "http://127.0.0.1:5000"
+                : "";
+
+        // Auth interceptor
+        (function() {
+            if (window._hrFetchPatched) return;
+            window._hrFetchPatched = true;
+            var originalFetch = window.fetch;
+            window.fetch = async function() {
+                let [resource, config] = arguments;
+                if (typeof resource === 'string' && (resource.startsWith('/api/') || resource.includes('/api/'))) {
+                    config = config || {};
+                    config.headers = config.headers || {};
+                    let userStr = sessionStorage.getItem('hrflow_user');
+                    let token = sessionStorage.getItem('hrflow_token');
+                    if (userStr) {
+                        try {
+                            let userObj = JSON.parse(userStr);
+                            config.headers['X-HR-User'] = userObj.name || userObj.email || "Unknown";
+                            let rawRole = (userObj.role || "ADMIN").toUpperCase();
+                            config.headers['X-HR-Role'] = rawRole === "SUPER_ADMIN" ? "ADMIN" : rawRole;
+                            config.headers['X-HR-Email'] = userObj.email || "";
+                        } catch(e) {}
+                    }
+                    if (token) config.headers['Authorization'] = `Bearer ${token}`;
+                }
+                return originalFetch(resource, config);
+            };
+        })();
+
+        let allCases = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            
+            // Check for pre-selected case ID in URL hash or search params
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetCaseId = urlParams.get('id') || window.location.hash.replace('#', '');
+            
+            await fetchAndRenderCases(targetCaseId);
+
+            // Filters
+            const searchInput = document.getElementById('caseSearch');
+            const listSearchInput = document.getElementById('caseListSearch');
+            const filterCategory = document.getElementById('filterCategory');
+            const filterStatus = document.getElementById('filterStatus');
+            const filterTime = document.getElementById('filterTime');
+
+            const applyFilters = () => renderCasesList();
+            
+            if(searchInput) searchInput.addEventListener('input', (e) => {
+                if(listSearchInput) listSearchInput.value = e.target.value;
+                applyFilters();
+            });
+            if(listSearchInput) listSearchInput.addEventListener('input', (e) => {
+                if(searchInput) searchInput.value = e.target.value;
+                applyFilters();
+            });
+            if(filterCategory) filterCategory.addEventListener('change', applyFilters);
+            if(filterStatus) filterStatus.addEventListener('change', applyFilters);
+            if(filterTime) filterTime.addEventListener('change', applyFilters);
+        });
+
+        async function fetchAndRenderCases(targetCaseId) {
+            try {
+                const res = await fetch(`${BACKEND_API_BASE}/api/cases?limit=100`);
+                if (!res.ok) throw new Error("Failed to fetch cases");
+                const data = await res.json();
+                allCases = data?.data?.cases || data?.cases || [];
+                
+                // Update stats
+                const totalActive = allCases.filter(c => c.status !== "CLOSED" && c.status !== "RESOLVED").length;
+                const critical = allCases.filter(c => (c.status !== "CLOSED" && c.status !== "RESOLVED") && (c.priority === "HIGH" || c.priority === "CRITICAL")).length;
+                const statActiveEl = document.getElementById("statTotalActive");
+                const statCritEl = document.getElementById("statCritical");
+                if (statActiveEl) statActiveEl.textContent = totalActive;
+                if (statCritEl) statCritEl.textContent = critical;
+                
+                renderCasesList();
+
+                if (targetCaseId) {
+                    renderCaseDetail(targetCaseId);
+                }
+
+            } catch (err) {
+                console.error(err);
+                if(window.showToast) window.showToast("Error", "Could not fetch cases.", "error"); 
+                document.getElementById("casesList").innerHTML = `<div style="color: var(--rose-600); padding: 20px;">Error loading cases.</div>`;
+            }
+        }
+
+        function renderCasesList() {
+            const listEl = document.getElementById("casesList");
+            const badgeEl = document.getElementById("caseListCountBadge");
+            if(!listEl) return;
+            listEl.innerHTML = "";
+            
+            const term = (document.getElementById('caseListSearch')?.value || "").toLowerCase();
+            const cat = document.getElementById('filterCategory')?.value || "ALL";
+            const stat = document.getElementById('filterStatus')?.value || "ALL";
+            
+            const filteredCases = allCases.filter(c => {
+                let match = true;
+                if (term) {
+                    const text = \`\${c.case_number || c.db_id} \${c.employee_name} \${c.category}\`.toLowerCase();
+                    if (!text.includes(term)) match = false;
+                }
+                if (cat !== "ALL" && c.category !== cat) match = false;
+                if (stat !== "ALL" && c.status !== stat) match = false;
+                return match;
+            });
+
+            if (badgeEl) badgeEl.textContent = filteredCases.length;
+
+            if (filteredCases.length === 0) {
+                listEl.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--slate-500);">No cases found.</div>`;
+                return;
+            }
+
+            filteredCases.forEach(c => {
+                const priorityClass = c.priority ? c.priority.toLowerCase() : "medium";
+                const statusClass = c.status === "IN_PROGRESS" ? "in-progress" : (c.status === "WAITING" || c.status === "REVIEW_REQUIRED") ? "waiting" : "completed";
+                
+                const div = document.createElement("div");
+                div.className = "email-row-card";
+                div.setAttribute("data-case", c.db_id || c.case_number);
+                div.onclick = () => renderCaseDetail(c.db_id || c.case_number, div);
+                
+                const initials = (c.employee_name || "Unknown").split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+                const timeStr = c.created_at ? new Date(c.created_at).toLocaleDateString() : 'Today';
+                
+                div.innerHTML = `
+                    <div class="email-row-avatar tone-blue">
+                        ${initials}
+                    </div>
+                    <div class="email-row-main">
+                        <div class="email-row-top">
+                            <div class="email-row-sender-wrap">
+                                <span class="email-row-sender">${c.employee_name || "Unknown"}</span>
+                            </div>
+                            <span class="email-row-time" style="font-size: 0.75rem; white-space: nowrap;">${timeStr}</span>
+                        </div>
+                        <div class="email-row-subject">${c.case_number || c.db_id}</div>
+                        <div class="email-row-snippet">${c.title || c.category || "General Request"} • ${c.workflow_state || "Intake"}</div>
+                        <div class="email-row-footer">
+                            <div class="email-row-tags">
+                                <span class="tag-status ${statusClass}">${c.status}</span>
+                                ${c.feedback_rating ? `<span style="display:inline-flex; align-items:center; gap:3px; padding:2px 7px; background:#fffbeb; border:1px solid #fde68a; border-radius:999px; font-size:0.7rem; font-weight:800; color:#b45309;">⭐ ${c.feedback_rating}.0</span>` : ''}
+                                <span class="tag-priority ${priorityClass}">${c.priority || "MED"}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                listEl.appendChild(div);
+            });
+        }
+
+        async function renderCaseDetail(caseId, rowElement) {
+            // Highlight selected row
+            if (!rowElement) {
+                rowElement = document.querySelector(`.email-row-card[data-case="${caseId}"]`);
+            }
+            if (rowElement) {
+                document.querySelectorAll('.email-row-card').forEach(el => el.classList.remove('selected'));
+                rowElement.classList.add('selected');
+            }
+
+            const bodyMain = document.getElementById("detailBodyMain");
+            const bodySidebar = document.getElementById("detailBodySidebar");
+
+            if (!bodyMain || !bodySidebar) return;
+
+            bodyMain.innerHTML = `<div class="modal-loader" style="display: flex; justify-content: center; padding: 40px;"><div class="pulse-dot" style="width: 12px; height: 12px;"></div></div>`;
+            bodySidebar.style.display = "none";
+            bodySidebar.innerHTML = "";
+
+            try {
+                const res = await fetch(`${BACKEND_API_BASE}/api/cases/${caseId}`);
+                if (!res.ok) throw new Error("Failed");
+                const data = await res.json();
+                const caseData = data.case || data;
+
+                const emailHtml = data.original_email ? `
+                    <div style="background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); border-radius: 12px; border: 1px solid rgba(255,255,255,0.9); padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+                        <h4 style="margin: 0 0 16px 0; color: var(--navy-900); display: flex; align-items: center; gap: 8px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                            Original Email
+                        </h4>
+                        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; font-size: 0.85rem;">
+                            <div style="display: flex; gap: 8px;"><strong style="color: var(--slate-600); width: 60px;">From:</strong> <span style="color: var(--navy-900);">${data.original_email.from_display || data.original_email.sender_email}</span></div>
+                            <div style="display: flex; gap: 8px;"><strong style="color: var(--slate-600); width: 60px;">Subject:</strong> <span style="color: var(--navy-900);">${data.original_email.subject}</span></div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.5); padding: 16px; border-radius: 8px; font-size: 0.85rem; color: var(--slate-700); line-height: 1.6; border: 1px solid rgba(0,0,0,0.03); max-height: 200px; overflow-y: auto; white-space: pre-wrap;">${data.original_email.body}</div>
+                    </div>
+                ` : '';
+
+                const intentScore = data.ai_classification?.intent_score ? Math.round(data.ai_classification.intent_score * 100) + '%' : 'N/A';
+                
+                const aiHtml = data.ai_classification ? `
+                    <div style="background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); border-radius: 12px; border: 1px solid rgba(255,255,255,0.9); padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+                        <h4 style="margin: 0 0 16px 0; color: var(--navy-900); display: flex; align-items: center; gap: 8px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--emerald-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"></path><path d="M12 18v4"></path><path d="M4.93 4.93l2.83 2.83"></path><path d="M16.24 16.24l2.83 2.83"></path><path d="M2 12h4"></path><path d="M18 12h4"></path><circle cx="12" cy="12" r="4"></circle></svg>
+                            AI Classification
+                        </h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--slate-500); text-transform: uppercase; margin-bottom: 4px;">Predicted Category</div>
+                                <div style="font-weight: 600; color: var(--navy-900);">${data.ai_classification.category || caseData.category}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--slate-500); text-transform: uppercase; margin-bottom: 4px;">Detected Intent</div>
+                                <div style="font-weight: 600; color: var(--navy-900);">${data.ai_classification.intent_name || caseData.intent || 'N/A'}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--slate-500); text-transform: uppercase; margin-bottom: 4px;">Confidence</div>
+                                <div style="font-weight: 600; color: var(--emerald-600);">${intentScore}</div>
+                            </div>
+                        </div>
+                        ${Object.keys(data.extracted_fields || {}).length > 0 ? `
+                        <div style="border-top: 1px dashed rgba(0,0,0,0.1); padding-top: 16px; margin-top: 16px;">
+                            <h5 style="margin: 0 0 12px 0; font-size: 0.8rem; color: var(--slate-500); text-transform: uppercase;">Extracted Entities</h5>
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                ${Object.entries(data.extracted_fields).map(([k, v]) => `
+                                    <div style="background: rgba(59,130,246,0.1); padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; color: var(--blue-700); border: 1px solid rgba(59,130,246,0.2);">
+                                        <span style="opacity: 0.7; margin-right: 4px;">${k.replace(/_/g, ' ')}:</span> <strong>${v}</strong>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>` : ''}
+                    </div>
+                ` : '';
+
+                // --- 0. Validation / Missing Info Warning ---
+                const val = data.validation || {};
+                const missingFields = val.missing_fields || [];
+                const warningHtml = missingFields.length > 0 ? `
+                    <div style="background: rgba(245,158,11,0.1); border-radius: 12px; border: 1px solid rgba(245,158,11,0.3); padding: 16px 20px; margin-bottom: 24px; display: flex; gap: 12px; align-items: flex-start;">
+                        <div style="color: var(--amber-600); margin-top: 2px;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        </div>
+                        <div>
+                            <div style="color: var(--amber-800); font-weight: 600; font-size: 0.9rem; margin-bottom: 4px;">Missing Information Detected</div>
+                            <div style="color: var(--amber-700); font-size: 0.8rem; margin-bottom: 8px;">The workflow is stalled because the following required data is missing from the employee's request:</div>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                ${missingFields.map(f => `<span style="background: rgba(245,158,11,0.2); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; color: var(--amber-900);">${f}</span>`).join('')}
+                            </div>
+                        </div>
+                        <button class="btn-primary" style="margin-left: auto; background: var(--amber-500); border: none; padding: 6px 12px; font-size: 0.8rem;" onclick="window.showToast('Request Info', 'Automated email sent to employee for missing information.', 'info')">Request Info</button>
+                    </div>
+                ` : '';
+
+                // --- 1. Employee Context ---
+                const emp = data.employee || {};
+                const empHtml = Object.keys(emp).length > 0 ? `
+                    <div style="background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); border-radius: 12px; border: 1px solid rgba(255,255,255,0.9); padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+                        <h4 style="margin: 0 0 16px 0; color: var(--navy-900); display: flex; align-items: center; gap: 8px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            Employee Profile
+                        </h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--slate-500); text-transform: uppercase; margin-bottom: 4px;">Name & ID</div>
+                                <div style="font-weight: 600; color: var(--navy-900);">${emp.full_name || emp.name || 'Unknown'} <span style="color: var(--slate-500); font-size: 0.8rem;">(${emp.employee_id || 'N/A'})</span></div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--slate-500); text-transform: uppercase; margin-bottom: 4px;">Role / Dept</div>
+                                <div style="font-weight: 600; color: var(--navy-900);">${emp.title || emp.designation || 'N/A'} • ${emp.department || 'N/A'}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--slate-500); text-transform: uppercase; margin-bottom: 4px;">Manager</div>
+                                <div style="font-weight: 600; color: var(--navy-900);">${emp.manager_name || 'N/A'}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--slate-500); text-transform: uppercase; margin-bottom: 4px;">Location / Band</div>
+                                <div style="font-weight: 600; color: var(--navy-900);">${emp.location || 'N/A'} • ${emp.band || emp.level || 'N/A'}</div>
+                            </div>
+                        </div>
+                    </div>
+                ` : '';
+
+                // --- 2. SLA & Workflow ---
+                const sla = data.sla || {};
+                const wf = data.workflow || {};
+                const slaColor = sla.breached ? 'var(--rose-600)' : 'var(--emerald-600)';
+                const slaHtml = `
+                    <div style="background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); border-radius: 12px; border: 1px solid rgba(255,255,255,0.9); padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+                        <h4 style="margin: 0 0 16px 0; color: var(--navy-900); display: flex; align-items: center; gap: 8px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--amber-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            SLA & Workflow
+                        </h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--slate-500); text-transform: uppercase; margin-bottom: 4px;">Current Step</div>
+                                <div style="font-weight: 600; color: var(--navy-900);">${wf.current_state || caseData.workflow_state || 'Intake'}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--slate-500); text-transform: uppercase; margin-bottom: 4px;">Next Action</div>
+                                <div style="font-weight: 600; color: var(--navy-900);">${wf.next_action || 'Pending Assignment'}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--slate-500); text-transform: uppercase; margin-bottom: 4px;">SLA Target</div>
+                                <div style="font-weight: 600; color: var(--navy-900);">${sla.target_date ? new Date(sla.target_date).toLocaleString() : 'Not Set'}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--slate-500); text-transform: uppercase; margin-bottom: 4px;">SLA Status</div>
+                                <div style="font-weight: 600; color: ${slaColor};">${sla.sla_remaining || (sla.breached ? 'Breached' : 'On Track')}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // --- 3. Tasks & Approvals ---
+                const tasksHtml = (data.tasks || []).map(t => {
+                    const tcolor = t.status === 'COMPLETED' ? 'var(--emerald-500)' : 'var(--amber-500)';
+                    return `
+                        <div style="display: flex; justify-content: space-between; padding: 8px 12px; background: rgba(0,0,0,0.02); border-radius: 6px; margin-bottom: 6px; font-size: 0.8rem;">
+                            <div style="color: var(--navy-900); font-weight: 500;">${t.title || 'Task'}</div>
+                            <div style="color: ${tcolor}; font-weight: 600; font-size: 0.7rem; text-transform: uppercase;">${t.status}</div>
+                        </div>
+                    `;
+                }).join('');
+                
+                const approvalsHtml = (data.approvals || []).map(a => {
+                    const acolor = a.status === 'APPROVED' ? 'var(--emerald-500)' : (a.status === 'REJECTED' ? 'var(--rose-500)' : 'var(--amber-500)');
+                    return `
+                        <div style="display: flex; justify-content: space-between; padding: 8px 12px; background: rgba(0,0,0,0.02); border-radius: 6px; margin-bottom: 6px; font-size: 0.8rem;">
+                            <div style="color: var(--navy-900); font-weight: 500;">Approval by ${a.approver_role || 'Manager'}</div>
+                            <div style="color: ${acolor}; font-weight: 600; font-size: 0.7rem; text-transform: uppercase;">${a.status}</div>
+                        </div>
+                    `;
+                }).join('');
+
+                const actionsBlockHtml = (tasksHtml || approvalsHtml) ? `
+                    <div style="background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); border-radius: 12px; border: 1px solid rgba(255,255,255,0.9); padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+                        <h4 style="margin: 0 0 16px 0; color: var(--navy-900); display: flex; align-items: center; gap: 8px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                            Active Tasks & Approvals
+                        </h4>
+                        ${tasksHtml}
+                        ${approvalsHtml}
+                    </div>
+                ` : '';
+                
+                // --- 4. Documents & Communications ---
+                const docs = data.documents?.documents || [];
+                const docsHtml = docs.map(d => {
+                    const docName = d.name || d.file_name || 'Document';
+                    const docSize = d.size || (d.file_size ? `${(d.file_size / 1024).toFixed(1)} KB` : '—');
+                    const hasFile = Boolean(d.has_file || d.file_path || d.view_url);
+                    const caseIdent = data.id || data.db_id || currentCaseId;
+                    const viewUrl = d.view_url || `/api/cases/${encodeURIComponent(caseIdent)}/documents/${d.id}/view`;
+                    const downloadUrl = d.download_url || `/api/cases/${encodeURIComponent(caseIdent)}/documents/${d.id}/download`;
+
+                    return `
+                        <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: rgba(0,0,0,0.02); border-radius: 8px; margin-bottom: 8px; border: 1px solid rgba(0,0,0,0.05);">
+                            <div style="width: 32px; height: 32px; border-radius: 6px; background: rgba(59,130,246,0.1); color: var(--blue-600); display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                                📄
+                            </div>
+                            <div style="flex: 1; overflow:hidden;">
+                                <div style="font-size: 0.8rem; font-weight: 600; color: var(--navy-900); text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">${docName}</div>
+                                <div style="font-size: 0.7rem; color: var(--slate-500);">${d.doc_type || d.document_type || 'Attachment'} • ${docSize} • <span style="font-weight:600;">${d.status || 'RECEIVED'}</span></div>
+                            </div>
+                            ${hasFile ? `
+                                <a href="${viewUrl}" target="_blank" title="Preview" style="background: rgba(59,130,246,0.1); border: none; color: var(--blue-600); border-radius: 4px; padding: 4px 8px; font-size: 0.72rem; text-decoration: none; display: flex; align-items: center; gap: 4px;">
+                                    👁 Preview
+                                </a>
+                                <a href="${downloadUrl}" download="${docName}" title="Download" style="background: rgba(59,130,246,0.1); border: none; color: var(--blue-600); border-radius: 4px; padding: 4px 8px; font-size: 0.72rem; text-decoration: none; display: flex; align-items: center; gap: 4px;">
+                                    ⬇
+                                </a>
+                            ` : `
+                                <span style="font-size: 0.7rem; color: var(--slate-400);">${d.status || 'REQUIRED'}</span>
+                            `}
+                        </div>
+                    `;
+                }).join('');
+
+                const docsBlockHtml = docs.length > 0 ? `
+                    <div style="background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); border-radius: 12px; border: 1px solid rgba(255,255,255,0.9); padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 20px;">
+                        <h4 style="margin: 0 0 16px 0; color: var(--navy-900); display: flex; align-items: center; gap: 8px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                            Attached Documents
+                        </h4>
+                        ${docsHtml}
+                    </div>
+                ` : '';
+
+                // --- 5. Communications Thread ---
+                const comms = data.communications || [];
+                const commsHtml = comms.map(c => {
+                    const isHr = c.sender_role === 'HR' || c.sender_email?.includes('hr@');
+                    const bg = isHr ? 'rgba(59,130,246,0.05)' : 'rgba(0,0,0,0.02)';
+                    const border = isHr ? '1px solid rgba(59,130,246,0.2)' : '1px solid rgba(0,0,0,0.05)';
+                    const align = isHr ? 'margin-left: 20px;' : 'margin-right: 20px;';
+                    
+                    return `
+                        <div style="background: ${bg}; border: ${border}; border-radius: 12px; padding: 16px; margin-bottom: 12px; ${align}">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <strong style="color: var(--navy-900); font-size: 0.85rem;">${c.sender_name || c.sender_email || 'Unknown Sender'}</strong>
+                                <span style="font-size: 0.7rem; color: var(--slate-500);">${new Date(c.created_at || c.timestamp).toLocaleString()}</span>
+                            </div>
+                            <div style="color: var(--slate-700); font-size: 0.85rem; line-height: 1.5; white-space: pre-wrap;">${c.body || c.message || ''}</div>
+                        </div>
+                    `;
+                }).join('');
+
+                const commsBlockHtml = comms.length > 0 ? `
+                    <div style="background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); border-radius: 12px; border: 1px solid rgba(255,255,255,0.9); padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-top: 24px;">
+                        <h4 style="margin: 0 0 16px 0; color: var(--navy-900); display: flex; align-items: center; gap: 8px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                            Communication Thread
+                        </h4>
+                        ${commsHtml}
+                    </div>
+                ` : '';
+
+                const timelineHtml = (data.timeline || []).map(t => {
+                    let timeStr = t.created_at ? new Date(t.created_at).toLocaleString() : 'Just now';
+                    return `
+                        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                            <div style="width: 2px; background: var(--blue-500); border-radius: 2px; flex-shrink: 0;"></div>
+                            <div>
+                                <div style="font-size: 0.85rem; font-weight: 600; color: var(--navy-900);">${t.action || t.title}</div>
+                                <div style="font-size: 0.75rem; color: var(--slate-500);">${timeStr}</div>
+                            </div>
+                        </div>
+                    `;
+                    return `
+                        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                            <div style="width: 2px; background: var(--blue-500); border-radius: 2px; flex-shrink: 0;"></div>
+                            <div>
+                                <div style="font-size: 0.85rem; font-weight: 600; color: var(--navy-900);">${t.action || t.title}</div>
+                                <div style="font-size: 0.75rem; color: var(--slate-500);">${t.performed_by || 'System'} • ${timeStr}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                bodyMain.innerHTML = `
+                    <div style="flex-shrink: 0; border-bottom: 1px solid rgba(0,0,0,0.05); padding: 16px 24px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.7); backdrop-filter: blur(12px);">
+                        <div>
+                            <h3 style="font-size: 1.4rem; margin:0; color:var(--navy-900);">${caseData.title || \`Case \${caseData.case_number || caseId}\`}</h3>
+                            <p style="margin:4px 0 0 0; font-size:0.9rem; color:var(--slate-500);">
+                                <span style='color: var(--blue-600); font-weight: 600; margin-right: 8px;'>${caseData.case_number || caseId}</span> <span style='opacity: 0.5; margin: 0 4px;'>|</span> ${caseData.employee_name || 'Unknown Employee'} <span style='opacity: 0.5; margin: 0 4px;'>|</span> ${caseData.category || 'General'}
+                            </p>
+                        </div>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <a href="casedetail.html?case=${encodeURIComponent(caseData.case_number || caseId)}" target="_blank" class="btn-primary" style="padding: 6px 14px; font-size: 0.8rem; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; background: linear-gradient(135deg, #2563eb, #1d4ed8);">
+                                <span>Open 360° Dossier</span>
+                                <span style="font-size:0.75rem;">↗</span>
+                            </a>
+                            <button class="btn-outline" onclick="window.showToast('Reassign', 'Case reassigned successfully.', 'success')" style="padding: 6px 12px; font-size: 0.8rem;">Reassign</button>
+                            <button class="btn-outline" onclick="window.showToast('Case Resolved', 'Case has been marked as resolved.', 'success')" style="padding: 6px 12px; font-size: 0.8rem; border-color: var(--emerald-500); color: var(--emerald-600);">Resolve</button>
+                            <button class="btn-primary" onclick="window.showToast('Note Added', 'Action recorded to case timeline.', 'info')" style="padding: 6px 12px; font-size: 0.8rem;">Add Note</button>
+                        </div>
+                    </div>
+
+                    <div style="padding: 0 24px 24px 24px;">
+                        ${warningHtml}
+                        ${emailHtml}
+                        ${commsBlockHtml}
+                        
+                        <div style="background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); border-radius: 12px; border: 1px solid rgba(255,255,255,0.9); padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+                            <h4 style="margin: 0 0 16px 0; color: var(--navy-900);">Timeline</h4>
+                            <div style="max-height: 250px; overflow-y: auto; padding-right: 8px;">
+                                ${timelineHtml || '<div style="color: var(--slate-400); font-size: 0.85rem;">No timeline events.</div>'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                const fbData = data.feedback || caseData.feedback;
+                const fbRating = caseData.feedback_rating || fbData?.rating;
+                const fbHtml = (fbRating && fbData) ? `
+                    <div style="background: #fffbeb; border-radius: 12px; border: 1px solid #fde68a; padding: 20px; box-shadow: 0 4px 15px rgba(245,158,11,0.06);">
+                        <h4 style="margin: 0 0 12px 0; color: #92400e; display: flex; align-items: center; justify-content: space-between;">
+                            <span style="display:flex; align-items:center; gap:6px;">⭐ Employee CSAT Feedback</span>
+                            <span style="font-size:0.8rem; font-weight:800; color:#b45309;">${'★'.repeat(fbRating)} ${fbRating}.0 / 5</span>
+                        </h4>
+                        <div style="font-size:0.8rem; color:#78350f; margin-bottom:6px;">
+                            Rating: <strong>${fbData.rating_label || 'Rating'}</strong> · Submitted by ${fbData.submitted_by || 'Requester'}
+                        </div>
+                        ${fbData.comments ? `<div style="font-size:0.8rem; color:#451a03; font-style:italic; line-height:1.4;">"${fbData.comments}"</div>` : ''}
+                        ${Array.isArray(fbData.tags) && fbData.tags.length > 0 ? `
+                            <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;">
+                                ${fbData.tags.map(t => `<span style="background:#ffffff; border:1px solid #fde68a; border-radius:999px; padding:2px 8px; font-size:0.7rem; font-weight:700; color:#92400e;">${t}</span>`).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                ` : '';
+
+                bodySidebar.style.display = "block";
+                bodySidebar.innerHTML = `
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.9); box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--slate-500); text-transform: uppercase; margin-bottom: 4px;">Status</div>
+                                <div style="font-weight: 600; color: var(--navy-900); display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                                    <span class="status-badge ${caseData.status === 'IN_PROGRESS' ? 'in-progress' : (caseData.status === 'WAITING' ? 'waiting' : 'completed')}">${caseData.status}</span>
+                                    ${fbRating ? `
+                                        <span style="display:inline-flex; align-items:center; gap:3px; padding:2px 8px; background:#fffbeb; border:1px solid #fde68a; border-radius:999px; font-size:0.75rem; font-weight:800; color:#b45309;">⭐ ${fbRating}.0</span>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--slate-500); text-transform: uppercase; margin-bottom: 4px;">Priority</div>
+                                <div style="font-weight: 600; color: var(--navy-900);"><span class="priority-badge ${caseData.priority ? caseData.priority.toLowerCase() : 'medium'}">${caseData.priority || 'MEDIUM'}</span></div>
+                            </div>
+                            <div style="grid-column: 1 / -1;">
+                                <div style="font-size: 0.75rem; color: var(--slate-500); text-transform: uppercase; margin-bottom: 4px;">Assigned To</div>
+                                <div style="font-weight: 600; color: var(--navy-900); display: flex; align-items: center; gap: 6px;">
+                                    <div style="width: 20px; height: 20px; border-radius: 50%; background: var(--blue-100); color: var(--blue-700); display: flex; align-items: center; justify-content: center; font-size: 0.6rem;">${(caseData.assigned_user || 'U')[0]}</div>
+                                    ${caseData.assigned_user || caseData.assigned_team || 'Unassigned'}
+                                </div>
+                            </div>
+                        </div>
+                        ${fbHtml}
+                        ${empHtml}
+                        ${slaHtml}
+                        ${actionsBlockHtml}
+                        ${aiHtml}
+                        ${docsBlockHtml}
+                    </div>
+                `;
+
+            } catch (err) {
+                console.error(err);
+                if(window.showToast) window.showToast("Error", "Could not load case details.", "error"); 
+                bodyMain.innerHTML = `<div style="color: var(--rose-600); padding: 20px;">Could not load case details.</div>`;
+            }
+        }
+    </script>
+<script src="js/dashboard.js?v=20261008_standalone_v7"></script>
+</body>
+</html>

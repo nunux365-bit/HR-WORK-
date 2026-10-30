@@ -1,0 +1,2509 @@
+/* ==========================================================================
+   HR FLOW — WORKFLOW BOT PERMANENTLY DISABLED
+   ========================================================================== */
+#grokOrbContainer, .aura-bot-launcher, #nexusBotRoot, .grok-orb-container, #auraSideSheet, #workflowBotContainer, .nexus-floating-badge {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+}
+
+/* 1. KEYFRAME ANIMATIONS: FLOAT, BLINK, BLOOM, TYPING */
+@keyframes auraOrbFloat {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-7px);
+    }
+}
+
+@keyframes auraShadowPulse {
+    0%, 100% {
+        transform: translateX(-50%) scale(1);
+        opacity: 0.65;
+    }
+    50% {
+        transform: translateX(-50%) scale(0.84);
+        opacity: 0.32;
+    }
+}
+
+/* REALISTIC DOUBLE-BLINK CADENCE */
+@keyframes auraNaturalBlink {
+    0%, 45%, 49%, 93%, 97%, 100% {
+        transform: scaleY(1) scaleX(1);
+    }
+    47% {
+        transform: scaleY(0.08) scaleX(1.18);
+    }
+    95% {
+        transform: scaleY(0.08) scaleX(1.18);
+    }
+}
+
+/* CONTINUOUS VELVET MESH ROTATION & FLUID GRADIENT COLOR FLOW (DARK COLOR THEME) */
+@keyframes auraVelvetRotate {
+    0% {
+        transform: rotate(0deg) scale(1.08);
+    }
+    50% {
+        transform: rotate(180deg) scale(1.18);
+    }
+    100% {
+        transform: rotate(360deg) scale(1.08);
+    }
+}
+
+@keyframes auraCounterRotate {
+    0% {
+        transform: rotate(360deg) scale(1.14);
+    }
+    50% {
+        transform: rotate(180deg) scale(1.04);
+    }
+    100% {
+        transform: rotate(0deg) scale(1.14);
+    }
+}
+
+@keyframes auraFluidBaseShift {
+    0% {
+        background-position: 0% 30%;
+    }
+    50% {
+        background-position: 100% 70%;
+    }
+    100% {
+        background-position: 0% 30%;
+    }
+}
+
+@keyframes auraBloomRotatePulse {
+    0% {
+        transform: rotate(0deg) scale(0.96);
+        opacity: 0.50;
+    }
+    50% {
+        transform: rotate(180deg) scale(1.12);
+        opacity: 0.78;
+    }
+    100% {
+        transform: rotate(360deg) scale(0.96);
+        opacity: 0.50;
+    }
+}
+
+@keyframes auraBadgeShimmer {
+    0% {
+        background-position: 0% 50%;
+    }
+    100% {
+        background-position: 100% 50%;
+    }
+}
+
+@keyframes auraBubblePop {
+    0% {
+        transform: scale(0.7) translateY(8px);
+        opacity: 0;
+    }
+    70% {
+        transform: scale(1.08) translateY(-2px);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes auraMessageSlide {
+    0% {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes auraDotPulse {
+    0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: 0.45;
+    }
+    30% {
+        transform: translateY(-4px);
+        opacity: 1;
+    }
+}
+
+@keyframes auraRibbonFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes auraShockwave {
+    0% {
+        box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.95), 0 0 35px rgba(249, 115, 22, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 28px rgba(236, 72, 153, 0), 0 0 50px rgba(168, 85, 247, 0.35);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(236, 72, 153, 0), 0 0 0 rgba(0, 0, 0, 0);
+    }
+}
+
+/* 2. THE FLOATING CUTE ORB CONTAINER */
+.gemini-orb-container,
+.grok-orb-container,
+.aura-bot-launcher {
+    position: fixed;
+    bottom: 28px;
+    right: 34px;
+    z-index: 9990;
+    width: 82px;
+    height: 82px;
+    cursor: grab;
+    user-select: none;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.aura-bot-launcher:active,
+.gemini-orb-container:active,
+.grok-orb-container:active {
+    cursor: grabbing;
+    transform: scale(0.94);
+}
+
+.aura-bot-launcher:hover,
+.gemini-orb-container:hover,
+.grok-orb-container:hover {
+    transform: scale(1.09) translateY(-4px);
+}
+
+/* 3. DIFFUSED AMBIENT BLOOM (ROTATING FLUID AURORA) */
+.aura-ambient-bloom {
+    position: absolute;
+    inset: -14px;
+    border-radius: 50%;
+    background: conic-gradient(
+        from 0deg,
+        rgba(219, 39, 119, 0.45) 0deg,
+        rgba(147, 51, 234, 0.50) 80deg,
+        rgba(59, 7, 100, 0.55) 170deg,
+        rgba(76, 29, 149, 0.50) 260deg,
+        rgba(219, 39, 119, 0.45) 360deg
+    );
+    filter: blur(20px);
+    pointer-events: none;
+    animation: auraBloomRotatePulse 8s linear infinite;
+    z-index: 1;
+}
+
+/* 4. SOFT WARM FLOOR SHADOW */
+.aura-floor-shadow {
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 72px;
+    height: 16px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(168, 85, 247, 0.4) 0%, rgba(236, 72, 153, 0.25) 45%, transparent 75%);
+    filter: blur(7px);
+    pointer-events: none;
+    z-index: 1;
+    animation: auraShadowPulse 3.5s ease-in-out infinite;
+}
+
+/* 5. THE SPHERICAL BODY WITH VELVET 3D DEPTH */
+.aura-orb-body {
+    position: relative;
+    width: 82px;
+    height: 82px;
+    border-radius: 50%;
+    animation: auraOrbFloat 3.5s ease-in-out infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    overflow: visible;
+}
+
+/* INNER CLIPPED SPHERE CHAMBER */
+.aura-orb-chamber {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #2e1065;
+    box-shadow: 
+        inset -8px -8px 20px rgba(46, 16, 101, 0.95),
+        inset 4px 4px 12px rgba(253, 230, 138, 0.15),
+        0 16px 38px -4px rgba(219, 39, 119, 0.45),
+        0 8px 20px rgba(99, 102, 241, 0.3);
+    border: 1.2px solid rgba(255, 255, 255, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* SUBTLE SPECULAR GLINT (NO MILKY WASH) */
+.aura-orb-chamber::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle at 30% 22%,
+        rgba(255, 255, 255, 0.25) 0%,
+        rgba(255, 255, 255, 0.05) 16%,
+        transparent 32%
+    );
+    pointer-events: none;
+    z-index: 4;
+}
+
+.aura-glass-specular {
+    display: none;
+}
+
+/* BASE MULTI-STOP RADIAL GRADIENT (ORIGINAL DARK VELVET THEME) */
+.aura-gradient-base {
+    position: absolute;
+    inset: -15%;
+    border-radius: 50%;
+    background: 
+        radial-gradient(circle at 45% 42%, #ec4899 0%, #db2777 34%, transparent 68%),
+        radial-gradient(circle at 82% 38%, #818cf8 0%, #6366f1 46%, transparent 76%),
+        radial-gradient(circle at 38% 82%, #a855f7 0%, #7c3aed 35%, transparent 62%),
+        radial-gradient(circle at 26% 24%, #fdf2f8 0%, #f472b6 40%, transparent 68%),
+        linear-gradient(135deg, #f472b6 0%, #a855f7 50%, #3b0764 100%);
+    background-size: 150% 150%;
+    animation: auraFluidBaseShift 8s ease-in-out infinite alternate;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* CONTINUOUS MOVING VELVET AURORA FLOW (ORIGINAL CONIC COLOR GRADIENT) */
+.aura-moving-gradient {
+    position: absolute;
+    inset: -30%;
+    border-radius: 50%;
+    background: conic-gradient(
+        from 180deg at 50% 50%,
+        #f472b6 0deg,
+        #c084fc 60deg,
+        #818cf8 130deg,
+        #6366f1 190deg,
+        #a855f7 260deg,
+        #ec4899 310deg,
+        #f472b6 360deg
+    );
+    animation: auraVelvetRotate 8s linear infinite;
+    mix-blend-mode: overlay;
+    opacity: 0.92;
+    filter: blur(8px);
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* SECONDARY LIQUID AURORA COUNTER-WAVE */
+.aura-moving-gradient::before,
+.aura-gradient-wave {
+    content: "";
+    position: absolute;
+    inset: -10%;
+    border-radius: 50%;
+    background: conic-gradient(
+        from 0deg at 50% 50%,
+        rgba(236, 72, 153, 0.7) 0deg,
+        rgba(129, 140, 248, 0.75) 100deg,
+        rgba(59, 7, 100, 0.85) 190deg,
+        rgba(249, 115, 22, 0.65) 280deg,
+        rgba(236, 72, 153, 0.7) 360deg
+    );
+    animation: auraCounterRotate 12s linear infinite;
+    mix-blend-mode: soft-light;
+    opacity: 0.75;
+    filter: blur(10px);
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* 3D VELVET SHADOW MASK (ORIGINAL DEEP SPHERICAL DARK VELVET DEPTH) */
+.aura-dark-shading-mask {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle at 32% 26%,
+        transparent 35%,
+        rgba(88, 28, 135, 0.45) 60%,
+        rgba(59, 7, 100, 0.8) 78%,
+        #2e1065 96%
+    );
+    pointer-events: none;
+    z-index: 3;
+}
+
+/* 6. PERFECTLY CENTERED GLOWING ARROWHEAD EYES & FACE TRACKING */
+.aura-eyes-wrapper {
+    position: absolute;
+    top: 38%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 6;
+}
+
+.aura-eyes-face {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 13px;
+    will-change: transform;
+    transition: transform 0.08s ease-out;
+}
+
+.aura-single-eye {
+    width: 17px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: 
+        drop-shadow(0 0 5px #ffffff)
+        drop-shadow(0 0 9px rgba(255, 255, 255, 0.95))
+        drop-shadow(0 0 18px rgba(244, 114, 182, 0.9));
+    transform-origin: center 65%;
+    animation: auraNaturalBlink 4.2s ease-in-out infinite;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.aura-single-eye svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* HOVER EXCITEMENT */
+.aura-bot-launcher:hover .aura-single-eye {
+    transform: scale(1.18) translateY(-1px);
+    filter: 
+        drop-shadow(0 0 6px #ffffff)
+        drop-shadow(0 0 12px rgba(255, 255, 255, 1))
+        drop-shadow(0 0 24px rgba(236, 72, 153, 1));
+}
+
+/* WINK / DELIGHT INTERACTIVE REACTION STATES */
+.aura-single-eye.is-winking {
+    animation: none !important;
+    transform: scaleY(0.08) scaleX(1.22) rotate(-6deg) !important;
+    transition: transform 0.15s ease !important;
+}
+
+.aura-single-eye.is-delighted {
+    animation: none !important;
+    transform: scale(1.25) translateY(-1px) !important;
+    filter: 
+        drop-shadow(0 0 7px #ffffff)
+        drop-shadow(0 0 14px rgba(255, 255, 255, 1))
+        drop-shadow(0 0 24px rgba(244, 114, 182, 1)) !important;
+    transition: transform 0.15s ease !important;
+}
+
+/* 7. CRISP PLAYFUL SPEECH BUBBLE (ANCHORED TO AVOID CUTOFF) */
+.aura-speech-bubble {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    right: 0;
+    left: auto;
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    padding: 6px 14px;
+    border-radius: 18px;
+    font-family: "Inter", -apple-system, sans-serif;
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: #1e293b;
+    box-shadow: 
+        0 6px 20px rgba(0, 0, 0, 0.08),
+        0 1px 3px rgba(0, 0, 0, 0.04);
+    cursor: pointer;
+    pointer-events: auto;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 10;
+    animation: auraBubblePop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    max-width: calc(100vw - 80px);
+}
+
+.aura-speech-bubble:hover {
+    transform: scale(1.05) translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+/* DOWNWARD-POINTING SPEECH TAIL (CENTERED OVER ORB) */
+.aura-speech-bubble::after {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    right: 32px;
+    width: 12px;
+    height: 8px;
+    background: #ffffff;
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+
+/* DOCKED LEFT ADAPTATION */
+.aura-bot-launcher.docked-left .aura-speech-bubble {
+    right: auto;
+    left: 0;
+}
+.aura-bot-launcher.docked-left .aura-speech-bubble::after {
+    right: auto;
+    left: 32px;
+}
+
+.aura-speech-text {
+    letter-spacing: -0.01em;
+}
+
+/* 8. STEP BADGE (ORIGINAL DEEP FUCHSIA-VIOLET PILL) */
+.aura-step-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #ec4899 0%, #a855f7 100%);
+    border: 2px solid #ffffff;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 800;
+    font-family: "Inter", -apple-system, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(236, 72, 153, 0.45);
+    z-index: 8;
+    pointer-events: none;
+}
+
+/* HOVER EXCITEMENT & GRADIENT ACCELERATION */
+.aura-bot-launcher:hover .aura-moving-gradient {
+    animation-duration: 3.2s;
+    filter: blur(6px) brightness(1.15);
+}
+
+.aura-bot-launcher:hover .aura-moving-gradient::before,
+.aura-bot-launcher:hover .aura-gradient-wave {
+    animation-duration: 5s;
+}
+
+.aura-bot-launcher:hover .aura-ambient-bloom {
+    animation-duration: 3.5s;
+    opacity: 0.95;
+    filter: blur(28px);
+}
+
+/* ==========================================================================
+   9. PERFECT & ATTRACTIVE CHAT UI & WORKFLOW WORKBENCH SHEET
+   ========================================================================== */
+.gemini-expanded-sheet,
+.grok-expanded-cockpit,
+.aura-expanded-cockpit {
+    position: fixed;
+    bottom: 22px;
+    right: 26px;
+    width: 460px;
+    max-width: calc(100vw - 32px);
+    height: 680px;
+    max-height: calc(100vh - 44px);
+    z-index: 9995;
+    background: rgba(13, 16, 29, 0.96);
+    backdrop-filter: blur(40px) saturate(220%);
+    -webkit-backdrop-filter: blur(40px) saturate(220%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 28px;
+    box-shadow: 
+        0 28px 70px rgba(0, 0, 0, 0.75),
+        0 0 50px rgba(168, 85, 247, 0.22),
+        inset 0 1px 1px rgba(255, 255, 255, 0.18);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform-origin: bottom right;
+    transition: all 0.36s cubic-bezier(0.16, 1, 0.3, 1);
+    font-family: "Inter", -apple-system, sans-serif;
+    color: #f1f5f9;
+}
+
+.aura-expanded-cockpit.is-hidden,
+.gemini-expanded-sheet.is-hidden,
+.grok-expanded-cockpit.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: scale(0.92) translateY(20px);
+}
+
+.aura-expanded-cockpit.is-visible,
+.gemini-expanded-sheet.is-visible,
+.grok-expanded-cockpit.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: scale(1) translateY(0);
+}
+
+/* TOP CHROMATIC VELVET RIBBON */
+.aura-expanded-cockpit::before,
+.gemini-expanded-sheet::before,
+.grok-expanded-cockpit::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(
+        90deg,
+        #ec4899 0%,
+        #c084fc 25%,
+        #818cf8 50%,
+        #a855f7 75%,
+        #ec4899 100%
+    );
+    background-size: 200% 100%;
+    animation: auraRibbonFlow 5s ease infinite;
+    z-index: 10;
+}
+
+/* ==========================================================================
+   TOP HEADER BAR: Real Logo · Nexus · Case Number · Chat · Node · Refresh · Close
+   ========================================================================== */
+.nexus-header-bar,
+.aura-sheet-header,
+.gemini-sheet-header,
+.grok-cockpit-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 14px;
+    background: rgba(18, 22, 38, 0.95);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    gap: 8px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+.nexus-header-left,
+.aura-header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex-shrink: 1;
+}
+
+/* 1. Real Logo (Official Bot Orb Logo) */
+.nexus-real-logo {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    filter: drop-shadow(0 2px 8px rgba(236, 72, 153, 0.45));
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+}
+
+.nexus-real-logo:hover {
+    transform: scale(1.12);
+}
+
+.nexus-real-logo svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* 2. Nexus */
+.nexus-brand-title {
+    font-size: 0.94rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.01em;
+    flex-shrink: 0;
+}
+
+/* 3. Case Number */
+.nexus-case-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2.5px 8px;
+    border-radius: 999px;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.32);
+    color: #34d399;
+    font-size: 0.70rem;
+    font-weight: 700;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 125px;
+    flex-shrink: 1;
+}
+
+.nexus-live-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #34d399;
+    box-shadow: 0 0 6px #34d399;
+    animation: auraDotPulse 2s infinite;
+    flex-shrink: 0;
+}
+
+.nexus-header-right,
+.aura-sheet-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+/* 4 & 5. Chat and Node Tabs */
+.nexus-tabs-pill,
+.aura-tabs-pill {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    background: rgba(13, 16, 29, 0.85);
+    padding: 2.5px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.nexus-tab-btn,
+.aura-tab-btn {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+.nexus-tab-btn svg,
+.aura-tab-btn svg {
+    flex-shrink: 0;
+    stroke: currentColor;
+    opacity: 0.85;
+}
+
+.nexus-tab-btn:hover,
+.aura-tab-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.nexus-tab-btn:hover svg,
+.aura-tab-btn:hover svg {
+    opacity: 1;
+}
+
+.nexus-tab-btn.is-active,
+.aura-tab-btn.is-active {
+    background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(236, 72, 153, 0.4);
+}
+
+.nexus-tab-btn.is-active svg,
+.aura-tab-btn.is-active svg {
+    opacity: 1;
+}
+
+/* 6 & 7. Refresh and Close Buttons */
+.nexus-icon-btn,
+.aura-icon-btn,
+.gemini-icon-btn,
+.grok-icon-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #cbd5e1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    flex-shrink: 0;
+    padding: 0;
+}
+
+.nexus-icon-btn svg,
+.aura-icon-btn svg,
+.gemini-icon-btn svg,
+.grok-icon-btn svg {
+    flex-shrink: 0;
+    stroke: currentColor;
+}
+
+.nexus-icon-btn:hover,
+.aura-icon-btn:hover,
+.gemini-icon-btn:hover,
+.grok-icon-btn:hover {
+    background: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.28);
+    transform: translateY(-1px) scale(1.06);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+.nexus-icon-btn.nexus-btn-close:hover,
+.aura-icon-btn.aura-btn-close:hover {
+    background: rgba(239, 68, 68, 0.28);
+    border-color: rgba(239, 68, 68, 0.55);
+    color: #fca5a5;
+}
+
+.nexus-icon-btn:active,
+.aura-icon-btn:active {
+    transform: scale(0.92);
+}
+
+/* CONTEXT STATUS BANNER */
+.aura-context-banner,
+.gemini-context-banner,
+.grok-cockpit-banner {
+    padding: 10px 20px;
+    background: rgba(20, 24, 40, 0.85);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.aura-intent-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.aura-intent-code {
+    background: rgba(236, 72, 153, 0.2);
+    color: #f472b6;
+    padding: 2px 7px;
+    border-radius: 6px;
+    border: 1px solid rgba(236, 72, 153, 0.35);
+    font-family: ui-monospace, monospace;
+    font-size: 0.74rem;
+    font-weight: 800;
+}
+
+.aura-status-tag {
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(251, 146, 60, 0.15);
+    color: #fb923c;
+    border: 1px solid rgba(251, 146, 60, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.aura-pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #fb923c;
+    box-shadow: 0 0 6px #fb923c;
+}
+
+/* ==========================================================================
+   CONVERSATIONAL CHAT FEED TAB
+   ========================================================================== */
+.aura-chat-stream {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    scroll-behavior: smooth;
+}
+
+.aura-chat-stream::-webkit-scrollbar {
+    width: 5px;
+}
+.aura-chat-stream::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+}
+
+.aura-chat-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    animation: auraMessageSlide 0.25s ease-out;
+}
+
+.aura-chat-row.user-row {
+    justify-content: flex-end;
+}
+
+.aura-chat-row.aura-row {
+    justify-content: flex-start;
+}
+
+.aura-msg-avatar-wrap {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 10px rgba(236, 72, 153, 0.5);
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.aura-msg-avatar-wrap svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.aura-msg-avatar-eyes {
+    display: flex;
+    gap: 3px;
+    filter: drop-shadow(0 0 2px #ffffff) drop-shadow(0 0 5px rgba(244, 114, 182, 0.8));
+    animation: auraNaturalBlink 4.2s ease-in-out infinite;
+}
+
+.aura-msg-avatar-eyes svg {
+    width: 6px;
+    height: 7px;
+    fill: #ffffff;
+}
+
+.aura-msg-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-width: 86%;
+}
+
+.aura-msg-bubble {
+    padding: 13px 18px;
+    font-size: 0.84rem;
+    line-height: 1.6;
+    border-radius: 20px;
+    word-break: break-word;
+    letter-spacing: -0.01em;
+    position: relative;
+}
+
+.aura-msg-sender-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 7px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.aura-msg-sender-name {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #f472b6;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    letter-spacing: 0.02em;
+}
+
+.aura-msg-action-copy {
+    opacity: 0;
+    transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #94a3b8;
+    font-size: 0.66rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 7px;
+    border-radius: 6px;
+    font-family: inherit;
+}
+
+.aura-msg-bubble:hover .aura-msg-action-copy {
+    opacity: 1;
+}
+
+.aura-msg-action-copy:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* HIGH-BOT WARNING / ADVISORY CARD */
+.aura-alert-banner {
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    border-radius: 12px;
+    padding: 9px 12px;
+    margin-bottom: 10px;
+    color: #fef3c7;
+}
+
+.aura-alert-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #fbbf24;
+}
+
+.aura-alert-header svg {
+    flex-shrink: 0;
+    stroke: #fbbf24;
+}
+
+.aura-chat-row.aura-row .aura-msg-bubble {
+    background: rgba(20, 24, 46, 0.90);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-left: 3px solid #ec4899;
+    color: #f1f5f9;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32);
+}
+
+.aura-chat-row.user-row .aura-msg-bubble {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
+    color: #ffffff;
+    border-bottom-right-radius: 4px;
+    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.38);
+    font-weight: 500;
+}
+
+.aura-msg-strong {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.aura-inline-code {
+    background: rgba(14, 165, 233, 0.14);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 5px;
+    padding: 1.5px 6px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.76rem;
+    font-weight: 600;
+}
+
+.aura-msg-bullet {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin: 4px 0;
+    font-size: 0.8rem;
+    color: #cbd5e1;
+}
+
+.aura-bullet-dot {
+    color: #f472b6;
+    font-weight: 800;
+    font-size: 0.85rem;
+    line-height: 1.2;
+    flex-shrink: 0;
+}
+
+.aura-msg-time {
+    font-size: 0.64rem;
+    color: #64748b;
+    align-self: flex-start;
+    padding-left: 4px;
+    font-weight: 500;
+}
+
+.aura-chat-row.user-row .aura-msg-time {
+    align-self: flex-end;
+    padding-right: 4px;
+}
+
+/* TYPING INDICATOR */
+.aura-typing-bubble {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    background: rgba(22, 27, 48, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 18px;
+    border-bottom-left-radius: 4px;
+    width: fit-content;
+}
+
+.aura-typing-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #f472b6;
+    animation: auraDotPulse 1.4s ease-in-out infinite;
+}
+.aura-typing-dot:nth-child(2) { animation-delay: 0.2s; background: #c084fc; }
+.aura-typing-dot:nth-child(3) { animation-delay: 0.4s; background: #818cf8; }
+
+.aura-typing-label {
+    font-size: 0.68rem;
+    color: #94a3b8;
+    margin-left: 4px;
+    font-style: italic;
+}
+
+/* ==========================================================================
+   RICH INTERACTIVE CARDS IN CHAT
+   ========================================================================== */
+
+/* 1. Captured Nodes Sequence Card */
+.aura-chat-card-nodes {
+    background: rgba(18, 22, 38, 0.92);
+    border: 1px solid rgba(129, 140, 248, 0.25);
+    border-radius: 16px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3);
+}
+
+.aura-chat-card-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #cbd5e1;
+    letter-spacing: 0.03em;
+}
+
+.aura-flow-tag {
+    color: #38bdf8;
+    font-size: 0.68rem;
+    font-family: ui-monospace, monospace;
+    font-weight: 700;
+    background: rgba(14, 165, 233, 0.15);
+    padding: 2px 7px;
+    border-radius: 6px;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.aura-chat-steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.aura-chat-step-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    background: rgba(28, 34, 58, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+.aura-chat-step-item:hover {
+    background: rgba(36, 44, 76, 0.8);
+    border-color: rgba(244, 114, 182, 0.25);
+}
+
+.aura-chat-step-num {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(236, 72, 153, 0.25);
+    color: #f472b6;
+    border: 1.2px solid #ec4899;
+    font-size: 0.66rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.aura-chat-step-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.aura-chat-step-name {
+    color: #f8fafc;
+    font-weight: 600;
+    font-size: 0.78rem;
+    line-height: 1.3;
+}
+
+.aura-chat-step-sub {
+    color: #94a3b8;
+    font-size: 0.68rem;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 2. Blueprint Synthesized State Machine Card */
+.aura-blueprint-card {
+    background: linear-gradient(135deg, rgba(28, 22, 46, 0.95) 0%, rgba(16, 18, 34, 0.98) 100%);
+    border: 1.5px solid rgba(244, 114, 182, 0.45);
+    border-radius: 18px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 24px rgba(236, 72, 153, 0.2);
+}
+
+.aura-card-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.aura-card-header-left {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.aura-sparkle-icon {
+    font-size: 16px;
+    color: #f472b6;
+}
+
+.aura-card-title {
+    font-size: 0.86rem;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.aura-badge-ready {
+    font-size: 0.62rem;
+    font-weight: 800;
+    background: #10b981;
+    color: #064e3b;
+    padding: 2.5px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+}
+
+.aura-badge-active {
+    font-size: 0.62rem;
+    font-weight: 800;
+    background: #a855f7;
+    color: #ffffff;
+    padding: 2.5px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+}
+
+.aura-badge-preview {
+    font-size: 0.62rem;
+    font-weight: 800;
+    background: #0ea5e9;
+    color: #ffffff;
+    padding: 2.5px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+}
+
+/* Horizontal Flow Step Bar */
+.aura-chat-step-flow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    background: rgba(15, 18, 32, 0.7);
+    padding: 8px 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.aura-flow-node {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #e2e8f0;
+}
+
+.aura-flow-icon {
+    font-size: 12px;
+}
+
+.aura-flow-arrow {
+    color: #f472b6;
+    font-size: 0.68rem;
+    font-weight: 800;
+}
+
+/* Telemetry Grid */
+.aura-telemetry-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+}
+
+.aura-telemetry-box {
+    padding: 8px 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    text-align: center;
+}
+
+.aura-telemetry-num {
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: #f472b6;
+    font-family: ui-monospace, monospace;
+}
+
+.aura-telemetry-lbl {
+    font-size: 0.6rem;
+    color: #94a3b8;
+    font-weight: 700;
+    margin-top: 2px;
+}
+
+.aura-card-actions-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.aura-btn-publish {
+    flex: 1.3;
+    height: 36px !important;
+    font-size: 0.78rem !important;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4) !important;
+}
+
+.aura-secondary-btn {
+    flex: 1;
+    height: 36px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    font-size: 0.76rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    font-family: inherit;
+}
+
+.aura-secondary-btn:hover {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   ANIMATED WAVING HAND GESTURE & WORKFLOW DECISION CARD
+   ========================================================================== */
+@keyframes nexusWaveHand {
+    0% { transform: rotate(0deg); }
+    15% { transform: rotate(18deg); }
+    30% { transform: rotate(-14deg); }
+    45% { transform: rotate(18deg); }
+    60% { transform: rotate(-8deg); }
+    75% { transform: rotate(12deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.nexus-wave-hand {
+    display: inline-block;
+    font-size: 1.15em;
+    transform-origin: 70% 70%;
+    animation: nexusWaveHand 2.2s ease-in-out infinite;
+    cursor: default;
+    user-select: none;
+    vertical-align: -1px;
+}
+
+/* SUCCESS / POSITIVE BANNER */
+.aura-success-banner {
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    border-radius: 12px;
+    padding: 9px 12px;
+    margin-bottom: 10px;
+    color: #d1fae5;
+}
+
+.aura-success-banner .aura-alert-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #34d399;
+}
+
+.aura-success-banner .aura-alert-header svg {
+    stroke: #34d399;
+    fill: rgba(52, 211, 153, 0.2);
+}
+
+/* WORKFLOW DECISION CARD */
+.nexus-decision-card {
+    background: rgba(18, 22, 38, 0.94);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding: 13px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    position: relative;
+    overflow: hidden;
+}
+
+.nexus-decision-card.is-configured {
+    border-color: rgba(16, 185, 129, 0.32);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 20px rgba(16, 185, 129, 0.12);
+}
+
+.nexus-decision-card.is-mining {
+    border-color: rgba(245, 158, 11, 0.32);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 20px rgba(245, 158, 11, 0.12);
+}
+
+.nexus-decision-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2.5px;
+}
+
+.nexus-decision-card.is-configured::before {
+    background: linear-gradient(90deg, #10b981, #34d399, #8b5cf6);
+}
+
+.nexus-decision-card.is-mining::before {
+    background: linear-gradient(90deg, #f59e0b, #ec4899, #8b5cf6);
+}
+
+.nexus-card-top-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.nexus-decision-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 3px 9px;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.nexus-decision-badge.badge-found {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    color: #34d399;
+}
+
+.nexus-decision-badge.badge-missing {
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    color: #fbbf24;
+}
+
+.nexus-pipeline-pill {
+    font-size: 0.62rem;
+    font-weight: 800;
+    color: #94a3b8;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    padding: 2.5px 7px;
+    border-radius: 6px;
+    letter-spacing: 0.04em;
+    font-family: ui-monospace, monospace;
+}
+
+.nexus-decision-intent-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    padding: 7px 10px;
+    border-radius: 10px;
+}
+
+.nexus-decision-intent-code {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #ec4899;
+    background: rgba(236, 72, 153, 0.15);
+    border: 1px solid rgba(236, 72, 153, 0.3);
+    padding: 2px 7px;
+    border-radius: 6px;
+    font-family: ui-monospace, monospace;
+    flex-shrink: 0;
+}
+
+.nexus-decision-intent-name {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #ffffff;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nexus-decision-flow-preview {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    overflow-x: auto;
+    padding: 6px 2px;
+}
+
+.nexus-decision-flow-preview::-webkit-scrollbar {
+    display: none;
+}
+
+.nexus-flow-node {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 8px;
+    border-radius: 7px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #cbd5e1;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.nexus-node-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #34d399;
+    box-shadow: 0 0 5px #34d399;
+}
+
+.nexus-flow-arrow {
+    color: #64748b;
+    font-size: 0.65rem;
+    flex-shrink: 0;
+}
+
+.nexus-decision-mining-note {
+    font-size: 0.74rem;
+    line-height: 1.45;
+    color: #94a3b8;
+    background: rgba(255, 255, 255, 0.03);
+    border-left: 2px solid #f59e0b;
+    padding: 6px 9px;
+    border-radius: 0 8px 8px 0;
+}
+
+.nexus-decision-prompt-text {
+    font-size: 0.76rem;
+    color: #e2e8f0;
+    line-height: 1.4;
+    padding-top: 2px;
+}
+
+.nexus-decision-prompt-text strong {
+    color: #ffffff;
+}
+
+.nexus-decision-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 3px;
+    flex-wrap: wrap;
+}
+
+.nexus-choice-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 13px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+}
+
+.nexus-choice-btn svg {
+    flex-shrink: 0;
+}
+
+.nexus-choice-btn.btn-choice-proceed {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: 1px solid rgba(52, 211, 153, 0.4);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.nexus-choice-btn.btn-choice-proceed:hover {
+    transform: translateY(-1.5px) scale(1.02);
+    box-shadow: 0 6px 18px rgba(16, 185, 129, 0.45);
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.nexus-choice-btn.btn-choice-new {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: #f1f5f9;
+}
+
+.nexus-choice-btn.btn-choice-new:hover {
+    transform: translateY(-1.5px) scale(1.02);
+    background: rgba(236, 72, 153, 0.22);
+    border-color: rgba(236, 72, 153, 0.55);
+    color: #f472b6;
+    box-shadow: 0 4px 14px rgba(236, 72, 153, 0.35);
+}
+
+.nexus-choice-btn:active {
+    transform: translateY(0.5px) scale(0.98);
+}
+
+/* 3. Approval Gate Card */
+.aura-rule-card {
+    background: linear-gradient(135deg, rgba(26, 22, 48, 0.92) 0%, rgba(18, 18, 36, 0.96) 100%);
+    border: 1px solid rgba(168, 85, 247, 0.4);
+    border-radius: 16px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.aura-rule-condition-box {
+    background: rgba(12, 14, 26, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.76rem;
+}
+
+.aura-rule-line {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1.4;
+}
+
+.aura-code-kw {
+    font-weight: 800;
+    color: #f472b6;
+    font-family: ui-monospace, monospace;
+}
+
+.aura-rule-code {
+    background: rgba(168, 85, 247, 0.18);
+    color: #c084fc;
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-family: ui-monospace, monospace;
+    font-size: 0.72rem;
+}
+
+.aura-action-pass {
+    color: #34d399;
+    font-weight: 700;
+}
+
+.aura-action-escalate {
+    color: #fb923c;
+    font-weight: 700;
+}
+
+.aura-rule-footer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    color: #94a3b8;
+}
+
+.aura-rule-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #34d399;
+    box-shadow: 0 0 6px #34d399;
+}
+
+/* 4. Email Preview Card */
+.aura-email-card {
+    background: linear-gradient(135deg, rgba(16, 28, 44, 0.92) 0%, rgba(12, 20, 34, 0.96) 100%);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 16px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.aura-email-meta {
+    background: rgba(10, 16, 28, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    font-size: 0.72rem;
+    color: #cbd5e1;
+}
+
+.aura-email-meta strong {
+    color: #38bdf8;
+}
+
+.aura-email-body-snippet {
+    font-size: 0.75rem;
+    line-height: 1.45;
+    color: #e2e8f0;
+    font-style: italic;
+    padding: 4px 6px;
+}
+
+/* 5. Dry Run Simulation Card */
+.aura-dryrun-card {
+    background: linear-gradient(135deg, rgba(18, 28, 38, 0.95) 0%, rgba(12, 20, 28, 0.98) 100%);
+    border: 1px solid rgba(52, 211, 153, 0.4);
+    border-radius: 16px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.aura-dryrun-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.aura-dryrun-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.74rem;
+    color: #f1f5f9;
+}
+
+.aura-check-pass {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(16, 185, 129, 0.25);
+    color: #34d399;
+    border: 1px solid #10b981;
+    font-size: 0.62rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.aura-dryrun-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: #94a3b8;
+    padding-top: 4px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* VOICE MIC BUTTON */
+.aura-voice-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.aura-voice-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.aura-voice-btn.is-listening {
+    background: #ef4444 !important;
+    color: #ffffff !important;
+    border-color: #f87171 !important;
+    box-shadow: 0 0 14px rgba(239, 68, 68, 0.7) !important;
+    animation: auraVoicePulse 1s infinite alternate;
+}
+
+@keyframes auraVoicePulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.15); }
+}
+
+/* ==========================================================================
+   WORKFLOW NODES VIEW TAB
+   ========================================================================== */
+.aura-sheet-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.aura-sheet-body::-webkit-scrollbar {
+    width: 5px;
+}
+.aura-sheet-body::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+}
+
+.aura-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* STEP TIMELINE */
+.aura-timeline-track,
+.gemini-timeline-track,
+.grok-timeline-deck {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+}
+
+.aura-timeline-track::before,
+.gemini-timeline-track::before,
+.grok-timeline-deck::before {
+    content: "";
+    position: absolute;
+    top: 14px;
+    bottom: 14px;
+    left: 17px;
+    width: 2px;
+    background: linear-gradient(180deg, #ec4899 0%, #8b5cf6 50%, #6366f1 100%);
+    z-index: 1;
+}
+
+.aura-step-card,
+.gemini-step-card,
+.grok-step-node {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    background: rgba(24, 28, 48, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    z-index: 2;
+    transition: all 0.25s ease;
+}
+
+.aura-step-card:hover,
+.gemini-step-card:hover,
+.grok-step-node:hover {
+    background: rgba(36, 42, 70, 0.85);
+    border-color: rgba(244, 114, 182, 0.35);
+    transform: translateX(3px);
+}
+
+.aura-node-num,
+.gemini-node-num,
+.grok-node-index {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 800;
+    background: rgba(236, 72, 153, 0.2);
+    color: #f472b6;
+    border: 1.5px solid #ec4899;
+    flex-shrink: 0;
+}
+
+.aura-node-content,
+.gemini-node-content,
+.grok-node-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.aura-node-header,
+.gemini-node-header,
+.grok-node-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 3px;
+}
+
+.aura-node-name,
+.gemini-node-name,
+.grok-node-title {
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: #f8fafc;
+}
+
+/* TONAL TAGS */
+.aura-type-pill,
+.gemini-type-pill,
+.grok-pill {
+    font-size: 0.64rem;
+    font-weight: 700;
+    font-family: ui-monospace, monospace;
+    padding: 2px 7px;
+    border-radius: 6px;
+    text-transform: uppercase;
+}
+
+.aura-type-pill.data, .gemini-type-pill.data, .grok-pill.data {
+    background: rgba(14, 165, 233, 0.18);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.aura-type-pill.gate, .gemini-type-pill.gate, .grok-pill.gate {
+    background: rgba(168, 85, 247, 0.18);
+    color: #c084fc;
+    border: 1px solid rgba(168, 85, 247, 0.35);
+}
+
+.aura-type-pill.email, .gemini-type-pill.email, .grok-pill.email {
+    background: rgba(16, 185, 129, 0.18);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.aura-type-pill.action, .gemini-type-pill.action, .grok-pill.action {
+    background: rgba(249, 115, 22, 0.18);
+    color: #fb923c;
+    border: 1px solid rgba(249, 115, 22, 0.3);
+}
+
+.aura-node-details,
+.gemini-node-details,
+.grok-node-desc {
+    font-size: 0.74rem;
+    color: #94a3b8;
+    line-height: 1.45;
+}
+
+/* SYNTHESIZED BLUEPRINT CARD */
+.aura-blueprint-card,
+.gemini-blueprint-card,
+.grok-blueprint-result {
+    background: linear-gradient(135deg, rgba(30, 26, 48, 0.95) 0%, rgba(18, 16, 28, 0.98) 100%);
+    border: 1px solid rgba(244, 114, 182, 0.35);
+    border-radius: 18px;
+    padding: 16px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 24px rgba(236, 72, 153, 0.18);
+}
+
+/* ==========================================================================
+   INTERACTIVE FOOTER & QUICK PROMPT CHIPS
+   ========================================================================== */
+.aura-sheet-footer {
+    background: rgba(18, 22, 38, 0.96);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-bottom: 14px;
+}
+
+/* QUICK PROMPT SUGGESTION CHIPS (HIGH-BOT VECTOR PILLS) */
+.aura-prompt-chips-tray {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px 4px 18px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.aura-prompt-chips-tray::-webkit-scrollbar {
+    display: none;
+}
+
+.aura-chip {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #cbd5e1;
+    font-size: 0.74rem;
+    font-weight: 700;
+    padding: 6px 13px;
+    border-radius: 999px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+    flex-shrink: 0;
+    backdrop-filter: blur(10px);
+}
+
+.aura-chip svg {
+    flex-shrink: 0;
+    stroke: currentColor;
+    opacity: 0.85;
+}
+
+.aura-chip:hover {
+    background: rgba(139, 92, 246, 0.28);
+    color: #ffffff;
+    border-color: rgba(168, 85, 247, 0.6);
+    transform: translateY(-1.5px);
+    box-shadow: 0 4px 14px rgba(139, 92, 246, 0.35);
+}
+
+.aura-chip:hover svg {
+    opacity: 1;
+}
+
+.aura-chip.primary-chip {
+    background: linear-gradient(135deg, rgba(236, 72, 153, 0.28) 0%, rgba(139, 92, 246, 0.28) 100%);
+    border-color: rgba(244, 114, 182, 0.55);
+    color: #f472b6;
+    box-shadow: 0 2px 10px rgba(236, 72, 153, 0.2);
+}
+
+.aura-chip.primary-chip:hover {
+    background: linear-gradient(135deg, rgba(236, 72, 153, 0.48) 0%, rgba(139, 92, 246, 0.48) 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 16px rgba(236, 72, 153, 0.4);
+}
+
+/* PRIMARY SYNTHESIZE BUTTON (WHEN ON WORKFLOW TAB) */
+.aura-workflow-footer-cta {
+    padding: 8px 18px 0 18px;
+}
+
+.aura-primary-btn,
+.gemini-primary-btn,
+.grok-synth-primary-btn {
+    width: 100%;
+    height: 42px;
+    border-radius: 999px;
+    border: none;
+    background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #6366f1 100%);
+    background-size: 200% 200%;
+    color: #ffffff;
+    font-size: 0.86rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4);
+    transition: all 0.25s ease;
+    animation: auraRibbonFlow 6s ease infinite;
+    font-family: inherit;
+}
+
+.aura-primary-btn:hover,
+.gemini-primary-btn:hover,
+.grok-synth-primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(236, 72, 153, 0.55), 0 0 20px rgba(249, 115, 22, 0.4);
+}
+
+/* HIGH-BOT COMMAND INPUT DOCK */
+.aura-input-wrapper {
+    padding: 6px 18px;
+}
+
+.aura-prompt-box,
+.gemini-prompt-box,
+.grok-prompt-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(22, 27, 48, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+    padding: 6px 7px 6px 16px;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+.aura-prompt-box:focus-within,
+.gemini-prompt-box:focus-within,
+.grok-prompt-bar:focus-within {
+    border-color: #a855f7;
+    background: rgba(28, 34, 60, 0.98);
+    box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.35), 0 8px 28px rgba(0, 0, 0, 0.5);
+}
+
+.aura-prompt-sparkle {
+    font-size: 16px;
+    color: #ec4899;
+    display: flex;
+    align-items: center;
+    filter: drop-shadow(0 0 6px rgba(236, 72, 153, 0.6));
+    animation: auraVelvetBreathe 3s ease-in-out infinite alternate;
+}
+
+.aura-prompt-input,
+.gemini-prompt-input,
+.grok-prompt-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #ffffff;
+    font-size: 0.84rem;
+    font-family: inherit;
+}
+
+.aura-prompt-input::placeholder,
+.gemini-prompt-input::placeholder,
+.grok-prompt-input::placeholder {
+    color: #94a3b8;
+}
+
+.aura-voice-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.aura-voice-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+}
+
+.aura-voice-btn.is-listening {
+    background: rgba(239, 68, 68, 0.28);
+    border-color: #ef4444;
+    color: #ef4444;
+    animation: auraDotPulse 1.2s infinite;
+}
+
+.aura-send-btn,
+.gemini-send-btn,
+.grok-prompt-submit {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+    border: none;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    flex-shrink: 0;
+    box-shadow: 0 4px 14px rgba(236, 72, 153, 0.45);
+}
+
+.aura-send-btn:hover,
+.gemini-send-btn:hover,
+.grok-prompt-submit:hover {
+    transform: scale(1.10);
+    box-shadow: 0 6px 20px rgba(236, 72, 153, 0.65), 0 0 12px rgba(139, 92, 246, 0.5);
+}
+
+/* ============================================================
+   NEXUS CENTERED CHAT HERO GREETING & INTENT DECISION
+   ============================================================ */
+.nexus-chat-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 26px 18px 22px;
+    margin: 4px 2px 18px;
+    background: radial-gradient(120% 80% at 50% 0%, rgba(236, 72, 153, 0.14) 0%, rgba(139, 92, 246, 0.08) 50%, rgba(15, 17, 28, 0) 100%),
+                rgba(17, 20, 34, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.nexus-chat-hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 12%;
+    right: 12%;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent, rgba(244, 114, 182, 0.7), rgba(168, 85, 247, 0.7), transparent);
+}
+
+/* 1. CENTERED LOGO */
+.nexus-hero-logo-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.nexus-hero-logo-bloom {
+    position: absolute;
+    width: 82px;
+    height: 82px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(236, 72, 153, 0.45) 0%, rgba(168, 85, 247, 0.28) 55%, transparent 75%);
+    filter: blur(14px);
+    animation: nexusHeroPulse 3s ease-in-out infinite alternate;
+    pointer-events: none;
+}
+
+@keyframes nexusHeroPulse {
+    0% { transform: scale(0.88); opacity: 0.55; }
+    100% { transform: scale(1.18); opacity: 0.95; }
+}
+
+.nexus-hero-logo-core {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 6px 18px rgba(236, 72, 153, 0.55));
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nexus-hero-logo-core:hover {
+    transform: scale(1.08);
+}
+
+.nexus-hero-bot-logo {
+    display: block;
+}
+
+/* 2. CENTERED GREETING */
+.nexus-hero-greeting-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 14px;
+    max-width: 92%;
+}
+
+.nexus-hero-greeting {
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+    margin: 0 0 5px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
+}
+
+/* ANIMATED HAND GESTURE */
+@keyframes nexusWaveHand {
+    0% { transform: rotate(0deg); }
+    10% { transform: rotate(14deg); }
+    20% { transform: rotate(-8deg); }
+    30% { transform: rotate(14deg); }
+    40% { transform: rotate(-4deg); }
+    50% { transform: rotate(10deg); }
+    60% { transform: rotate(0deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.nexus-wave-hand {
+    display: inline-block;
+    transform-origin: 70% 70%;
+    animation: nexusWaveHand 2.2s ease-in-out infinite;
+    cursor: default;
+}
+
+.nexus-hero-subtitle {
+    font-size: 0.8rem;
+    color: rgba(226, 232, 240, 0.78);
+    margin: 0;
+    line-height: 1.45;
+    font-weight: 450;
+    text-align: center;
+}
+
+.nexus-hero-subtitle strong {
+    color: #f472b6;
+    font-weight: 700;
+}
+
+/* 3. CENTERED INTENT DISPLAY */
+.nexus-hero-intent-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+.nexus-hero-intent-kicker {
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #c084fc;
+    margin-bottom: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.nexus-hero-intent-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 7px 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(168, 85, 247, 0.35);
+    border-radius: 9999px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28), 0 0 14px rgba(168, 85, 247, 0.15);
+    max-width: 95%;
+}
+
+.nexus-hero-intent-code {
+    background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+    color: #ffffff;
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 2.5px 7.5px;
+    border-radius: 6px;
+    letter-spacing: 0.04em;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.nexus-hero-intent-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px;
+}
+
+.nexus-hero-cat-tag {
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: #94a3b8;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 2px 7px;
+    border-radius: 5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+/* 4. CENTERED DECISION CHOICES */
+.nexus-hero-decision-box,
+.nexus-hero-no-intent-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+}
+
+.nexus-hero-create-line {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #cbd5e1;
+    margin: 0 0 12px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.nexus-hero-actions-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 100%;
+}
+
+.nexus-hero-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 9px 16px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    outline: none;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.nexus-hero-action-btn.btn-use-workflow {
+    background: linear-gradient(135deg, #ec4899 0%, #a855f7 60%, #6366f1 100%);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 4px 18px rgba(236, 72, 153, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.nexus-hero-action-btn.btn-use-workflow:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 24px rgba(236, 72, 153, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    filter: brightness(1.1);
+}
+
+.nexus-hero-action-btn.btn-create-workflow {
+    background: rgba(255, 255, 255, 0.06);
+    color: #f1f5f9;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+.nexus-hero-action-btn.btn-create-workflow:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(244, 114, 182, 0.5);
+    color: #ffffff;
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 6px 18px rgba(168, 85, 247, 0.25);
+}

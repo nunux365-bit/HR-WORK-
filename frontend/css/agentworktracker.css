@@ -1,0 +1,824 @@
+/* ==========================================================================
+   HR FLOW — Standalone Full-Screen "Agents Status & Department Work Tracker"
+   Google Cloud / Microsoft Fluent 2 / One UI 9.0 Frosted Acrylic Architecture
+   (frontend/css/agentworktracker.css)
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body.awt-standalone-body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    width: 100%;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #0f172a;
+    -webkit-font-smoothing: antialiased;
+    background:
+        radial-gradient(circle at 8% 12%, rgba(26, 115, 232, 0.08) 0%, transparent 38%),
+        radial-gradient(circle at 92% 16%, rgba(79, 70, 229, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 50% 90%, rgba(13, 148, 136, 0.06) 0%, transparent 45%),
+        linear-gradient(180deg, #f1f5f9 0%, #f8fafc 45%, #eef2f6 100%);
+    background-attachment: fixed;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* Full-Viewport Standalone Content Container */
+.awt-standalone-canvas {
+    max-width: 1760px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 22px 28px 56px 28px;
+    display: block;
+}
+
+.awt-standalone-canvas > * + * {
+    margin-top: 16px;
+}
+
+@media (max-width: 768px) {
+    .awt-standalone-canvas {
+        padding: 14px 14px 40px 14px;
+    }
+}
+
+.awt-loading-state {
+    min-height: 75vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    color: #475569;
+    font-size: 0.92rem;
+    font-weight: 600;
+}
+
+.awt-loading-spinner {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 3px solid #dbeafe;
+    border-top-color: #1a73e8;
+    animation: awtSpin 0.75s linear infinite;
+}
+
+@keyframes awtSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==========================================================================
+   1. GOOGLE CLOUD / FLUENT 2 EXECUTIVE COMMAND HEADER BAR
+   ========================================================================== */
+.awt-hero-bar {
+    background:
+        radial-gradient(circle at 12% 20%, rgba(56, 189, 248, 0.22) 0%, transparent 42%),
+        radial-gradient(circle at 88% 80%, rgba(99, 102, 241, 0.25) 0%, transparent 48%),
+        linear-gradient(135deg, #091122 0%, #132247 52%, #1e1b4b 100%);
+    border-radius: 22px;
+    padding: 16px 24px;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.16),
+        0 14px 34px -8px rgba(15, 23, 42, 0.22);
+    border: 1px solid rgba(148, 163, 184, 0.22);
+}
+
+.awt-hero-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    min-width: 280px;
+    flex: 1;
+}
+
+.awt-hero-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #1a73e8 0%, #4f46e5 55%, #06b6d4 100%);
+    border: 1px solid rgba(191, 219, 254, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.42),
+        0 8px 18px rgba(26, 115, 232, 0.38);
+}
+
+.awt-hero-title {
+    margin: 0;
+    font-size: 1.16rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    line-height: 1.25;
+}
+
+.awt-live-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(16, 185, 129, 0.22);
+    border: 1px solid rgba(110, 231, 183, 0.45);
+    color: #6ee7b7;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.awt-hero-sub {
+    margin: 3px 0 0 0;
+    font-size: 0.78rem;
+    color: #cbd5e1;
+    line-height: 1.35;
+}
+
+.awt-hero-controls {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-wrap: wrap;
+}
+
+.awt-segmented-group {
+    display: inline-flex;
+    background: rgba(15, 23, 42, 0.52);
+    backdrop-filter: blur(12px);
+    padding: 4px;
+    border-radius: 13px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    gap: 3px;
+}
+
+.awt-seg-btn {
+    padding: 6px 13px;
+    border-radius: 9px;
+    border: none;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    background: transparent;
+    color: #cbd5e1;
+    transition: all 0.16s ease;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.awt-seg-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.awt-seg-btn.active {
+    background: #ffffff;
+    color: #0f172a;
+    font-weight: 800;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.26);
+}
+
+/* ==========================================================================
+   2. 6-CARD GOOGLE MATERIAL / FLUENT 2 FROSTED ACRYLIC KPI STRIP
+   ========================================================================== */
+.awt-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 13px;
+}
+
+@media (max-width: 1400px) {
+    .awt-kpi-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 780px) {
+    .awt-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.awt-kpi-card {
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    border: 1px solid rgba(226, 232, 240, 0.95);
+    border-radius: 20px;
+    padding: 15px 17px;
+    box-shadow:
+        0 8px 24px -6px rgba(15, 23, 42, 0.05),
+        0 2px 6px rgba(15, 23, 42, 0.02),
+        inset 0 1px 0 #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.awt-kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3.5px;
+    border-radius: 20px 20px 0 0;
+}
+
+.awt-kpi-card.theme-blue::before    { background: linear-gradient(90deg, #1a73e8, #38bdf8); }
+.awt-kpi-card.theme-indigo::before  { background: linear-gradient(90deg, #4f46e5, #818cf8); }
+.awt-kpi-card.theme-emerald::before { background: linear-gradient(90deg, #059669, #34d399); }
+.awt-kpi-card.theme-teal::before    { background: linear-gradient(90deg, #0d9488, #2dd4bf); }
+.awt-kpi-card.theme-violet::before  { background: linear-gradient(90deg, #7c3aed, #c084fc); }
+.awt-kpi-card.theme-cyan::before    { background: linear-gradient(90deg, #0284c7, #38bdf8); }
+
+.awt-kpi-card:hover {
+    transform: translateY(-2px);
+    background: #ffffff;
+    border-color: #cbd5e1;
+    box-shadow:
+        0 14px 30px -8px rgba(26, 115, 232, 0.1),
+        inset 0 1px 0 #ffffff;
+}
+
+.awt-kpi-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.awt-kpi-label {
+    font-size: 0.69rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #475569;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.awt-kpi-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 2px 6px rgba(15, 23, 42, 0.04);
+}
+
+.awt-kpi-val {
+    font-size: 1.72rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 7px 0 4px 0;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.awt-kpi-sub {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #64748b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ==========================================================================
+   3. SINGLE-LINE FROSTED FILTER & QUICK-PILLS BAR
+   ========================================================================== */
+.awt-toolbar {
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    border: 1px solid rgba(226, 232, 240, 0.95);
+    border-radius: 20px;
+    padding: 14px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    box-shadow:
+        0 8px 24px -6px rgba(15, 23, 42, 0.04),
+        inset 0 1px 0 #ffffff;
+}
+
+.awt-toolbar-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: nowrap;
+}
+
+.awt-toolbar-filters {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex: 1;
+    min-width: 0;
+    flex-wrap: nowrap;
+}
+
+@media (max-width: 1160px) {
+    .awt-toolbar-top,
+    .awt-toolbar-filters {
+        flex-wrap: wrap;
+    }
+}
+
+.awt-search-wrap {
+    position: relative;
+    flex: 1.5;
+    min-width: 220px;
+}
+
+.awt-search-wrap svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    pointer-events: none;
+}
+
+.awt-search-wrap .awt-input {
+    width: 100%;
+    padding-left: 35px;
+}
+
+.awt-input {
+    height: 37px;
+    padding: 0 12px;
+    border-radius: 11px;
+    border: 1px solid #cbd5e1;
+    background: #f8fafc;
+    font-size: 0.79rem;
+    font-weight: 600;
+    color: #0f172a;
+    outline: none;
+    transition: all 0.15s ease;
+    min-width: 0;
+}
+
+select.awt-input {
+    flex: 0.85;
+    min-width: 150px;
+    max-width: 225px;
+    cursor: pointer;
+}
+
+.awt-input:focus {
+    border-color: #1a73e8;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.14);
+}
+
+.awt-dept-pills-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: wrap;
+    padding-top: 10px;
+    border-top: 1px solid rgba(226, 232, 240, 0.85);
+}
+
+.awt-dept-filter-pill {
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    color: #475569;
+    font-size: 0.73rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.16s ease;
+}
+
+.awt-dept-filter-pill:hover {
+    border-color: #93c5fd;
+    background: #ffffff;
+    color: #0f172a;
+}
+
+.awt-dept-filter-pill.active {
+    background: linear-gradient(135deg, #1a73e8 0%, #4f46e5 100%);
+    color: #ffffff;
+    border-color: transparent;
+    font-weight: 800;
+    box-shadow: 0 4px 12px rgba(26, 115, 232, 0.25);
+}
+
+.awt-pill-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.awt-pill-dot.online {
+    background: #10b981;
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+}
+
+.awt-pill-dot.empty {
+    background: #cbd5e1;
+}
+
+.awt-dept-filter-pill.active .awt-pill-dot.online {
+    background: #6ee7b7;
+}
+
+/* ==========================================================================
+   4. GOOGLE CLOUD / FLUENT 2 DEPARTMENT SECTIONS & SPECIALIST CARDS
+   ========================================================================== */
+.awt-dept-section {
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    border: 1px solid rgba(226, 232, 240, 0.95);
+    border-radius: 22px;
+    box-shadow:
+        0 10px 30px -8px rgba(15, 23, 42, 0.05),
+        inset 0 1px 0 #ffffff;
+    margin-bottom: 18px;
+    overflow: hidden;
+}
+
+.awt-dept-header {
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+    padding: 15px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.awt-dept-badge {
+    font-family: ui-monospace, SFMono-Regular, monospace;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    color: #ffffff;
+    letter-spacing: 0.04em;
+}
+
+.awt-dept-desc-line {
+    font-size: 0.76rem;
+    color: #475569;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.awt-dept-desc-trunc {
+    color: #64748b;
+    max-width: 640px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    vertical-align: bottom;
+}
+
+.awt-dept-stats-strip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.awt-dept-stat-pill {
+    padding: 5px 11px;
+    border-radius: 999px;
+    font-size: 0.73rem;
+    font-weight: 700;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #0f172a;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02);
+}
+
+/* Agent Cards Container inside Department */
+.awt-agents-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+    gap: 16px;
+    padding: 18px 22px;
+}
+
+@media (max-width: 700px) {
+    .awt-agents-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Specialist Directory Card */
+.awt-agent-card {
+    border: 1px solid rgba(203, 213, 225, 0.85);
+    border-radius: 18px;
+    background: #ffffff;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow:
+        0 4px 16px -4px rgba(15, 23, 42, 0.04),
+        inset 0 1px 0 #ffffff;
+    position: relative;
+    overflow: hidden;
+}
+
+.awt-agent-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, #1a73e8 0%, #4f46e5 55%, #10b981 100%);
+}
+
+.awt-agent-card:hover {
+    border-color: #93c5fd;
+    transform: translateY(-2px);
+    box-shadow:
+        0 14px 32px -8px rgba(26, 115, 232, 0.12),
+        inset 0 1px 0 #ffffff;
+}
+
+.awt-agent-top-bar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+/* 6-Box Telemetry Ribbon inside Agent Card */
+.awt-agent-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 8px;
+}
+
+@media (max-width: 960px) {
+    .awt-agent-metrics-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+.awt-metric-box {
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 9px 8px;
+    text-align: center;
+    transition: all 0.15s ease;
+    box-shadow: inset 0 1px 0 #ffffff;
+}
+
+.awt-metric-box:hover {
+    background: #ffffff;
+    border-color: #cbd5e1;
+}
+
+.awt-metric-num {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.15;
+}
+
+.awt-metric-lbl {
+    font-size: 0.63rem;
+    font-weight: 800;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Compact Latest Case & Quick Assign Strip */
+.awt-agent-activity-strip {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 13px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Action Footer inside Specialist Card */
+.awt-agent-footer-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding-top: 12px;
+    border-top: 1px solid #f1f5f9;
+}
+
+/* Compact Unstaffed Departments Grid (4 columns on wide screens) */
+.awt-unstaffed-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 14px;
+}
+
+.awt-unstaffed-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px);
+    border: 1px dashed #cbd5e1;
+    border-radius: 18px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;
+    transition: all 0.18s ease;
+}
+
+.awt-unstaffed-card:hover {
+    border-style: solid;
+    border-color: #93c5fd;
+    background: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px -6px rgba(15, 23, 42, 0.06);
+}
+
+/* 5. 360° Agent Work Dossier Modal */
+.awt-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.58);
+    backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.awt-modal-dialog {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(24px);
+    border-radius: 24px;
+    max-width: 1180px;
+    width: 100%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 25px 65px rgba(15, 23, 42, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+}
+
+.awt-modal-header {
+    background: linear-gradient(135deg, #091122 0%, #132247 55%, #1e1b4b 100%);
+    color: #ffffff;
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.awt-modal-tabs {
+    display: flex;
+    gap: 6px;
+    padding: 10px 24px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    flex-wrap: wrap;
+}
+
+.awt-dossier-tab {
+    padding: 7px 14px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: #475569;
+    font-size: 0.76rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.awt-dossier-tab.active {
+    background: #ffffff;
+    color: #1a73e8;
+    border-color: #bfdbfe;
+    box-shadow: 0 2px 8px rgba(26, 115, 232, 0.1);
+}
+
+.awt-modal-body {
+    padding: 20px 24px;
+    overflow-y: auto;
+    flex: 1;
+    background: #f8fafc;
+}
+
+/* Google Material + Fluent 2 Action Buttons */
+.awt-btn-primary {
+    height: 36px;
+    padding: 0 15px;
+    border-radius: 11px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: linear-gradient(135deg, #1a73e8 0%, #4f46e5 100%);
+    color: #ffffff;
+    font-size: 0.76rem;
+    font-weight: 800;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.18s ease;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 4px 12px rgba(26, 115, 232, 0.25);
+}
+
+.awt-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 8px 18px rgba(26, 115, 232, 0.35);
+}
+
+.awt-btn-outline {
+    height: 36px;
+    padding: 0 13px;
+    border-radius: 11px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #0f172a;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.16s ease;
+}
+
+.awt-btn-outline:hover {
+    background: #f8fafc;
+    border-color: #93c5fd;
+    color: #1a73e8;
+}

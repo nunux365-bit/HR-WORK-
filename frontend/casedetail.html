@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Flow — Case 360° Operations Console</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/dashboard.css?v=20261026_scrollfix_v8">
+    <link rel="stylesheet" href="css/agent.css?v=20261026_scrollfix_v8">
+    <link rel="stylesheet" href="css/casedetail.css?v=20261026_scrollfix_v8">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="img/nexus-logo-64.png">
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js').catch(() => null);
+            });
+        }
+    </script>
+    <script>
+        // High-Visibility Error Boundary Guard
+        window.addEventListener('error', function(e) {
+            console.error("CaseConsole Error Trap:", e.error || e.message);
+            const m = document.getElementById("casedetailWorkspaceMount");
+            if (m && !m.querySelector(".error-boundary-box")) {
+                const b = document.createElement("div");
+                b.className = "error-boundary-box";
+                b.style = "margin:20px; padding:20px; background:#fff1f2; border:1px solid #fecdd3; border-radius:12px; color:#9f1239; font-family:monospace; font-size:13px; z-index:9999;";
+                b.innerHTML = "<h3 style='margin:0 0 8px 0; color:#e11d48;'>⚠️ Case Console Initialization Notice</h3>" +
+                              "<div>" + (e.message || e.error) + "</div>" +
+                              "<small style='color:#64748b;'>" + (e.filename || '') + ":" + (e.lineno || '') + "</small>";
+                m.prepend(b);
+            }
+        });
+    </script>
+    <style>
+        /* Keep Copilot Bot Completely Inactive */
+        #grokOrbContainer, #nexusBotRoot, #workflowBotContainer, #auraSideSheet, #auraContainer,
+        .aura-bot-launcher, .grok-orb-container, .gemini-orb-container, .nexus-floating-badge, .nexus-agent-badge {
+            display: none !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+            opacity: 0 !important;
+            height: 0 !important;
+            width: 0 !important;
+            overflow: hidden !important;
+        }
+    </style>
+</head>
+<body class="casedetail-page">
+    <div class="app-shell">
+        <!-- Shared Sidebar -->
+        <div id="sidebarContainer"></div>
+
+        <!-- Main Workspace Shell -->
+        <div class="main-area casedetail-app-shell">
+            <!-- Executive Topbar Mount -->
+            <header id="casedetailHeaderMount"></header>
+
+            <!-- Dynamic Workflow Stepper Mount -->
+            <nav id="casedetailStepperMount"></nav>
+
+            <!-- Main Workspace Mount -->
+            <main class="casedetail-body">
+                <div id="casedetailWorkspaceMount"></div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modals Container -->
+    <div id="casedetailModalsContainer" class="modal-overlay"></div>
+
+    <!-- Toast Notification Container -->
+    <div id="casedetailToast" class="casedetail-toast"></div>
+
+    <!-- Slide-Over Activity & History Drawer -->
+    <div id="casedetailTimelineDrawer" class="casedetail-drawer">
+        <div class="drawer-header">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:1.2rem;">⏱️</span>
+                <strong style="font-size:0.95rem; color:#0f172a;">Activity &amp; Communications History</strong>
+            </div>
+            <button type="button" class="drawer-close-btn" id="btnCloseTimelineDrawer" title="Close Drawer">✕</button>
+        </div>
+        <div class="drawer-body" id="timelineDrawerMount"></div>
+    </div>
+    <div id="casedetailDrawerBackdrop" class="drawer-backdrop"></div>
+
+    <!-- Global App Scripts (Bot Inactive) -->
+    <script src="js/sidebar.js?v=20261027_resolution_v12"></script>
+    <script type="module" src="js/casedetail/index.js?v=20261027_resolution_v12"></script>
+</body>
+</html>

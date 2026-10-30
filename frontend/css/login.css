@@ -1,0 +1,876 @@
+/* ==========================================================================
+   TATA 1mg PeopleDesk — Executive Login Styles
+   Pixel-Perfect Tata 1mg Design System
+   ========================================================================== */
+
+:root {
+    /* TATA 1mg Signature Brand Colors */
+    --tata-coral:         #FF6F61; /* Signature 1mg Coral Accent */
+    --tata-coral-hover:   #FF5847;
+    --tata-crimson:       #E03546; /* Deep 1mg Crimson */
+    --tata-crimson-hover: #D42637;
+    --tata-coral-light:   #FFF1F0; /* Active badge & highlight background */
+    --tata-coral-border:  #FDA29B;
+    --tata-coral-tint:    #FFF8F6;
+
+    /* Executive Surfaces & Neutrals */
+    --bg-page:            #F8F9FA;
+    --bg-surface:         #FFFFFF;
+    --border-light:       #EAECF0;
+    --border-subtle:      #F2F4F7;
+    --border-mid:         #D0D5DD;
+    --border-focus:       #FF6F61;
+
+    /* High-Legibility Typography */
+    --text-heading:       #101828;
+    --text-primary:       #1D2939;
+    --text-secondary:     #475467;
+    --text-muted:         #667085;
+    --text-subtle:        #98A2B3;
+
+    /* Semantic Status Accents */
+    --emerald-500:        #12B76A;
+    --emerald-bg:         #ECFDF3;
+    --emerald-border:     #A6F4C5;
+    --emerald-text:       #027A48;
+
+    --amber-500:          #F79009;
+    --amber-bg:           #FEF0C7;
+    --amber-text:         #B54708;
+
+    /* Shadows & Transitions */
+    --shadow-card:        0 24px 64px -12px rgba(16, 24, 40, 0.10), 0 4px 16px rgba(16, 24, 40, 0.03);
+    --shadow-btn:         0 8px 20px -4px rgba(224, 53, 70, 0.38);
+    --shadow-btn-hover:   0 12px 24px -4px rgba(224, 53, 70, 0.48);
+    --shadow-focus:       0 0 0 4px rgba(255, 111, 97, 0.16);
+
+    --ease-smooth:        cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================================================
+   Full Viewport Centered Shell & Ambient Aura
+   ========================================================================== */
+.page-shell {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #FFF8F6 0%, #F8FAFC 45%, #FFF2F0 100%);
+}
+
+/* Ambient Tata 1mg Coral Glows */
+.bg-glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.glow-1 {
+    width: 580px;
+    height: 580px;
+    background: radial-gradient(circle, rgba(255, 111, 97, 0.16) 0%, transparent 70%);
+    top: -140px;
+    left: -120px;
+}
+
+.glow-2 {
+    width: 520px;
+    height: 520px;
+    background: radial-gradient(circle, rgba(224, 53, 70, 0.10) 0%, transparent 70%);
+    bottom: -130px;
+    right: -100px;
+}
+
+.glow-3 {
+    width: 440px;
+    height: 440px;
+    background: radial-gradient(circle, rgba(255, 170, 160, 0.12) 0%, transparent 70%);
+    top: 40%;
+    left: 45%;
+    transform: translate(-50%, -50%);
+}
+
+/* Subtle Micro Dot Pattern */
+.bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image: 
+        radial-gradient(rgba(16, 24, 40, 0.05) 1px, transparent 1px),
+        linear-gradient(rgba(224, 53, 70, 0.015) 1px, transparent 1px);
+    background-size: 28px 28px, 28px 28px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ==========================================================================
+   Centered Twin-Panel Executive Card
+   ========================================================================== */
+.login-container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1020px;
+    min-height: 590px;
+    background: var(--bg-surface);
+    border-radius: 20px;
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-card);
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Left Side: Authentication Form
+   ========================================================================== */
+.auth-card {
+    padding: 48px 52px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: var(--bg-surface);
+}
+
+.brand-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 26px;
+}
+
+.brand-logo-pill {
+    width: 44px;
+    height: 44px;
+    border-radius: 11px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(224, 53, 70, 0.25);
+    background: linear-gradient(135deg, var(--tata-coral) 0%, var(--tata-crimson) 100%);
+}
+
+.brand-icon-img {
+    width: 44px;
+    height: 44px;
+    display: block;
+    object-fit: contain;
+}
+
+.brand-meta {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.brand-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: var(--text-heading);
+}
+
+.brand-badge {
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: var(--tata-coral-light);
+    color: var(--tata-crimson);
+    border: 1px solid var(--tata-coral-border);
+}
+
+.auth-header {
+    margin-bottom: 24px;
+}
+
+.auth-header h1 {
+    font-size: 1.68rem;
+    font-weight: 700;
+    color: var(--text-heading);
+    letter-spacing: -0.025em;
+    margin-bottom: 8px;
+}
+
+.auth-header p {
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* Form Controls */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.auth-alert {
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 0.84rem;
+    font-weight: 500;
+    line-height: 1.45;
+}
+
+.auth-alert.error {
+    background: #FEF3F2;
+    color: #B42318;
+    border: 1px solid #FECDCA;
+}
+
+.auth-alert.success {
+    background: var(--emerald-bg);
+    color: var(--emerald-text);
+    border: 1px solid var(--emerald-border);
+}
+
+.field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.field-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.security-hint {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--tata-crimson);
+    background: var(--tata-coral-light);
+    border: 1px solid var(--tata-coral-border);
+    padding: 2px 8px;
+    border-radius: 99px;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 14px;
+    color: var(--text-subtle);
+    pointer-events: none;
+    z-index: 2;
+    transition: color 0.2s ease;
+}
+
+.input-wrapper input {
+    width: 100%;
+    height: 48px;
+    padding: 0 42px 0 42px;
+    font-size: 0.94rem;
+    font-family: inherit;
+    color: var(--text-heading);
+    background-color: #FAFAFA;
+    border: 1.5px solid var(--border-mid);
+    border-radius: 10px;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.input-wrapper input::placeholder {
+    color: var(--text-subtle);
+}
+
+.input-wrapper input:hover {
+    border-color: #98A2B3;
+    background-color: #FFFFFF;
+}
+
+.input-wrapper input:focus {
+    background-color: #FFFFFF;
+    border-color: var(--tata-coral);
+    box-shadow: var(--shadow-focus);
+}
+
+.input-wrapper:focus-within .input-icon {
+    color: var(--tata-coral);
+}
+
+/* Fix Autofill background & typography */
+.input-wrapper input:-webkit-autofill,
+.input-wrapper input:-webkit-autofill:hover,
+.input-wrapper input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--text-heading);
+    -webkit-box-shadow: 0 0 0px 1000px #FFF9F8 inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    color: var(--text-subtle);
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.toggle-password:hover {
+    color: var(--tata-crimson);
+    background-color: var(--tata-coral-light);
+}
+
+.form-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.83rem;
+    margin-top: -2px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    user-select: none;
+    font-size: 0.83rem;
+    font-weight: 500;
+}
+
+.checkbox-label input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--tata-coral);
+    cursor: pointer;
+}
+
+.help-link-btn {
+    background: none;
+    border: none;
+    color: var(--tata-crimson);
+    font-size: 0.83rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    font-family: inherit;
+    transition: opacity 0.15s ease;
+}
+
+.help-link-btn:hover {
+    text-decoration: underline;
+    opacity: 0.85;
+}
+
+/* Submit Button: Signature Tata 1mg Coral/Crimson */
+.submit-btn {
+    height: 48px;
+    margin-top: 6px;
+    background: linear-gradient(135deg, var(--tata-coral) 0%, var(--tata-crimson) 100%);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.96rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: var(--shadow-btn);
+    transition: all 0.2s ease;
+}
+
+.submit-btn:hover {
+    background: linear-gradient(135deg, var(--tata-coral-hover) 0%, var(--tata-crimson-hover) 100%);
+    box-shadow: var(--shadow-btn-hover);
+    transform: translateY(-1px);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+.submit-btn:disabled {
+    opacity: 0.75;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.trust-footer {
+    margin-top: 28px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 0.77rem;
+    color: var(--text-muted);
+}
+
+.trust-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+}
+
+.trust-item svg {
+    color: var(--emerald-500);
+}
+
+.dot-sep {
+    color: var(--border-mid);
+}
+
+/* ==========================================================================
+   Right Side: Executive Platform Telemetry Preview
+   Modern Midnight Slate with Tata Coral Atmosphere
+   ========================================================================== */
+.preview-panel {
+    background: linear-gradient(155deg, #1C2331 0%, #111827 50%, #201316 100%);
+    color: #FFFFFF;
+    padding: 48px 42px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    border-left: 1px solid rgba(255, 111, 97, 0.12);
+}
+
+.preview-panel::before {
+    content: '';
+    position: absolute;
+    top: -80px;
+    right: -80px;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, rgba(255, 111, 97, 0.22) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #E2E8F0;
+}
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--emerald-500);
+    box-shadow: 0 0 10px var(--emerald-500);
+    animation: pulseBeacon 2s infinite ease-in-out;
+}
+
+@keyframes pulseBeacon {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+        box-shadow: 0 0 8px var(--emerald-500);
+    }
+    50% {
+        opacity: 0.6;
+        transform: scale(0.9);
+        box-shadow: 0 0 3px var(--emerald-500);
+    }
+}
+
+.org-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: rgba(224, 53, 70, 0.18);
+    color: #FDA29B;
+    border: 1px solid rgba(255, 111, 97, 0.32);
+}
+
+/* Mini Workflow Architecture Card */
+.workflow-preview-card {
+    background: rgba(30, 41, 59, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    padding: 22px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+    margin: 24px 0;
+}
+
+.wf-title-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.wf-title-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.wf-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #F8FAFC;
+    letter-spacing: -0.01em;
+}
+
+.wf-sub {
+    font-size: 0.7rem;
+    color: #94A3B8;
+    margin-top: 2px;
+}
+
+.wf-version {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: rgba(18, 183, 106, 0.18);
+    color: #34D399;
+    border: 1px solid rgba(18, 183, 106, 0.35);
+}
+
+.wf-nodes-mini {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.mini-node {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 9px;
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.mini-node div {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.mini-node strong {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #F8FAFC;
+}
+
+.mini-node small {
+    font-size: 0.7rem;
+    color: #94A3B8;
+    margin-top: 2px;
+}
+
+.mini-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.mini-node.trigger .mini-dot { background: var(--emerald-500); }
+.mini-node.data .mini-dot    { background: var(--tata-coral); }
+.mini-node.action .mini-dot  { background: var(--tata-crimson); }
+
+.mini-check {
+    font-size: 0.75rem;
+    color: #34D399;
+    font-weight: 700;
+}
+
+.mini-badge {
+    font-size: 0.62rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: rgba(255, 111, 97, 0.22);
+    color: #FF8A7A;
+    border: 1px solid rgba(255, 111, 97, 0.35);
+}
+
+.mini-connector {
+    width: 2px;
+    height: 14px;
+    background: rgba(255, 255, 255, 0.15);
+    margin-left: 21px;
+}
+
+.preview-quote p {
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: #CBD5E1;
+    font-style: italic;
+    margin-bottom: 10px;
+}
+
+.quote-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.74rem;
+    color: #94A3B8;
+    font-weight: 500;
+}
+
+.quote-author {
+    color: #FDA29B;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   Help Modal Dialog
+   ========================================================================== */
+.help-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(16, 24, 40, 0.6);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeInModal 0.2s ease-out;
+}
+
+@keyframes fadeInModal {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.help-modal-card {
+    background: var(--bg-surface);
+    border-radius: 18px;
+    max-width: 540px;
+    width: 100%;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--border-light);
+    padding: 30px;
+    position: relative;
+    animation: scaleInModal 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes scaleInModal {
+    from {
+        transform: scale(0.96) translateY(10px);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}
+
+.help-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.help-modal-title-wrap {
+    display: flex;
+    gap: 14px;
+}
+
+.help-modal-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--tata-coral-light);
+    color: var(--tata-crimson);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.help-modal-title-wrap h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-heading);
+    margin-bottom: 4px;
+}
+
+.help-modal-sub {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+}
+
+.btn-close-modal {
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    line-height: 1;
+    color: var(--text-subtle);
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 6px;
+    transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.btn-close-modal:hover {
+    color: var(--text-heading);
+    background-color: var(--border-subtle);
+}
+
+.help-modal-tabs {
+    display: flex;
+    gap: 8px;
+    border-bottom: 1.5px solid var(--border-light);
+    margin-bottom: 20px;
+}
+
+.help-tab {
+    padding: 9px 16px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    margin-bottom: -1.5px;
+    transition: all 0.18s ease;
+}
+
+.help-tab:hover {
+    color: var(--tata-crimson);
+}
+
+.help-tab.active {
+    color: var(--tata-crimson);
+    border-bottom-color: var(--tata-crimson);
+}
+
+.help-steps-list {
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 0.86rem;
+    color: var(--text-primary);
+    line-height: 1.5;
+}
+
+.help-steps-list li strong {
+    color: var(--text-heading);
+}
+
+.help-steps-list a {
+    color: var(--tata-crimson);
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+.help-steps-list code {
+    background: var(--tata-coral-light);
+    color: var(--tata-crimson);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.82rem;
+}
+
+.help-modal-footer {
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border-light);
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-modal-dismiss {
+    background: linear-gradient(135deg, var(--tata-coral) 0%, var(--tata-crimson) 100%);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 0.86rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(224, 53, 70, 0.25);
+    transition: all 0.2s ease;
+}
+
+.btn-modal-dismiss:hover {
+    opacity: 0.95;
+    transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   Responsive Adaptations
+   ========================================================================== */
+@media (max-width: 920px) {
+    .login-container {
+        grid-template-columns: 1fr;
+        max-width: 480px;
+    }
+    .preview-panel {
+        display: none;
+    }
+    .auth-card {
+        padding: 40px 32px;
+    }
+}
