@@ -787,164 +787,187 @@ def add_managed_employee_route():
     if not email or "@" not in email:
         return error_response("VALIDATION_ERROR", "A valid Email / Gmail address is required.", 400)
 
-    ensure_default_departments_seeded()
-    depts = list_departments_with_members()
-    raw_dept_ids = payload.get("dept_ids")
-    selected_dept_ids: List[int] = []
-    if isinstance(raw_dept_ids, (list, tuple)):
-        for x in raw_dept_ids:
-            if str(x).strip().isdigit():
-                val = int(str(x).strip())
-                if val not in selected_dept_ids:
-                    selected_dept_ids.append(val)
-    elif isinstance(raw_dept_ids, str) and raw_dept_ids.strip():
-        for x in raw_dept_ids.split(","):
-            if x.strip().isdigit():
-                val = int(x.strip())
-                if val not in selected_dept_ids:
-                    selected_dept_ids.append(val)
+    try:
+        ensure_default_departments_seeded()
+        depts = list_departments_with_members()
+        raw_dept_ids = payload.get("dept_ids")
+        selected_dept_ids: List[int] = []
+        if isinstance(raw_dept_ids, (list, tuple)):
+            for x in raw_dept_ids:
+                if str(x).strip().isdigit():
+                    val = int(str(x).strip())
+                    if val not in selected_dept_ids:
+                        selected_dept_ids.append(val)
+        elif isinstance(raw_dept_ids, str) and raw_dept_ids.strip():
+            for x in raw_dept_ids.split(","):
+                if x.strip().isdigit():
+                    val = int(x.strip())
+                    if val not in selected_dept_ids:
+                        selected_dept_ids.append(val)
 
-    if dept_id and str(dept_id).isdigit():
-        d_val = int(str(dept_id).strip())
-        if d_val not in selected_dept_ids:
-            selected_dept_ids.insert(0, d_val)
+        if dept_id and str(dept_id).isdigit():
+            d_val = int(str(dept_id).strip())
+            if d_val not in selected_dept_ids:
+                selected_dept_ids.insert(0, d_val)
 
-    selected_depts = [d for d in depts if int(d["id"]) in selected_dept_ids]
-    if not selected_depts and team_name_req:
-        td = next((d for d in depts if d["team_name"].lower() == team_name_req.lower()), None)
-        if td:
-            selected_depts = [td]
-    if not selected_depts:
-        selected_depts = [depts[0]]
+        selected_depts = [d for d in depts if int(d["id"]) in selected_dept_ids]
+        if not selected_depts and team_name_req:
+            td = next((d for d in depts if d["team_name"].lower() == team_name_req.lower()), None)
+            if td:
+                selected_depts = [td]
+        if not selected_depts:
+            selected_depts = [depts[0]]
 
-    resolved_dept_id = int(selected_depts[0]["id"])
-    resolved_dept_ids_str = ",".join(str(d["id"]) for d in selected_depts)
+        resolved_dept_id = int(selected_depts[0]["id"])
+        resolved_dept_ids_str = ",".join(str(d["id"]) for d in selected_depts)
 
-    all_cats = set()
-    for sd in selected_depts:
-        if sd.get("category_scope"):
-            for sc in str(sd["category_scope"]).split(","):
+        all_cats = set()
+        for sd in selected_depts:
+            if sd.get("category_scope"):
+                for sc in str(sd["category_scope"]).split(","):
+                    if sc.strip():
+                        all_cats.add(sc.strip().upper())
+        req_scope = (payload.get("category_scope") or "").strip()
+        if req_scope:
+            for sc in req_scope.split(","):
                 if sc.strip():
                     all_cats.add(sc.strip().upper())
-    req_scope = (payload.get("category_scope") or "").strip()
-    if req_scope:
-        for sc in req_scope.split(","):
-            if sc.strip():
-                all_cats.add(sc.strip().upper())
 
-    category_scope = ", ".join(sorted(all_cats)) if all_cats else (selected_depts[0].get("category_scope") or "GENERAL_HR")
-    resolved_team = " & ".join([sd["team_name"] for sd in selected_depts]) if len(selected_depts) > 1 else selected_depts[0]["team_name"]
+        category_scope = ", ".join(sorted(all_cats)) if all_cats else (selected_depts[0].get("category_scope") or "GENERAL_HR")
+        resolved_team = " & ".join([sd["team_name"] for sd in selected_depts]) if len(selected_depts) > 1 else selected_depts[0]["team_name"]
+        clean_sub_dept = sub_department or resolved_team or "Universal Desk (General)"
 
-    conn = get_connection()
-    try:
-        # 1. Upsert in `users` table
-        existing_user = conn.execute(
-            "SELECT id FROM users WHERE LOWER(email) = LOWER(?)",
-            (email,),
-        ).fetchone()
-        if existing_user:
-            conn.execute(
-                "UPDATE users SET name = ?, role = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
-                (name, role, int(existing_user["id"])),
-            )
+        conn = get_connection()
+        try:
+            # 1. Upsert in `users` table
+            existing_user = conn.execute(
+                "SELECT id FROM users WHERE LOWER(email) = LOWER(?)",
+                (email,),
+            ).fetchone()
+            if existing_user:
+                conn.execute(
+                    "UPDATE users SET name = ?, role = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+                    (name, role, int(existing_user["id"])),
+                )
+            else:
+                conn.execute(
+                    "INSERT INTO users (email, role, name) VALUES (?, ?, ?)",
+                    (email, role, name),
+                )
+
+            # 2. Upsert in `hr_department_members`
+            existing_mem = conn.execute(
+                "SELECT id FROM hr_department_members WHERE LOWER(email) = LOWER(?) AND active = 1",
+                (email,),
+            ).fetchone()
+            if existing_mem:
+                member_id = int(existing_mem["id"])
+                conn.execute(
+                    """
+                    UPDATE hr_department_members
+                    SET dept_id = ?, dept_ids = ?, category_scope = ?, team_name = ?, member_name = ?, email = ?, role = ?, designation = ?, sub_department = ?, updated_at = CURRENT_TIMESTAMP
+                    WHERE id = ?
+                    """,
+                    (resolved_dept_id, resolved_dept_ids_str, category_scope, resolved_team, name, email, role, designation, clean_sub_dept, member_id),
+                )
+            else:
+                cur = conn.execute(
+                    """
+                    INSERT INTO hr_department_members (
+                        dept_id, dept_ids, category_scope, team_name, member_name, email, role, designation, sub_department, active
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+                    """,
+                    (resolved_dept_id, resolved_dept_ids_str, category_scope, resolved_team, name, email, role, designation, clean_sub_dept),
+                )
+                member_id = int(cur.lastrowid)
+
+            conn.commit()
+        finally:
+            conn.close()
+
+        portal_url = Config.get_portal_base_url()
+        email_payload = build_role_welcome_email_payload(
+            name=name,
+            email=email,
+            role=role,
+            team_name=resolved_team,
+            designation=designation,
+            category_scope=category_scope,
+            custom_note=custom_note,
+            is_role_update=False,
+            portal_base_url=portal_url,
+        )
+
+        smtp_res = {
+            "sent": False,
+            "status": "SKIPPED_BY_USER",
+            "recipient": email,
+            "message": "Welcome email was not requested.",
+        }
+        if send_welcome:
+            try:
+                smtp_res = send_gmail_smtp_email(
+                    recipient_email=email,
+                    subject=email_payload["subject"],
+                    body_text=email_payload["body_text"],
+                    body_html=email_payload["body_html"],
+                )
+            except Exception as e:
+                logger.warning(f"Failed to dispatch welcome email: {e}")
+                smtp_res = {
+                    "sent": False,
+                    "status": "SMTP_ERROR",
+                    "recipient": email,
+                    "message": str(e),
+                }
+
+            try:
+                log_event(
+                    entity_type="USER",
+                    entity_id=member_id,
+                    action="EMPLOYEE_WELCOME_EMAIL_SENT",
+                    description=f"Elected {name} ({email}) as {role} in {resolved_team} · Welcome Email: {smtp_res.get('status')}",
+                    performed_by=performed_by,
+                    metadata={
+                        "member_id": member_id,
+                        "name": name,
+                        "email": email,
+                        "role": role,
+                        "team_name": resolved_team,
+                        "designation": designation,
+                        "smtp_status": smtp_res.get("status"),
+                        "sent": smtp_res.get("sent", False),
+                    },
+                )
+            except Exception:
+                pass
         else:
-            conn.execute(
-                "INSERT INTO users (email, role, name) VALUES (?, ?, ?)",
-                (email, role, name),
-            )
+            try:
+                log_event(
+                    entity_type="USER",
+                    entity_id=member_id,
+                    action="EMPLOYEE_ROLE_ADDED",
+                    description=f"Added {name} ({email}) as {role} in {resolved_team}",
+                    performed_by=performed_by,
+                    metadata={"member_id": member_id, "name": name, "email": email, "role": role, "team_name": resolved_team},
+                )
+            except Exception:
+                pass
 
-        # 2. Upsert in `hr_department_members`
-        existing_mem = conn.execute(
-            "SELECT id FROM hr_department_members WHERE LOWER(email) = LOWER(?) AND active = 1",
-            (email,),
-        ).fetchone()
-        if existing_mem:
-            member_id = int(existing_mem["id"])
-            conn.execute(
-                """
-                UPDATE hr_department_members
-                SET dept_id = ?, dept_ids = ?, category_scope = ?, team_name = ?, member_name = ?, email = ?, role = ?, designation = ?, sub_department = COALESCE(NULLIF(?, ''), sub_department), updated_at = CURRENT_TIMESTAMP
-                WHERE id = ?
-                """,
-                (resolved_dept_id, resolved_dept_ids_str, category_scope, resolved_team, name, email, role, designation, sub_department, member_id),
-            )
-        else:
-            cur = conn.execute(
-                """
-                INSERT INTO hr_department_members (
-                    dept_id, dept_ids, category_scope, team_name, member_name, email, role, designation, sub_department, active
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
-                """,
-                (resolved_dept_id, resolved_dept_ids_str, category_scope, resolved_team, name, email, role, designation, sub_department or None),
-            )
-            member_id = int(cur.lastrowid)
+        directory = _sync_users_and_members()
+        added_record = next((p for p in directory if int(p["id"]) == member_id), None)
 
-        conn.commit()
-    finally:
-        conn.close()
-
-    portal_url = Config.get_portal_base_url()
-    email_payload = build_role_welcome_email_payload(
-        name=name,
-        email=email,
-        role=role,
-        team_name=resolved_team,
-        designation=designation,
-        category_scope=category_scope,
-        custom_note=custom_note,
-        is_role_update=False,
-        portal_base_url=portal_url,
-    )
-
-    smtp_res = {
-        "sent": False,
-        "status": "SKIPPED_BY_USER",
-        "recipient": email,
-        "message": "Welcome email was not requested.",
-    }
-    if send_welcome:
-        smtp_res = send_gmail_smtp_email(
-            recipient_email=email,
-            subject=email_payload["subject"],
-            body_text=email_payload["body_text"],
-            body_html=email_payload["body_html"],
-        )
-        log_event(
-            entity_type="USER",
-            entity_id=member_id,
-            action="EMPLOYEE_WELCOME_EMAIL_SENT",
-            description=f"Elected {name} ({email}) as {role} in {resolved_team} · Welcome Email: {smtp_res['status']}",
-            performed_by=performed_by,
-            metadata={
-                "member_id": member_id,
-                "name": name,
-                "email": email,
-                "role": role,
-                "team_name": resolved_team,
-                "designation": designation,
-                "smtp_status": smtp_res["status"],
-                "sent": smtp_res.get("sent", False),
-            },
-        )
-    else:
-        log_event(
-            entity_type="USER",
-            entity_id=member_id,
-            action="EMPLOYEE_ROLE_ADDED",
-            description=f"Added {name} ({email}) as {role} in {resolved_team}",
-            performed_by=performed_by,
-            metadata={"member_id": member_id, "name": name, "email": email, "role": role, "team_name": resolved_team},
-        )
-
-    directory = _sync_users_and_members()
-    added_record = next((p for p in directory if int(p["id"]) == member_id), None)
-
-    return success_response({
-        "employee": added_record,
-        "welcome_dispatch": smtp_res,
-        "email_preview": email_payload,
-        "employees": directory,
-    }, status_code=201)
+        return success_response({
+            "employee": added_record,
+            "welcome_dispatch": smtp_res,
+            "email_preview": email_payload,
+            "employees": directory,
+        }, status_code=201)
+    except ValueError as ve:
+        return error_response("VALIDATION_ERROR", str(ve), 400)
+    except Exception as exc:
+        logger.error(f"Error provisioning user {email}: {exc}", exc_info=True)
+        return error_response("SERVER_ERROR", f"Failed to provision user: {exc}", 500)
 
 
 @agent_bp.route("/employees/<int:member_id>", methods=["PUT", "PATCH"])
@@ -1128,10 +1151,10 @@ def update_managed_employee_route(member_id: int):
                     conn.execute(
                         """
                         INSERT INTO hr_department_members (
-                            dept_id, team_name, member_name, email, role, designation, active
-                        ) VALUES (?, ?, ?, ?, ?, ?, 1)
+                            dept_id, team_name, member_name, email, role, designation, sub_department, active
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, 1)
                         """,
-                        (int(target_dept["id"]), new_team, new_name, new_email, new_role, new_desig),
+                        (int(target_dept["id"]), new_team, new_name, new_email, new_role, new_desig, new_team),
                     )
             if new_email:
                 conn.execute(

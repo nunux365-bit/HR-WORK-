@@ -15522,7 +15522,7 @@ async function renderUsersWorkspaceView(container, skipReload = false, forceWait
                     <div>
                         <label style="display:block; font-size:0.74rem; font-weight:700; color:#334155; margin-bottom:5px;">SUB-DEPARTMENT / SPECIALTY (PEOPLEDESK)</label>
                         <select id="umInputSubDept" style="width:100%; height:40px; padding:0 12px; border-radius:10px; border:1px solid #cbd5e1; font-size:0.84rem; font-weight:600; color:#0f172a; background:#ffffff;">
-                            <option value="" ${!editTarget || !editTarget.sub_department ? "selected" : ""}>Universal Desk (General)</option>
+                            <option value="Universal Desk (General)" ${!editTarget || !editTarget.sub_department || editTarget.sub_department === "Universal Desk (General)" ? "selected" : ""}>Universal Desk (General)</option>
                             <option value="Salary & Payroll" ${editTarget && editTarget.sub_department === "Salary & Payroll" ? "selected" : ""}>Salary &amp; Payroll</option>
                             <option value="Leave Management" ${editTarget && editTarget.sub_department === "Leave Management" ? "selected" : ""}>Leave Management</option>
                             <option value="Attendance & Shifts" ${editTarget && editTarget.sub_department === "Attendance & Shifts" ? "selected" : ""}>Attendance &amp; Shifts</option>

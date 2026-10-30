@@ -142,10 +142,10 @@ def ensure_default_departments_seeded() -> None:
                 conn.execute(
                     """
                     INSERT INTO hr_department_members (
-                        dept_id, dept_ids, team_name, member_name, email, role, designation, category_scope, active
+                        dept_id, dept_ids, team_name, member_name, email, role, designation, sub_department, category_scope, active
                     ) VALUES (
                         ?, ?, 'PeopleDesk', 'Vaibhav Yadav', 'vaibhavx002@zohomail.in', 'HR_AGENT',
-                        'HR Specialist / Agent',
+                        'HR Specialist / Agent', 'Leave Management',
                         'ALL_HR, PAYROLL, LEAVE, ATTENDANCE, RESIGNATION, ONBOARDING, BGV, DOCUMENTS, ASSET_IT, EMPLOYEE_PROFILE, BENEFITS, PERFORMANCE, GENERAL_HR, PEOPLEDESK',
                         1
                     )
@@ -463,10 +463,10 @@ def create_department(
             conn.execute(
                 """
                 INSERT INTO hr_department_members (
-                    dept_id, team_name, member_name, email, role, designation, active
-                ) VALUES (?, ?, ?, ?, 'HR_LEAD', ?, 1)
+                    dept_id, team_name, member_name, email, role, designation, sub_department, active
+                ) VALUES (?, ?, ?, ?, 'HR_LEAD', ?, ?, 1)
                 """,
-                (dept_id, clean_name, str(lead_name).strip(), m_email, m_desig),
+                (dept_id, clean_name, str(lead_name).strip(), m_email, m_desig, clean_name),
             )
 
         conn.commit()

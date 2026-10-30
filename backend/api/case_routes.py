@@ -280,6 +280,9 @@ def create_department_route():
         }, status_code=201)
     except ValueError as ve:
         return error_response("VALIDATION_ERROR", str(ve), 400)
+    except Exception as exc:
+        logger.error(f"Error creating department: {exc}", exc_info=True)
+        return error_response("SERVER_ERROR", f"Failed to create department: {exc}", 500)
 
 
 
@@ -294,6 +297,7 @@ def add_department_member_route(dept_id: int):
             email=payload.get("email") or payload.get("gmail") or "",
             role=payload.get("role") or "HR_AGENT",
             designation=payload.get("designation") or "HR Specialist",
+            sub_department=payload.get("sub_department"),
         )
         return success_response({
             "member": member,
@@ -301,6 +305,9 @@ def add_department_member_route(dept_id: int):
         }, status_code=201)
     except ValueError as ve:
         return error_response("VALIDATION_ERROR", str(ve), 400)
+    except Exception as exc:
+        logger.error(f"Error adding department member: {exc}", exc_info=True)
+        return error_response("SERVER_ERROR", f"Failed to add department member: {exc}", 500)
 
 
 @case_bp.route("/departments/members/<int:member_id>", methods=["PUT", "POST"])
@@ -314,6 +321,7 @@ def update_department_member_route(member_id: int):
             email=payload.get("email") or payload.get("gmail"),
             role=payload.get("role"),
             designation=payload.get("designation"),
+            sub_department=payload.get("sub_department"),
         )
         return success_response({
             "member": member,
@@ -321,6 +329,9 @@ def update_department_member_route(member_id: int):
         })
     except ValueError as ve:
         return error_response("VALIDATION_ERROR", str(ve), 400)
+    except Exception as exc:
+        logger.error(f"Error updating department member: {exc}", exc_info=True)
+        return error_response("SERVER_ERROR", f"Failed to update department member: {exc}", 500)
 
 
 @case_bp.route("/departments/members/<int:member_id>", methods=["DELETE"])
