@@ -2342,14 +2342,17 @@ ${formatEmailBody(email.body || email.actionable_reason || "No message body prov
                 const myCases = data.my_cases || [];
                 const deptCases = data.dept_cases || [];
                 const unclaimedCases = data.unclaimed_cases || [];
-                const caseMap = new Map();
+                const seenKeys = new Set();
+                const dedupedList = [];
                 [...myCases, ...deptCases, ...unclaimedCases].forEach(c => {
-                    const key = c.case_number || c.case_ref || c.id || c.db_id;
-                    if (key && !caseMap.has(key)) {
-                        caseMap.set(key, c);
+                    const rawKey = c.case_number || c.case_ref || c.id || c.db_id;
+                    const normKey = rawKey ? String(rawKey).trim().toUpperCase() : null;
+                    if (normKey && !seenKeys.has(normKey)) {
+                        seenKeys.add(normKey);
+                        dedupedList.push(c);
                     }
                 });
-                allCases = Array.from(caseMap.values());
+                allCases = dedupedList;
             } else {
                 allCases = [];
             }
@@ -2974,25 +2977,27 @@ ${formatEmailBody(email.body || email.actionable_reason || "No message body prov
                     </div>
 
                     <div class="dossier-deck-right">
-                        <!-- Segmented Stepper Navigation -->
+                        <!-- 2-Tab Navigation: Inquiry & Profile vs Audit & Actions (No workflow steppers) -->
                         <div class="dossier-stepper-segmented" id="dossierStepperTabs">
-                            <button type="button" class="dossier-segment-btn ${currentDossierStep === 1 ? 'is-active' : ''}" onclick="switchDossierStep(1)">
-                                <span class="segment-num">1</span>
-                                <span>Mail &amp; Profile</span>
+                            <button type="button" class="dossier-segment-btn ${currentDossierStep === 1 ? 'is-active' : ''}" onclick="switchDossierStep(1)" title="Employee Profile & Inbound Email">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                    <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                                </svg>
+                                <span>Inquiry &amp; Profile</span>
                             </button>
-                            <button type="button" class="dossier-segment-btn ${currentDossierStep === 2 ? 'is-active' : ''}" onclick="switchDossierStep(2)">
-                                <span class="segment-num">2</span>
-                                <span>Audit Checklist</span>
-                            </button>
-                            <button type="button" class="dossier-segment-btn ${currentDossierStep === 3 ? 'is-active' : ''}" onclick="switchDossierStep(3)">
-                                <span class="segment-num">3</span>
-                                <span>Resolution</span>
+                            <button type="button" class="dossier-segment-btn ${currentDossierStep === 2 ? 'is-active' : ''}" onclick="switchDossierStep(2)" title="Case Actions, Timer & Checklist">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                    <polyline points="9 12 11 14 15 10"></polyline>
+                                </svg>
+                                <span>Audit &amp; Actions</span>
                             </button>
                         </div>
 
                         ${!isAssigned
                             ? `<button type="button" class="btn-pill-action btn-primary-action" onclick="handleClaimCase('${caseRef}')">⚡ Claim Case</button>`
-                            : `<button type="button" class="btn-pill-action btn-primary-action" onclick="switchDossierStep(3)">Resolve Case &rarr;</button>`
+                            : `<button type="button" class="btn-pill-action ${currentDossierStep === 1 ? 'btn-primary-action' : ''}" onclick="switchDossierStep(currentDossierStep === 1 ? 2 : 1)">${currentDossierStep === 1 ? 'Audit &amp; Actions &rarr;' : '&larr; Inquiry View'}</button>`
                         }
                     </div>
                 </div>
@@ -3294,10 +3299,10 @@ ${formatEmailBody(email.body || email.actionable_reason || "No message body prov
                                     <circle cx="12" cy="12" r="10"></circle>
                                     <polyline points="12 6 12 12 16 14"></polyline>
                                 </svg>
-                                <span>Verified against corporate Zoho Mail servers. Ready for checklist audit.</span>
+                                <span>Verified against corporate Zoho Mail servers. Ready for audit &amp; operational actions.</span>
                             </div>
                             <button type="button" class="btn-pill-action btn-primary-action" onclick="switchDossierStep(2)">
-                                <span>Proceed to Audit Checklist &rarr;</span>
+                                <span>Proceed to Audit &amp; Actions &rarr;</span>
                             </button>
                         </div>
                     </div>
@@ -3305,16 +3310,20 @@ ${formatEmailBody(email.body || email.actionable_reason || "No message body prov
                 </div>
             `;
         } else if (stepNum === 2) {
-            // STEP 2: Active Investigation Work Tracker & Dynamic Policy Checklist
+            // STEP 2: Active Investigation Work Tracker, 3 Core Operational Options & Dynamic Policy Checklist
             const cf = c.custom_fields || {};
             const workSession = cf.work_session || {};
             const checklistState = cf.checklist_state || {};
             const isSessionActive = Boolean(workSession.is_active);
+            const statusUpper = (c.status || "OPEN").toUpperCase();
+            const isResolved = statusUpper === "RESOLVED" || statusUpper === "COMPLETED";
+            const isRejected = statusUpper === "REJECTED";
 
             const totalSec = parseInt(workSession.total_handling_seconds || 0, 10);
             const mins = Math.floor(totalSec / 60);
             const secs = totalSec % 60;
             const timerFormatted = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            const durationDisplay = workSession.handling_display || `${mins}m ${secs}s`;
 
             // Extract financial or discrepancy amount for dynamic checklist context
             const rawInquiry = (c.description || "") + "\n" + (email.body || "");
@@ -3380,46 +3389,122 @@ ${formatEmailBody(email.body || email.actionable_reason || "No message body prov
                 }
             }, 60);
 
+            // Outcome banner HTML if case has already been resolved or rejected
+            let outcomeBannerHtml = "";
+            if (isResolved) {
+                const resType = c.resolution_type || "VERIFIED_COMPLETED";
+                const refId = (c.forensic_proof && c.forensic_proof.proofId) || `1MG-${caseRef}`;
+                outcomeBannerHtml = `
+                    <div class="case-outcome-card is-resolved">
+                        <div class="outcome-header">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#027A48" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span>Case Successfully Resolved &amp; Completed</span>
+                        </div>
+                        <div class="outcome-grid">
+                            <div><span>Resolution Outcome:</span> <strong>${escapeHtml(resType)}</strong></div>
+                            <div><span>Audit Reference ID:</span> <strong>${escapeHtml(refId)}</strong></div>
+                            <div><span>Resolved By:</span> <strong>${escapeHtml(c.resolved_by || 'Specialist')}</strong></div>
+                            <div><span>Total Handling Time:</span> <strong>${escapeHtml(durationDisplay)}</strong></div>
+                        </div>
+                        ${c.resolution_notes ? `<div class="outcome-notes"><strong>Resolution Note:</strong> ${escapeHtml(c.resolution_notes)}</div>` : ''}
+                    </div>
+                `;
+            } else if (isRejected) {
+                const rejCat = (c.forensic_proof && c.forensic_proof.rejection_category) || "POLICY_INELIGIBLE";
+                outcomeBannerHtml = `
+                    <div class="case-outcome-card is-rejected">
+                        <div class="outcome-header">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B42318" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                            <span>Case Rejected &amp; Disallowed</span>
+                        </div>
+                        <div class="outcome-grid">
+                            <div><span>Rejection Category:</span> <strong>${escapeHtml(rejCat)}</strong></div>
+                            <div><span>Reviewed By:</span> <strong>${escapeHtml(c.resolved_by || 'Specialist')}</strong></div>
+                            <div><span>Decision Date:</span> <strong>${c.resolved_at ? new Date(c.resolved_at).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : 'Recorded'}</strong></div>
+                            <div><span>Total Handling Time:</span> <strong>${escapeHtml(durationDisplay)}</strong></div>
+                        </div>
+                        ${c.resolution_notes ? `<div class="outcome-notes"><strong>Reason / Justification:</strong> ${escapeHtml(c.resolution_notes)}</div>` : ''}
+                    </div>
+                `;
+            }
+
             return `
-                <!-- 1. Active Work Tracker & Session Timer Banner -->
-                <div class="audit-work-tracker-card ${isSessionActive ? 'is-active-session' : ''}" id="auditWorkTrackerCard">
-                    <div class="audit-tracker-left">
-                        <div class="audit-timer-wrap">
-                            <div class="audit-timer-head">
-                                ${isSessionActive
-                                    ? `<span class="badge-pill" style="background:#ECFDF3; color:#027A48; font-weight:700; font-size:11px; display:inline-flex; align-items:center; gap:5px;"><span class="live-pulse-dot"></span> INVESTIGATION ACTIVE</span>`
-                                    : `<span class="badge-pill" style="background:#F2F4F7; color:#344054; font-weight:700; font-size:11px;">READY FOR AUDIT</span>`
-                                }
-                                <span class="badge-pill" style="background:#FEF3F2; color:#B42318; font-size:11px; font-weight:700;">⚡ SLA: ${c.sla_hours || 24}h Window</span>
-                            </div>
-                            <div class="audit-timer-display" id="auditSessionTimerDisplay">${timerFormatted}</div>
-                            <div class="audit-timer-sub">
-                                ${isSessionActive
-                                    ? `Session started by <strong>${escapeHtml(workSession.started_by || 'Specialist')}</strong> • Cumulative handling time tracked`
-                                    : `Total handling time recorded: <strong>${workSession.handling_display || `${mins}m ${secs}s`}</strong>`
-                                }
-                            </div>
+                <!-- 1. Executive Action Command Card (The 3 Operational Options) -->
+                <div class="audit-actions-panel" id="auditActionsPanel">
+                    <div class="audit-actions-head">
+                        <div class="audit-actions-title-wrap">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="color:var(--tata-coral);">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                <polyline points="9 12 11 14 15 10"></polyline>
+                            </svg>
+                            <span class="audit-actions-title">Audit Investigation &amp; Operational Actions</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            ${isResolved
+                                ? `<span class="badge-pill" style="background:#ECFDF3; color:#027A48; font-weight:700; font-size:11px;">✓ COMPLETED</span>`
+                                : isRejected
+                                    ? `<span class="badge-pill" style="background:#FEF3F2; color:#B42318; font-weight:700; font-size:11px;">✕ REJECTED</span>`
+                                    : isSessionActive
+                                        ? `<span class="badge-pill" style="background:#ECFDF3; color:#027A48; font-weight:700; font-size:11px; display:inline-flex; align-items:center; gap:5px;"><span class="live-pulse-dot"></span> ACTIVE SESSION</span>`
+                                        : `<span class="badge-pill" style="background:#F2F4F7; color:#344054; font-weight:700; font-size:11px;">READY FOR AUDIT</span>`
+                            }
+                            <span class="badge-pill" style="background:#FEF3F2; color:#B42318; font-size:11px; font-weight:700;">⚡ SLA: ${c.sla_hours || 24}h Window</span>
                         </div>
                     </div>
 
-                    <div class="audit-tracker-actions">
-                        ${isSessionActive
-                            ? `<button type="button" class="btn-pause-work" onclick="handlePauseCaseWork('${caseRef}')">
-                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                                     <rect x="6" y="4" width="4" height="16" rx="1"></rect>
-                                     <rect x="14" y="4" width="4" height="16" rx="1"></rect>
-                                 </svg>
-                                 <span>⏸ Pause Work</span>
-                               </button>`
-                            : `<button type="button" class="btn-start-work" onclick="handleStartCaseWork('${caseRef}')">
-                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                                     <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                                 </svg>
-                                 <span>▶ Start Working on this Case</span>
-                               </button>`
-                        }
+                    <div class="audit-actions-body">
+                        <!-- Left: Live Stopwatch & Handling Duration -->
+                        <div class="audit-timer-wrap">
+                            <div class="audit-timer-display" id="auditSessionTimerDisplay">${timerFormatted}</div>
+                            <div class="audit-timer-sub">
+                                ${isSessionActive
+                                    ? `Investigation active • Started by <strong>${escapeHtml(workSession.started_by || 'Specialist')}</strong>`
+                                    : `Cumulative handling duration: <strong>${durationDisplay}</strong>`
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Right: The 3 Core Operational Options -->
+                        <div class="audit-ops-btn-group">
+                            <!-- Option 1: Start / Pause Work -->
+                            ${isSessionActive
+                                ? `<button type="button" class="btn-audit-op btn-pause-work" onclick="handlePauseCaseWork('${caseRef}')" title="Pause the active work timer">
+                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                         <rect x="6" y="4" width="4" height="16" rx="1"></rect>
+                                         <rect x="14" y="4" width="4" height="16" rx="1"></rect>
+                                     </svg>
+                                     <span>⏸ Pause Work</span>
+                                   </button>`
+                                : `<button type="button" class="btn-audit-op btn-start-work" onclick="handleStartCaseWork('${caseRef}')" title="Record start time and run stopwatch">
+                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                         <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                     </svg>
+                                     <span>▶ Start Working</span>
+                                   </button>`
+                            }
+
+                            <!-- Option 2: Completed -->
+                            <button type="button" class="btn-audit-op btn-complete-work" onclick="openCompleteCaseModal('${caseRef}')" title="Complete case and update status to RESOLVED">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                <span>✓ Completed</span>
+                            </button>
+
+                            <!-- Option 3: Rejected -->
+                            <button type="button" class="btn-audit-op btn-reject-work" onclick="openRejectCaseModal('${caseRef}')" title="Reject case with reason and record in audit log">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                                <span>✕ Rejected</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Case Outcome Banner (If already Completed or Rejected) -->
+                ${outcomeBannerHtml}
 
                 <!-- 2. Tata 1mg Compliance Checklist -->
                 <div class="checklist-card">
@@ -3441,77 +3526,15 @@ ${formatEmailBody(email.body || email.actionable_reason || "No message body prov
                     </div>
 
                     <div style="display:flex; align-items:center; justify-content:space-between; margin-top:16px; padding-top:14px; border-top:1px solid var(--border-light);">
-                        <button type="button" class="btn-pill-action" onclick="switchDossierStep(1)">&larr; Back to Mail &amp; Profile</button>
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            <span style="font-size:12px; color:var(--text-muted);">
-                                ${checkedCount === checklistItems.length ? '✓ All compliance items verified' : `${checklistItems.length - checkedCount} pending verification`}
-                            </span>
-                            <button type="button" class="btn-pill-action btn-primary-action" onclick="switchDossierStep(3)">
-                                <span>Proceed to Resolution &amp; Dispatch &rarr;</span>
-                            </button>
-                        </div>
+                        <button type="button" class="btn-pill-action" onclick="switchDossierStep(1)">&larr; Back to Inquiry &amp; Profile</button>
+                        <span style="font-size:12px; color:var(--text-muted);">
+                            ${checkedCount === checklistItems.length ? '✓ All compliance items verified' : `${checklistItems.length - checkedCount} pending verification`}
+                        </span>
                     </div>
                 </div>
             `;
         } else {
-            // STEP 3: Response & Resolution Workbench
-            const draftText = data.smart_reply_draft || `Dear ${empName},\n\nYour request regarding "${mailSubject}" has been verified and processed by the People Operations team in accordance with Tata 1mg HR policy. Your records have been updated accordingly.\n\nRegards,\nPeople Operations Team\nTata 1mg Healthcare Solutions`;
-
-            const defaultRef = c.forensic_proof && c.forensic_proof.proofId
-                ? c.forensic_proof.proofId
-                : `1MG-${caseRef}`;
-
-            return `
-                <div class="resolution-card">
-                    <div class="emp-card-header">
-                        <div class="emp-card-title">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--tata-coral);">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                            <span>Response &amp; Resolution Dispatch Hub</span>
-                        </div>
-                        <span class="badge-pill badge-urgent-tag" style="padding:3px 8px; font-size:11px;">READY FOR DISPATCH</span>
-                    </div>
-
-                    <div class="resolution-box">
-                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:14px;">
-                            <div>
-                                <label style="display:block; font-size:12px; font-weight:700; color:var(--text-heading); margin-bottom:6px;">Resolution Outcome Action</label>
-                                <select class="resolution-select" id="dossierResolutionSelect">
-                                    <option value="ATTENDANCE_REGULARIZED">Attendance Regularized / Biometric In-Punch Override</option>
-                                    <option value="RECORD_UPDATED">Employee HRMS Records Updated</option>
-                                    <option value="PAYROLL_ADJUSTED">Payroll Discrepancy Adjusted / Arrear Scheduled</option>
-                                    <option value="POLICY_CLARIFIED">General Inquiry Clarified &amp; Closed</option>
-                                    <option value="SERVICE_CLOSED">Service Request Approved &amp; Executed</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label style="display:block; font-size:12px; font-weight:700; color:var(--text-heading); margin-bottom:6px;">Audit / Transaction Reference ID</label>
-                                <input type="text" class="resolution-select" id="dossierResolutionRef" placeholder="e.g. 1MG-BIO-OVERRIDE-8841" value="${escapeHtml(defaultRef)}">
-                            </div>
-                        </div>
-
-                        <div>
-                            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
-                                <label style="font-size:12px; font-weight:700; color:var(--text-heading);">Official Resolution Email (Dispatched via Tata 1mg SMTP)</label>
-                                <span style="font-size:11px; color:var(--text-muted);">Recipient: <strong style="color:var(--text-primary);">${escapeHtml(officialEmail)}</strong></span>
-                            </div>
-                            <textarea class="resolution-textarea" id="dossierResolutionReply" rows="7" placeholder="Compose official resolution note...">${escapeHtml(draftText)}</textarea>
-                        </div>
-
-                        <div style="display:flex; align-items:center; justify-content:space-between; padding-top:10px; border-top:1px solid var(--border-light);">
-                            <button type="button" class="btn-pill-action" onclick="switchDossierStep(2)">&larr; Back to Checklist</button>
-                            <button type="button" class="btn-resolve-dispatch" id="btnDispatchResolution" onclick="handleDossierResolve('${caseRef}')">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span>✓ Dispatch Resolution &amp; Close Case</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
+            return renderDossierStepContent(2, data);
         }
     }
 
@@ -3723,6 +3746,262 @@ ${formatEmailBody(email.body || email.actionable_reason || "No message body prov
             }
         } catch (err) {
             console.warn("Could not refresh audit timeline:", err);
+        }
+    };
+
+    /* ==========================================================================
+       MODALS & CONTROLLERS FOR COMPLETED & REJECTED ACTIONS
+       ========================================================================== */
+
+    window.closeAuditActionModal = function() {
+        const modal = document.getElementById("auditActionModalOverlay");
+        if (modal) {
+            modal.remove();
+        }
+    };
+
+    window.openCompleteCaseModal = function(caseRef) {
+        closeAuditActionModal();
+
+        const data = currentDossierData || {};
+        const c = data.case || {};
+        const emp = data.employee || {};
+        const email = data.email || {};
+
+        const empName = emp.name || c.employee_name || "Employee";
+        const empEmail = emp.email || c.sender_email || email.sender_email || "";
+        const mailSubject = email.subject || c.title || c.subject || "Employee HR Inquiry";
+        const defaultRef = (c.forensic_proof && c.forensic_proof.proofId) || `1MG-${caseRef}`;
+        const defaultNotes = `Dear ${empName},\n\nYour request regarding "${mailSubject}" has been verified and processed by the People Operations team in accordance with Tata 1mg HR policy. Your records have been updated accordingly.\n\nRegards,\nPeople Operations Team\nTata 1mg Healthcare Solutions`;
+
+        const modalHtml = `
+            <div class="audit-modal-overlay" id="auditActionModalOverlay" onclick="if(event.target === this) closeAuditActionModal();">
+                <div class="audit-modal-card">
+                    <div class="audit-modal-header">
+                        <div class="audit-modal-title">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#027A48" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span>Mark Case as Completed: <strong>${escapeHtml(caseRef)}</strong></span>
+                        </div>
+                        <button type="button" class="audit-modal-close-btn" onclick="closeAuditActionModal()">&times;</button>
+                    </div>
+
+                    <div class="audit-modal-body">
+                        <div class="audit-modal-field">
+                            <label class="audit-modal-label">Resolution Action Outcome</label>
+                            <select class="audit-modal-select" id="modalResolutionAction">
+                                <option value="PAYROLL_ADJUSTED">Payroll Discrepancy Adjusted / Arrear Scheduled</option>
+                                <option value="ATTENDANCE_REGULARIZED">Attendance Regularized / Biometric In-Punch Override</option>
+                                <option value="RECORD_UPDATED">HRMS Employee Records Updated &amp; Corrected</option>
+                                <option value="POLICY_CLARIFIED">General HR Policy Clarified &amp; Resolved</option>
+                                <option value="SERVICE_CLOSED">Service Request Approved &amp; Executed</option>
+                            </select>
+                        </div>
+
+                        <div class="audit-modal-field">
+                            <label class="audit-modal-label">Audit / Transaction Reference ID</label>
+                            <input type="text" class="audit-modal-input" id="modalResolutionRef" value="${escapeHtml(defaultRef)}" placeholder="e.g. 1MG-PAYROLL-8841">
+                        </div>
+
+                        <div class="audit-modal-field">
+                            <label class="audit-modal-label">Resolution Summary Note (Logged in Audit Trail)</label>
+                            <textarea class="audit-modal-textarea" id="modalResolutionNotes" rows="5">${escapeHtml(defaultNotes)}</textarea>
+                        </div>
+
+                        <label class="audit-modal-checkbox-row">
+                            <input type="checkbox" id="modalNotifyEmployee" ${empEmail ? 'checked' : 'disabled'}>
+                            <span>Send official completion notice email to <strong>${escapeHtml(empEmail || 'No employee email on file')}</strong></span>
+                        </label>
+                    </div>
+
+                    <div class="audit-modal-footer">
+                        <button type="button" class="btn-pill-action" onclick="closeAuditActionModal()">Cancel</button>
+                        <button type="button" class="btn-audit-op btn-complete-work" id="btnSubmitCompleteCase" onclick="submitCompleteCaseWork('${caseRef}')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span>✓ Confirm &amp; Mark Completed</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML("beforeend", modalHtml);
+    };
+
+    window.submitCompleteCaseWork = async function(caseRef) {
+        const btn = document.getElementById("btnSubmitCompleteCase");
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = `<span>Saving...</span>`;
+        }
+
+        const resType = document.getElementById("modalResolutionAction")?.value || "VERIFIED_COMPLETED";
+        const refId = document.getElementById("modalResolutionRef")?.value || `1MG-${caseRef}`;
+        const notes = document.getElementById("modalResolutionNotes")?.value || "Verified and completed by HR Specialist.";
+        const notifyEmp = document.getElementById("modalNotifyEmployee")?.checked || false;
+
+        const elapsed = stopClientWorkTimer();
+        const userStr = sessionStorage.getItem("hrflow_user") || localStorage.getItem("hrflow_last_user");
+        let userName = "Vaibhav (HR)";
+        if (userStr) {
+            try { userName = JSON.parse(userStr).name || userName; } catch (_) {}
+        }
+
+        try {
+            const res = await fetch(`${BACKEND_API_BASE}/api/agent/cases/${encodeURIComponent(caseRef)}/complete-work`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    performed_by: userName,
+                    resolution_type: resType,
+                    reference_id: refId,
+                    resolution_notes: notes,
+                    notify_employee: notifyEmp,
+                    elapsed_seconds: elapsed
+                })
+            });
+
+            if (res.ok) {
+                closeAuditActionModal();
+                currentDossierStep = 2;
+                await selectCase(caseRef);
+                loadWorkbench(false);
+                refreshCaseAuditTimeline(caseRef);
+            } else {
+                const err = await res.json();
+                alert(err.message || "Failed to mark case as completed. Please try again.");
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = `<span>✓ Confirm &amp; Mark Completed</span>`;
+                }
+            }
+        } catch (err) {
+            console.error("Error completing case:", err);
+            alert("Network error completing case.");
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = `<span>✓ Confirm &amp; Mark Completed</span>`;
+            }
+        }
+    };
+
+    window.openRejectCaseModal = function(caseRef) {
+        closeAuditActionModal();
+
+        const data = currentDossierData || {};
+        const c = data.case || {};
+        const emp = data.employee || {};
+        const email = data.email || {};
+
+        const empName = emp.name || c.employee_name || "Employee";
+        const empEmail = emp.email || c.sender_email || email.sender_email || "";
+
+        const modalHtml = `
+            <div class="audit-modal-overlay" id="auditActionModalOverlay" onclick="if(event.target === this) closeAuditActionModal();">
+                <div class="audit-modal-card">
+                    <div class="audit-modal-header">
+                        <div class="audit-modal-title" style="color:#B42318;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B42318" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                            <span>Reject Case: <strong>${escapeHtml(caseRef)}</strong></span>
+                        </div>
+                        <button type="button" class="audit-modal-close-btn" onclick="closeAuditActionModal()">&times;</button>
+                    </div>
+
+                    <div class="audit-modal-body">
+                        <div class="audit-modal-field">
+                            <label class="audit-modal-label">Rejection Classification Category</label>
+                            <select class="audit-modal-select" id="modalRejectionCategory">
+                                <option value="POLICY_INELIGIBLE">Policy Ineligible / Outside Tata 1mg HR Guidelines</option>
+                                <option value="INSUFFICIENT_DOCUMENTATION">Insufficient Documentation / Unverified Attendance</option>
+                                <option value="DUPLICATE_INQUIRY">Duplicate Inquiry / Already Addressed</option>
+                                <option value="INVALID_DISCREPANCY">Discrepancy Claim Not Substantiated in Payroll Ledger</option>
+                                <option value="MANAGER_NOT_APPROVED">Reporting Manager Disapproval on Record</option>
+                            </select>
+                        </div>
+
+                        <div class="audit-modal-field">
+                            <label class="audit-modal-label">Rejection Reason &amp; Compliance Justification (Required)</label>
+                            <textarea class="audit-modal-textarea" id="modalRejectionReason" rows="5" placeholder="Specify clearly why this request cannot be approved per Tata 1mg policy..."></textarea>
+                        </div>
+
+                        <label class="audit-modal-checkbox-row">
+                            <input type="checkbox" id="modalNotifyEmployeeReject" ${empEmail ? 'checked' : 'disabled'}>
+                            <span>Send official rejection explanation email to <strong>${escapeHtml(empEmail || 'No employee email on file')}</strong></span>
+                        </label>
+                    </div>
+
+                    <div class="audit-modal-footer">
+                        <button type="button" class="btn-pill-action" onclick="closeAuditActionModal()">Cancel</button>
+                        <button type="button" class="btn-audit-op btn-reject-work" id="btnSubmitRejectCase" onclick="submitRejectCaseWork('${caseRef}')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                            <span>✕ Confirm &amp; Reject Case</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML("beforeend", modalHtml);
+    };
+
+    window.submitRejectCaseWork = async function(caseRef) {
+        const reasonInput = document.getElementById("modalRejectionReason");
+        const reason = (reasonInput?.value || "").trim();
+        if (!reason) {
+            alert("Please provide a valid rejection reason or compliance justification.");
+            reasonInput?.focus();
+            return;
+        }
+
+        const btn = document.getElementById("btnSubmitRejectCase");
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = `<span>Saving...</span>`;
+        }
+
+        const category = document.getElementById("modalRejectionCategory")?.value || "POLICY_INELIGIBLE";
+        const notifyEmp = document.getElementById("modalNotifyEmployeeReject")?.checked || false;
+
+        const elapsed = stopClientWorkTimer();
+        const userStr = sessionStorage.getItem("hrflow_user") || localStorage.getItem("hrflow_last_user");
+        let userName = "Vaibhav (HR)";
+        if (userStr) {
+            try { userName = JSON.parse(userStr).name || userName; } catch (_) {}
+        }
+
+        try {
+            const res = await fetch(`${BACKEND_API_BASE}/api/agent/cases/${encodeURIComponent(caseRef)}/reject-work`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    performed_by: userName,
+                    rejection_category: category,
+                    rejection_reason: reason,
+                    notify_employee: notifyEmp,
+                    elapsed_seconds: elapsed
+                })
+            });
+
+            if (res.ok) {
+                closeAuditActionModal();
+                currentDossierStep = 2;
+                await selectCase(caseRef);
+                loadWorkbench(false);
+                refreshCaseAuditTimeline(caseRef);
+            } else {
+                const err = await res.json();
+                alert(err.message || "Failed to reject case. Please try again.");
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = `<span>✕ Confirm &amp; Reject Case</span>`;
+                }
+            }
+        } catch (err) {
+            console.error("Error rejecting case:", err);
+            alert("Network error rejecting case.");
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = `<span>✕ Confirm &amp; Reject Case</span>`;
+            }
         }
     };
 

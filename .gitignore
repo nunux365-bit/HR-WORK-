@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.env
+backend/.env
+backend/storage/logs/*.log
+backend/storage/gmail_session.json
+*.db
+*.sqlite
+scratch/
+.pytest_cache/
+dist/
+build/

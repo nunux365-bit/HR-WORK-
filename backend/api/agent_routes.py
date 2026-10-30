@@ -3387,6 +3387,279 @@ def toggle_case_checklist_item(case_ref: str):
         conn.close()
 
 
+@agent_bp.route("/cases/<case_ref>/complete-work", methods=["POST"])
+def complete_case_work(case_ref: str):
+    """
+    Complete & resolve case from Audit section:
+    - Calculates handling elapsed time (if session was active)
+    - Sets case status = 'RESOLVED', workflow_state = 'RESOLVED'
+    - Updates resolution_type, resolution_notes, forensic_proof, resolved_by, resolved_at
+    - Optionally sends professional resolution email via Gmail SMTP
+    - Logs CASE_COMPLETED in audit_logs with total handling duration
+    """
+    from backend.models.case import get_case_by_id_or_number
+    from backend.services.audit.audit_service import log_event
+    from backend.services.gmail.gmail_client import send_gmail_smtp_email
+
+    payload = request.get_json(silent=True) or {}
+    performed_by = (payload.get("performed_by") or request.headers.get("X-HR-User") or "HR Agent").strip()
+    res_type = (payload.get("resolution_type") or "VERIFIED_COMPLETED").strip().upper()
+    ref_id = (payload.get("reference_id") or "").strip()
+    notes = (payload.get("resolution_notes") or payload.get("notes") or "Verified and completed by HR Specialist.").strip()
+    notify_employee = bool(payload.get("notify_employee", True))
+    session_sec = int(payload.get("elapsed_seconds") or 0)
+    now_iso = datetime.now(timezone.utc).isoformat()
+
+    conn = get_connection()
+    try:
+        case_obj = _resolve_case_row_by_ref(conn, case_ref)
+        if not case_obj:
+            return error_response("NOT_FOUND", f"Case '{case_ref}' not found.", 404)
+        db_id = int(case_obj["id"])
+        case_number = case_obj["case_number"]
+
+        raw_cf = case_obj.get("custom_fields")
+        cf = json.loads(raw_cf) if isinstance(raw_cf, str) and raw_cf.strip() else (raw_cf if isinstance(raw_cf, dict) else {})
+
+        work_session = cf.get("work_session") or {}
+        prev_total = int(work_session.get("total_handling_seconds") or 0)
+        new_total = prev_total + session_sec
+        mins, secs = divmod(new_total, 60)
+        duration_display = f"{mins}m {secs:02d}s" if mins > 0 else f"{secs}s"
+
+        work_session["is_active"] = False
+        work_session["completed_at"] = now_iso
+        work_session["total_handling_seconds"] = new_total
+        work_session["handling_display"] = duration_display
+        cf["work_session"] = work_session
+
+        proof_payload = {"proofId": ref_id, "resolution_type": res_type, "completed_at": now_iso}
+        proof_json = json.dumps(proof_payload)
+
+        full_notes = notes
+        if ref_id and ref_id not in full_notes:
+            full_notes = f"{full_notes}\n\n[Reference / UTR: {ref_id}]"
+
+        conn.execute(
+            """
+            UPDATE cases
+               SET status = 'RESOLVED',
+                   workflow_state = 'RESOLVED',
+                   resolution_type = ?,
+                   resolution_notes = ?,
+                   forensic_proof = ?,
+                   resolved_by = ?,
+                   resolved_at = ?,
+                   custom_fields = ?,
+                   updated_at = ?
+             WHERE id = ?
+            """,
+            (res_type, full_notes, proof_json, performed_by, now_iso, json.dumps(cf), now_iso, db_id),
+        )
+        conn.commit()
+
+        # Email notification if requested
+        recipient_email = (payload.get("recipient_email") or "").strip()
+        if not recipient_email and case_obj.get("email_id"):
+            em_row = conn.execute("SELECT sender_email FROM emails WHERE id = ?", (case_obj["email_id"],)).fetchone()
+            if em_row and em_row["sender_email"]:
+                recipient_email = em_row["sender_email"].strip()
+
+        if notify_employee and recipient_email and "@" in recipient_email:
+            subj = f"[Resolved · {case_number}] {case_obj.get('title') or 'HR Request Resolved'}"
+            html_body = (
+                f"<div style='font-family:Inter,Arial,sans-serif;font-size:14px;line-height:1.6;color:#0f172a;max-width:620px;margin:0 auto;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;'>"
+                f"<div style='background:linear-gradient(135deg,#027A48,#12B76A);color:#ffffff;padding:20px 24px;'>"
+                f"<div style='font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;opacity:0.9;'>Tata 1mg · People Operations Desk</div>"
+                f"<h2 style='margin:4px 0 0 0;font-size:20px;font-weight:800;'>✓ Request Resolved &amp; Completed: {html_lib.escape(str(case_number))}</h2>"
+                f"</div>"
+                f"<div style='padding:24px;background:#ffffff;'>"
+                f"<p style='margin:0 0 16px 0;font-size:14px;color:#334155;line-height:1.6;white-space:pre-wrap;'>{html_lib.escape(notes)}</p>"
+                f"<div style='background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px 16px;margin:18px 0;font-size:12px;color:#64748b;display:grid;grid-template-columns:1fr 1fr;gap:8px;'>"
+                f"<div><strong>Resolution Action:</strong> {html_lib.escape(res_type)}</div>"
+                f"<div><strong>Audit Reference ID:</strong> {html_lib.escape(ref_id or '1MG-COMPLETED')}</div>"
+                f"<div><strong>Handled By:</strong> {html_lib.escape(performed_by)}</div>"
+                f"<div><strong>Total Handling Time:</strong> {html_lib.escape(duration_display)}</div>"
+                f"</div>"
+                f"<hr style='border:none;border-top:1px solid #e2e8f0;margin:18px 0;'>"
+                f"<div style='font-size:11px;color:#94a3b8;'>Tata 1mg People Operations Desk · Automated Compliance Dispatch</div>"
+                f"</div>"
+                f"</div>"
+            )
+            try:
+                send_gmail_smtp_email(
+                    recipient_email=recipient_email,
+                    subject=subj,
+                    body_text=full_notes,
+                    body_html=html_body,
+                )
+                conn.execute(
+                    """
+                    INSERT INTO case_communications (case_id, email_id, sender_type, sender_name, recipient, subject, message, comm_type)
+                    VALUES (?, ?, 'HR_AGENT', ?, ?, ?, ?, 'RESOLUTION_NOTICE')
+                    """,
+                    (db_id, case_obj.get("email_id"), performed_by, recipient_email, subj, full_notes),
+                )
+                conn.commit()
+            except Exception as mail_err:
+                print(f"[AgentRoutes] SMTP dispatch error on complete: {mail_err}")
+
+        log_event(
+            entity_type="CASE",
+            entity_id=str(case_number),
+            action="CASE_COMPLETED",
+            description=f"{performed_by} marked case #{case_number} as COMPLETED ({res_type}{f', Ref: {ref_id}' if ref_id else ''}). Cumulative handling time: {duration_display}",
+            performed_by=performed_by,
+            metadata={"status": "RESOLVED", "resolution_type": res_type, "reference_id": ref_id, "handling_display": duration_display, "total_handling_seconds": new_total}
+        )
+
+        return success_response({
+            "case_number": case_number,
+            "status": "RESOLVED",
+            "resolution_type": res_type,
+            "reference_id": ref_id,
+            "work_session": work_session,
+            "message": f"Case {case_number} marked as COMPLETED. Handling time: {duration_display}"
+        })
+    finally:
+        conn.close()
+
+
+@agent_bp.route("/cases/<case_ref>/reject-work", methods=["POST"])
+def reject_case_work(case_ref: str):
+    """
+    Reject case from Audit section:
+    - Calculates handling elapsed time (if session was active)
+    - Sets case status = 'REJECTED', workflow_state = 'REJECTED'
+    - Updates resolution_type = 'REJECTED', resolution_notes = reason, forensic_proof
+    - Optionally sends rejection explanation email via Gmail SMTP
+    - Logs CASE_REJECTED in audit_logs with reason, category, handling time
+    """
+    from backend.models.case import get_case_by_id_or_number
+    from backend.services.audit.audit_service import log_event
+    from backend.services.gmail.gmail_client import send_gmail_smtp_email
+
+    payload = request.get_json(silent=True) or {}
+    performed_by = (payload.get("performed_by") or request.headers.get("X-HR-User") or "HR Agent").strip()
+    category = (payload.get("rejection_category") or "POLICY_INELIGIBLE").strip()
+    reason = (payload.get("rejection_reason") or payload.get("reason") or "Request does not meet Tata 1mg HR policy guidelines.").strip()
+    notify_employee = bool(payload.get("notify_employee", True))
+    session_sec = int(payload.get("elapsed_seconds") or 0)
+    now_iso = datetime.now(timezone.utc).isoformat()
+
+    conn = get_connection()
+    try:
+        case_obj = _resolve_case_row_by_ref(conn, case_ref)
+        if not case_obj:
+            return error_response("NOT_FOUND", f"Case '{case_ref}' not found.", 404)
+        db_id = int(case_obj["id"])
+        case_number = case_obj["case_number"]
+
+        raw_cf = case_obj.get("custom_fields")
+        cf = json.loads(raw_cf) if isinstance(raw_cf, str) and raw_cf.strip() else (raw_cf if isinstance(raw_cf, dict) else {})
+
+        work_session = cf.get("work_session") or {}
+        prev_total = int(work_session.get("total_handling_seconds") or 0)
+        new_total = prev_total + session_sec
+        mins, secs = divmod(new_total, 60)
+        duration_display = f"{mins}m {secs:02d}s" if mins > 0 else f"{secs}s"
+
+        work_session["is_active"] = False
+        work_session["rejected_at"] = now_iso
+        work_session["total_handling_seconds"] = new_total
+        work_session["handling_display"] = duration_display
+        cf["work_session"] = work_session
+
+        proof_payload = {"rejection_category": category, "rejection_reason": reason, "rejected_at": now_iso}
+        proof_json = json.dumps(proof_payload)
+        full_notes = f"[{category}] {reason}"
+
+        conn.execute(
+            """
+            UPDATE cases
+               SET status = 'REJECTED',
+                   workflow_state = 'REJECTED',
+                   resolution_type = 'REJECTED',
+                   resolution_notes = ?,
+                   forensic_proof = ?,
+                   resolved_by = ?,
+                   resolved_at = ?,
+                   custom_fields = ?,
+                   updated_at = ?
+             WHERE id = ?
+            """,
+            (full_notes, proof_json, performed_by, now_iso, json.dumps(cf), now_iso, db_id),
+        )
+        conn.commit()
+
+        # Email notification if requested
+        recipient_email = (payload.get("recipient_email") or "").strip()
+        if not recipient_email and case_obj.get("email_id"):
+            em_row = conn.execute("SELECT sender_email FROM emails WHERE id = ?", (case_obj["email_id"],)).fetchone()
+            if em_row and em_row["sender_email"]:
+                recipient_email = em_row["sender_email"].strip()
+
+        if notify_employee and recipient_email and "@" in recipient_email:
+            subj = f"[Notice · {case_number}] {case_obj.get('title') or 'HR Request Decision'}"
+            html_body = (
+                f"<div style='font-family:Inter,Arial,sans-serif;font-size:14px;line-height:1.6;color:#0f172a;max-width:620px;margin:0 auto;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;'>"
+                f"<div style='background:linear-gradient(135deg,#B42318,#E03546);color:#ffffff;padding:20px 24px;'>"
+                f"<div style='font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;opacity:0.9;'>Tata 1mg · People Operations Desk</div>"
+                f"<h2 style='margin:4px 0 0 0;font-size:20px;font-weight:800;'>Request Decision Notice: {html_lib.escape(str(case_number))}</h2>"
+                f"</div>"
+                f"<div style='padding:24px;background:#ffffff;'>"
+                f"<p style='margin:0 0 16px 0;font-size:14px;color:#334155;line-height:1.6;'>Following verification against Tata 1mg HR policy guidelines, your inquiry/request could not be approved for adjustment.</p>"
+                f"<div style='background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:14px 16px;margin:18px 0;font-size:13px;color:#991b1b;'>"
+                f"<strong>Category:</strong> {html_lib.escape(category)}<br>"
+                f"<strong>Explanation:</strong> {html_lib.escape(reason)}"
+                f"</div>"
+                f"<div style='background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px 16px;margin:18px 0;font-size:12px;color:#64748b;'>"
+                f"Reviewed by: <strong>{html_lib.escape(performed_by)}</strong> • Decision recorded on {html_lib.escape(now_iso)}"
+                f"</div>"
+                f"<hr style='border:none;border-top:1px solid #e2e8f0;margin:18px 0;'>"
+                f"<div style='font-size:11px;color:#94a3b8;'>If you have questions or additional documents, reply directly to this email to request lead review.</div>"
+                f"</div>"
+                f"</div>"
+            )
+            try:
+                send_gmail_smtp_email(
+                    recipient_email=recipient_email,
+                    subject=subj,
+                    body_text=f"Request Decision Notice: {case_number}\n\n{reason}",
+                    body_html=html_body,
+                )
+                conn.execute(
+                    """
+                    INSERT INTO case_communications (case_id, email_id, sender_type, sender_name, recipient, subject, message, comm_type)
+                    VALUES (?, ?, 'HR_AGENT', ?, ?, ?, ?, 'REJECTION_NOTICE')
+                    """,
+                    (db_id, case_obj.get("email_id"), performed_by, recipient_email, subj, full_notes),
+                )
+                conn.commit()
+            except Exception as mail_err:
+                print(f"[AgentRoutes] SMTP dispatch error on reject: {mail_err}")
+
+        log_event(
+            entity_type="CASE",
+            entity_id=str(case_number),
+            action="CASE_REJECTED",
+            description=f"{performed_by} REJECTED case #{case_number} ({category}: {reason[:100]}). Cumulative handling time: {duration_display}",
+            performed_by=performed_by,
+            metadata={"status": "REJECTED", "rejection_category": category, "rejection_reason": reason, "handling_display": duration_display, "total_handling_seconds": new_total}
+        )
+
+        return success_response({
+            "case_number": case_number,
+            "status": "REJECTED",
+            "rejection_category": category,
+            "rejection_reason": reason,
+            "work_session": work_session,
+            "message": f"Case {case_number} has been REJECTED. Handling time: {duration_display}"
+        })
+    finally:
+        conn.close()
+
+
 @agent_bp.route("/cases/<case_ref>/action", methods=["POST"])
 def execute_agent_case_action(case_ref: str):
     """
