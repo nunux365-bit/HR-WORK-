@@ -1,0 +1,50 @@
+{
+  "name": "hrflow-desktop",
+  "version": "1.0.0",
+  "description": "HR Flow — Autonomous Workforce Operations Desktop Application",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build:linux": "electron-builder --linux AppImage",
+    "build:win": "electron-builder --win nsis",
+    "build:all": "electron-builder -mwl"
+  },
+  "author": "HR Flow Core Team",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^29.1.5",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.hrflow.desktop",
+    "productName": "HR Flow",
+    "directories": {
+      "output": "../dist-electron"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "../frontend/**/*",
+      "../backend/**/*",
+      "../data/**/*"
+    ],
+    "win": {
+      "target": ["nsis"],
+      "icon": "../frontend/img/hrflow.ico"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "HR Flow"
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "icon": "../frontend/img/nexus-logo-512.png",
+      "category": "Office"
+    }
+  }
+}
+
