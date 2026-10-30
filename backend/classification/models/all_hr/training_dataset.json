@@ -1,0 +1,1617 @@
+{
+  "category_code": "ALL_HR",
+  "display_name": "PeopleDesk",
+  "intents": {
+    "AL01": "General People Desk Support",
+    "AL02": "Payroll and Salary Query",
+    "AL03": "Payslip and Payroll Documents",
+    "AL04": "Leave and Attendance Support",
+    "AL05": "Onboarding and Joining Formalities",
+    "AL06": "Employee Profile and Bank Details",
+    "AL07": "Benefits, Policies and Employment Documents",
+    "AL08": "Performance, Transfer and Exit Support"
+  },
+  "training_samples": [
+    {
+      "text": "Subject: General HR assistance request\nHi People Desk,\nMy employee ID is EMP1000. I have an employee-related question and would appreciate guidance on the correct process. I checked the employee portal but could not find a clear update. Thank you for your time and support.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: Need help from People Desk\nHello Team,\nMy employee ID is EMP1028. Could you review my query and advise which steps I should follow? Please let me know whether I need to raise a formal request. Thank you for your time and support.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: HR se help chahiye\nHi People Desk,\nMy employee ID is EMP1056. Mera ek employee-related query hai. Please process samjha kar help kar dijiye. I checked the employee portal but could not find a clear update. Thank you for your time and support.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: People Desk se guidance chahiye\nDear HR Operations,\nMy employee ID is EMP1084. Mujhe HR se related issue ke liye guidance chahiye. Please next steps bata dein. Please let me know whether I need to raise a formal request. Thank you for your time and support.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: Need help from People Desk\nDear People Desk Team,\nMy employee ID is EMP1112. Could you review my query and advise which steps I should follow? I checked the employee portal but could not find a clear update. Kindly advise on the next steps. Thank you.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: HR se help chahiye\nDear HR Operations,\nMy employee ID is EMP1140. Mera ek employee-related query hai. Please process samjha kar help kar dijiye. I checked the employee portal but could not find a clear update. Thank you for your time and support.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: People Desk se guidance chahiye\nHi People Desk,\nMy employee ID is EMP1168. Mujhe HR se related issue ke liye guidance chahiye. Please next steps bata dein. Could you confirm the expected timeline? Thank you for your time and support.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: General HR assistance request\nHello Team,\nMy employee ID is EMP1196. I have an employee-related question and would appreciate guidance on the correct process. Could you confirm the expected timeline? I would appreciate your guidance and an update.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: HR se help chahiye\nDear People Desk Team,\nMy employee ID is EMP1224. Mera ek employee-related query hai. Please process samjha kar help kar dijiye. I am contacting People Desk as the central point of contact. I would appreciate your guidance and an update.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: People Desk se guidance chahiye\nDear People Desk Team,\nMy employee ID is EMP1252. Mujhe HR se related issue ke liye guidance chahiye. Please next steps bata dein. Could you confirm the expected timeline? Kindly advise on the next steps. Thank you.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: General HR assistance request\nHi People Desk,\nMy employee ID is EMP1280. I have an employee-related question and would appreciate guidance on the correct process. Please let me know whether I need to raise a formal request. I would appreciate your guidance and an update.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: Need help from People Desk\nDear People Desk Team,\nMy employee ID is EMP1308. Could you review my query and advise which steps I should follow? Please let me know whether I need to raise a formal request. Kindly advise on the next steps. Thank you.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: People Desk se guidance chahiye\nHi People Desk,\nMy employee ID is EMP1336. Mujhe HR se related issue ke liye guidance chahiye. Please next steps bata dein. I checked the employee portal but could not find a clear update. I would appreciate your guidance and an update.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: General HR assistance request\nHello Team,\nMy employee ID is EMP1364. I have an employee-related question and would appreciate guidance on the correct process. Please let me know whether I need to raise a formal request. Thank you for your time and support.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: Need help from People Desk\nDear People Desk Team,\nMy employee ID is EMP1392. Could you review my query and advise which steps I should follow? I checked the employee portal but could not find a clear update. Please let me know if additional information is required.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: HR se help chahiye\nHello HR Team,\nMy employee ID is EMP1420. Mera ek employee-related query hai. Please process samjha kar help kar dijiye. Please let me know whether I need to raise a formal request. I would appreciate your guidance and an update.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: General HR assistance request\nDear HR Operations,\nMy employee ID is EMP1448. I have an employee-related question and would appreciate guidance on the correct process. Could you confirm the expected timeline? Thank you for your time and support.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: Need help from People Desk\nHello Team,\nMy employee ID is EMP1476. Could you review my query and advise which steps I should follow? Please let me know whether I need to raise a formal request. Kindly advise on the next steps. Thank you.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: HR se help chahiye\nHi People Desk,\nMy employee ID is EMP1504. Mera ek employee-related query hai. Please process samjha kar help kar dijiye. Please let me know whether I need to raise a formal request. Please let me know if additional information is required.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: People Desk se guidance chahiye\nDear HR Operations,\nMy employee ID is EMP1532. Mujhe HR se related issue ke liye guidance chahiye. Please next steps bata dein. I checked the employee portal but could not find a clear update. Thank you for your time and support.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: Need help from People Desk\nDear HR Operations,\nMy employee ID is EMP1560. Could you review my query and advise which steps I should follow? I checked the employee portal but could not find a clear update. Please let me know if additional information is required.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: HR se help chahiye\nHi People Desk,\nMy employee ID is EMP1588. Mera ek employee-related query hai. Please process samjha kar help kar dijiye. Could you confirm the expected timeline? I would appreciate your guidance and an update.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: People Desk se guidance chahiye\nHi People Desk,\nMy employee ID is EMP1616. Mujhe HR se related issue ke liye guidance chahiye. Please next steps bata dein. Could you confirm the expected timeline? Please let me know if additional information is required.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: General HR assistance request\nHello HR Team,\nMy employee ID is EMP1644. I have an employee-related question and would appreciate guidance on the correct process. Please let me know whether I need to raise a formal request. Please let me know if additional information is required.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: HR se help chahiye\nHello Team,\nMy employee ID is EMP1672. Mera ek employee-related query hai. Please process samjha kar help kar dijiye. I am contacting People Desk as the central point of contact. Thank you for your time and support.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: People Desk se guidance chahiye\nDear HR Operations,\nMy employee ID is EMP1700. Mujhe HR se related issue ke liye guidance chahiye. Please next steps bata dein. I am contacting People Desk as the central point of contact. Thank you for your time and support.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: General HR assistance request\nDear People Desk Team,\nMy employee ID is EMP1728. I have an employee-related question and would appreciate guidance on the correct process. Could you confirm the expected timeline? Please let me know if additional information is required.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: Need help from People Desk\nDear People Desk Team,\nMy employee ID is EMP1756. Could you review my query and advise which steps I should follow? I checked the employee portal but could not find a clear update. Kindly advise on the next steps. Thank you.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: People Desk se guidance chahiye\nHello Team,\nMy employee ID is EMP1784. Mujhe HR se related issue ke liye guidance chahiye. Please next steps bata dein. Could you confirm the expected timeline? Please let me know if additional information is required.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: General HR assistance request\nHello HR Team,\nMy employee ID is EMP1812. I have an employee-related question and would appreciate guidance on the correct process. I am contacting People Desk as the central point of contact. Please let me know if additional information is required.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: Need help from People Desk\nHello HR Team,\nMy employee ID is EMP1840. Could you review my query and advise which steps I should follow? I checked the employee portal but could not find a clear update. Please let me know if additional information is required.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: HR se help chahiye\nHi People Desk,\nMy employee ID is EMP1868. Mera ek employee-related query hai. Please process samjha kar help kar dijiye. Please let me know whether I need to raise a formal request. I would appreciate your guidance and an update.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: General HR assistance request\nDear HR Operations,\nMy employee ID is EMP1896. I have an employee-related question and would appreciate guidance on the correct process. I checked the employee portal but could not find a clear update. Thank you for your time and support.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: People Desk se guidance chahiye\nHello HR team,\nMera employee ID EMP1024 hai. Mujhe HR se related issue ke liye guidance chahiye. Please next steps bata dein. Portal par check kiya, lekin clear update nahi mila. Agar aur details chahiye toh bata dena.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: People Desk se guidance chahiye\nHello HR team,\nMera employee ID EMP1052 hai. Mujhe HR se related issue ke liye guidance chahiye. Please next steps bata dein. Please bata dein ki formal request raise karni hai ya nahi. Is issue mein help kar dein, thank you.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: People Desk se guidance chahiye\nHello HR team,\nMera employee ID EMP1080 hai. Mujhe HR se related issue ke liye guidance chahiye. Please next steps bata dein. Please expected timeline aur next steps share kar dein. Please check karke update de dein.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: HR se help chahiye\nHi People Desk,\nMera employee ID EMP1108 hai. Mera ek employee-related query hai. Please process samjha kar help kar dijiye. Please expected timeline aur next steps share kar dein. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: HR se help chahiye\nDear HR team,\nMera employee ID EMP1136 hai. Mera ek employee-related query hai. Please process samjha kar help kar dijiye. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Agar aur details chahiye toh bata dena.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: HR se help chahiye\nHi team,\nMera employee ID EMP1164 hai. Mera ek employee-related query hai. Please process samjha kar help kar dijiye. Please expected timeline aur next steps share kar dein. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: People Desk se guidance chahiye\nHello HR team,\nMera employee ID EMP1192 hai. Mujhe HR se related issue ke liye guidance chahiye. Please next steps bata dein. Please expected timeline aur next steps share kar dein. Is issue mein help kar dein, thank you.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: People Desk se guidance chahiye\nDear HR team,\nMera employee ID EMP1220 hai. Mujhe HR se related issue ke liye guidance chahiye. Please next steps bata dein. Please expected timeline aur next steps share kar dein. Agar aur details chahiye toh bata dena.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: People Desk se guidance chahiye\nDear HR team,\nMera employee ID EMP1248 hai. Mujhe HR se related issue ke liye guidance chahiye. Please next steps bata dein. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: HR se help chahiye\nHi People Desk,\nMera employee ID EMP1276 hai. Mera ek employee-related query hai. Please process samjha kar help kar dijiye. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: HR se help chahiye\nHi People Desk,\nMera employee ID EMP1304 hai. Mera ek employee-related query hai. Please process samjha kar help kar dijiye. Portal par check kiya, lekin clear update nahi mila. Is issue mein help kar dein, thank you.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: HR se help chahiye\nHi team,\nMera employee ID EMP1332 hai. Mera ek employee-related query hai. Please process samjha kar help kar dijiye. Portal par check kiya, lekin clear update nahi mila. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: People Desk se guidance chahiye\nDear HR team,\nMera employee ID EMP1360 hai. Mujhe HR se related issue ke liye guidance chahiye. Please next steps bata dein. Please expected timeline aur next steps share kar dein. Is issue mein help kar dein, thank you.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: People Desk se guidance chahiye\nDear HR team,\nMera employee ID EMP1388 hai. Mujhe HR se related issue ke liye guidance chahiye. Please next steps bata dein. Portal par check kiya, lekin clear update nahi mila. Please check karke update de dein.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: People Desk se guidance chahiye\nHello HR team,\nMera employee ID EMP1416 hai. Mujhe HR se related issue ke liye guidance chahiye. Please next steps bata dein. Portal par check kiya, lekin clear update nahi mila. Please check karke update de dein.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: HR se help chahiye\nHi team,\nMera employee ID EMP1444 hai. Mera ek employee-related query hai. Please process samjha kar help kar dijiye. Please bata dein ki formal request raise karni hai ya nahi. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: HR se help chahiye\nDear HR team,\nMera employee ID EMP1472 hai. Mera ek employee-related query hai. Please process samjha kar help kar dijiye. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Please check karke update de dein.",
+      "intent": "AL01"
+    },
+    {
+      "text": "Subject: Salary payment status request\nDear People Desk Team,\nMy employee ID is EMP1850. My salary for this month has not been credited yet. Please check the payment status. Could you confirm the expected timeline? Kindly advise on the next steps. Thank you.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Payroll amount discrepancy\nDear HR Operations,\nMy employee ID is EMP1878. The amount credited appears lower than expected. Please review the payroll calculation and deductions. I am contacting People Desk as the central point of contact. Please let me know if additional information is required.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary nahi aayi\nDear People Desk Team,\nMy employee ID is EMP1006. Meri is month ki salary account mein credit nahi hui hai. Please status check karke update de dein. I am contacting People Desk as the central point of contact. Please let me know if additional information is required.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary kam aayi hai\nHello HR Team,\nMy employee ID is EMP1034. Mere account mein expected amount se kam salary aayi hai. Please calculation check karwa dijiye. Could you confirm the expected timeline? Thank you for your time and support.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Payroll amount discrepancy\nHello HR Team,\nMy employee ID is EMP1062. The amount credited appears lower than expected. Please review the payroll calculation and deductions. Please let me know whether I need to raise a formal request. Please let me know if additional information is required.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary nahi aayi\nDear People Desk Team,\nMy employee ID is EMP1090. Meri is month ki salary account mein credit nahi hui hai. Please status check karke update de dein. I am contacting People Desk as the central point of contact. Please let me know if additional information is required.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary kam aayi hai\nHello Team,\nMy employee ID is EMP1118. Mere account mein expected amount se kam salary aayi hai. Please calculation check karwa dijiye. Could you confirm the expected timeline? I would appreciate your guidance and an update.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary payment status request\nDear People Desk Team,\nMy employee ID is EMP1146. My salary for this month has not been credited yet. Please check the payment status. Could you confirm the expected timeline? Please let me know if additional information is required.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary nahi aayi\nDear HR Operations,\nMy employee ID is EMP1174. Meri is month ki salary account mein credit nahi hui hai. Please status check karke update de dein. I am contacting People Desk as the central point of contact. Thank you for your time and support.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary kam aayi hai\nHello HR Team,\nMy employee ID is EMP1202. Mere account mein expected amount se kam salary aayi hai. Please calculation check karwa dijiye. Please let me know whether I need to raise a formal request. Kindly advise on the next steps. Thank you.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary payment status request\nHello HR Team,\nMy employee ID is EMP1230. My salary for this month has not been credited yet. Please check the payment status. I am contacting People Desk as the central point of contact. I would appreciate your guidance and an update.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Payroll amount discrepancy\nHello HR Team,\nMy employee ID is EMP1258. The amount credited appears lower than expected. Please review the payroll calculation and deductions. I am contacting People Desk as the central point of contact. Please let me know if additional information is required.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary kam aayi hai\nHello Team,\nMy employee ID is EMP1286. Mere account mein expected amount se kam salary aayi hai. Please calculation check karwa dijiye. Could you confirm the expected timeline? I would appreciate your guidance and an update.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary payment status request\nDear HR Operations,\nMy employee ID is EMP1314. My salary for this month has not been credited yet. Please check the payment status. Please let me know whether I need to raise a formal request. I would appreciate your guidance and an update.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Payroll amount discrepancy\nDear HR Operations,\nMy employee ID is EMP1342. The amount credited appears lower than expected. Please review the payroll calculation and deductions. Could you confirm the expected timeline? Kindly advise on the next steps. Thank you.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary nahi aayi\nHello HR Team,\nMy employee ID is EMP1370. Meri is month ki salary account mein credit nahi hui hai. Please status check karke update de dein. I checked the employee portal but could not find a clear update. Please let me know if additional information is required.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary payment status request\nHello HR Team,\nMy employee ID is EMP1398. My salary for this month has not been credited yet. Please check the payment status. Please let me know whether I need to raise a formal request. I would appreciate your guidance and an update.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Payroll amount discrepancy\nDear People Desk Team,\nMy employee ID is EMP1426. The amount credited appears lower than expected. Please review the payroll calculation and deductions. I am contacting People Desk as the central point of contact. I would appreciate your guidance and an update.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary nahi aayi\nHello HR Team,\nMy employee ID is EMP1454. Meri is month ki salary account mein credit nahi hui hai. Please status check karke update de dein. I checked the employee portal but could not find a clear update. Kindly advise on the next steps. Thank you.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary kam aayi hai\nDear HR Operations,\nMy employee ID is EMP1482. Mere account mein expected amount se kam salary aayi hai. Please calculation check karwa dijiye. Please let me know whether I need to raise a formal request. I would appreciate your guidance and an update.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Payroll amount discrepancy\nHello Team,\nMy employee ID is EMP1510. The amount credited appears lower than expected. Please review the payroll calculation and deductions. I am contacting People Desk as the central point of contact. Please let me know if additional information is required.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary nahi aayi\nDear HR Operations,\nMy employee ID is EMP1538. Meri is month ki salary account mein credit nahi hui hai. Please status check karke update de dein. Please let me know whether I need to raise a formal request. Thank you for your time and support.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary kam aayi hai\nHi People Desk,\nMy employee ID is EMP1566. Mere account mein expected amount se kam salary aayi hai. Please calculation check karwa dijiye. I am contacting People Desk as the central point of contact. Thank you for your time and support.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary payment status request\nHello HR Team,\nMy employee ID is EMP1594. My salary for this month has not been credited yet. Please check the payment status. Please let me know whether I need to raise a formal request. Kindly advise on the next steps. Thank you.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary nahi aayi\nHello Team,\nMy employee ID is EMP1622. Meri is month ki salary account mein credit nahi hui hai. Please status check karke update de dein. I checked the employee portal but could not find a clear update. I would appreciate your guidance and an update.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary kam aayi hai\nDear HR Operations,\nMy employee ID is EMP1650. Mere account mein expected amount se kam salary aayi hai. Please calculation check karwa dijiye. Could you confirm the expected timeline? Thank you for your time and support.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary payment status request\nDear HR Operations,\nMy employee ID is EMP1678. My salary for this month has not been credited yet. Please check the payment status. Please let me know whether I need to raise a formal request. Please let me know if additional information is required.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Payroll amount discrepancy\nDear People Desk Team,\nMy employee ID is EMP1706. The amount credited appears lower than expected. Please review the payroll calculation and deductions. Please let me know whether I need to raise a formal request. Please let me know if additional information is required.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary kam aayi hai\nDear People Desk Team,\nMy employee ID is EMP1734. Mere account mein expected amount se kam salary aayi hai. Please calculation check karwa dijiye. I checked the employee portal but could not find a clear update. Kindly advise on the next steps. Thank you.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary payment status request\nHello HR Team,\nMy employee ID is EMP1762. My salary for this month has not been credited yet. Please check the payment status. I am contacting People Desk as the central point of contact. Kindly advise on the next steps. Thank you.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Payroll amount discrepancy\nDear People Desk Team,\nMy employee ID is EMP1790. The amount credited appears lower than expected. Please review the payroll calculation and deductions. I am contacting People Desk as the central point of contact. Kindly advise on the next steps. Thank you.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary nahi aayi\nHi People Desk,\nMy employee ID is EMP1818. Meri is month ki salary account mein credit nahi hui hai. Please status check karke update de dein. I am contacting People Desk as the central point of contact. Please let me know if additional information is required.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary payment status request\nDear HR Operations,\nMy employee ID is EMP1846. My salary for this month has not been credited yet. Please check the payment status. I am contacting People Desk as the central point of contact. Kindly advise on the next steps. Thank you.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary kam aayi hai\nHi team,\nMera employee ID EMP1874 hai. Mere account mein expected amount se kam salary aayi hai. Please calculation check karwa dijiye. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Please check karke update de dein.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary kam aayi hai\nHi team,\nMera employee ID EMP1002 hai. Mere account mein expected amount se kam salary aayi hai. Please calculation check karwa dijiye. Portal par check kiya, lekin clear update nahi mila. Please check karke update de dein.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary kam aayi hai\nHi team,\nMera employee ID EMP1030 hai. Mere account mein expected amount se kam salary aayi hai. Please calculation check karwa dijiye. Please bata dein ki formal request raise karni hai ya nahi. Please check karke update de dein.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary nahi aayi\nHello HR team,\nMera employee ID EMP1058 hai. Meri is month ki salary account mein credit nahi hui hai. Please status check karke update de dein. Please expected timeline aur next steps share kar dein. Is issue mein help kar dein, thank you.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary nahi aayi\nHi People Desk,\nMera employee ID EMP1086 hai. Meri is month ki salary account mein credit nahi hui hai. Please status check karke update de dein. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary nahi aayi\nHi team,\nMera employee ID EMP1114 hai. Meri is month ki salary account mein credit nahi hui hai. Please status check karke update de dein. Portal par check kiya, lekin clear update nahi mila. Agar aur details chahiye toh bata dena.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary kam aayi hai\nHi team,\nMera employee ID EMP1142 hai. Mere account mein expected amount se kam salary aayi hai. Please calculation check karwa dijiye. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Agar aur details chahiye toh bata dena.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary kam aayi hai\nDear HR team,\nMera employee ID EMP1170 hai. Mere account mein expected amount se kam salary aayi hai. Please calculation check karwa dijiye. Please expected timeline aur next steps share kar dein. Agar aur details chahiye toh bata dena.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary kam aayi hai\nHi People Desk,\nMera employee ID EMP1198 hai. Mere account mein expected amount se kam salary aayi hai. Please calculation check karwa dijiye. Portal par check kiya, lekin clear update nahi mila. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary nahi aayi\nHi team,\nMera employee ID EMP1226 hai. Meri is month ki salary account mein credit nahi hui hai. Please status check karke update de dein. Please expected timeline aur next steps share kar dein. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary nahi aayi\nHi team,\nMera employee ID EMP1254 hai. Meri is month ki salary account mein credit nahi hui hai. Please status check karke update de dein. Please expected timeline aur next steps share kar dein. Agar aur details chahiye toh bata dena.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary nahi aayi\nDear HR team,\nMera employee ID EMP1282 hai. Meri is month ki salary account mein credit nahi hui hai. Please status check karke update de dein. Please expected timeline aur next steps share kar dein. Agar aur details chahiye toh bata dena.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary kam aayi hai\nHi People Desk,\nMera employee ID EMP1310 hai. Mere account mein expected amount se kam salary aayi hai. Please calculation check karwa dijiye. Portal par check kiya, lekin clear update nahi mila. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary kam aayi hai\nHello HR team,\nMera employee ID EMP1338 hai. Mere account mein expected amount se kam salary aayi hai. Please calculation check karwa dijiye. Please expected timeline aur next steps share kar dein. Please check karke update de dein.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary kam aayi hai\nHello HR team,\nMera employee ID EMP1366 hai. Mere account mein expected amount se kam salary aayi hai. Please calculation check karwa dijiye. Please expected timeline aur next steps share kar dein. Agar aur details chahiye toh bata dena.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary nahi aayi\nHello HR team,\nMera employee ID EMP1394 hai. Meri is month ki salary account mein credit nahi hui hai. Please status check karke update de dein. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Please check karke update de dein.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Salary nahi aayi\nHello HR team,\nMera employee ID EMP1422 hai. Meri is month ki salary account mein credit nahi hui hai. Please status check karke update de dein. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL02"
+    },
+    {
+      "text": "Subject: Request for monthly payslip\nHello Team,\nMy employee ID is EMP1800. Could you please share my latest payslip for my records? I am contacting People Desk as the central point of contact. I would appreciate your guidance and an update.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Unable to download payslip\nDear HR Operations,\nMy employee ID is EMP1828. I cannot find my payslip in the employee portal. Please help me access it. I am contacting People Desk as the central point of contact. Thank you for your time and support.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip chahiye\nHello HR Team,\nMy employee ID is EMP1856. Mujhe latest month ki payslip chahiye. Please share kar dijiye. Could you confirm the expected timeline? Kindly advise on the next steps. Thank you.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip portal par nahi dikh rahi\nDear People Desk Team,\nMy employee ID is EMP1884. Employee portal par meri payslip show nahi ho rahi hai. Please check karke help karein. Could you confirm the expected timeline? Kindly advise on the next steps. Thank you.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Unable to download payslip\nDear HR Operations,\nMy employee ID is EMP1012. I cannot find my payslip in the employee portal. Please help me access it. I am contacting People Desk as the central point of contact. Kindly advise on the next steps. Thank you.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip chahiye\nHello HR Team,\nMy employee ID is EMP1040. Mujhe latest month ki payslip chahiye. Please share kar dijiye. Could you confirm the expected timeline? Kindly advise on the next steps. Thank you.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip portal par nahi dikh rahi\nHi People Desk,\nMy employee ID is EMP1068. Employee portal par meri payslip show nahi ho rahi hai. Please check karke help karein. Could you confirm the expected timeline? Kindly advise on the next steps. Thank you.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Request for monthly payslip\nDear People Desk Team,\nMy employee ID is EMP1096. Could you please share my latest payslip for my records? Please let me know whether I need to raise a formal request. Kindly advise on the next steps. Thank you.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip chahiye\nHello HR Team,\nMy employee ID is EMP1124. Mujhe latest month ki payslip chahiye. Please share kar dijiye. Please let me know whether I need to raise a formal request. I would appreciate your guidance and an update.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip portal par nahi dikh rahi\nHello HR Team,\nMy employee ID is EMP1152. Employee portal par meri payslip show nahi ho rahi hai. Please check karke help karein. I am contacting People Desk as the central point of contact. I would appreciate your guidance and an update.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Request for monthly payslip\nHello Team,\nMy employee ID is EMP1180. Could you please share my latest payslip for my records? Could you confirm the expected timeline? Thank you for your time and support.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Unable to download payslip\nHello Team,\nMy employee ID is EMP1208. I cannot find my payslip in the employee portal. Please help me access it. Could you confirm the expected timeline? Please let me know if additional information is required.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip portal par nahi dikh rahi\nHello HR Team,\nMy employee ID is EMP1236. Employee portal par meri payslip show nahi ho rahi hai. Please check karke help karein. Please let me know whether I need to raise a formal request. I would appreciate your guidance and an update.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Request for monthly payslip\nDear HR Operations,\nMy employee ID is EMP1264. Could you please share my latest payslip for my records? I checked the employee portal but could not find a clear update. I would appreciate your guidance and an update.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Unable to download payslip\nHi People Desk,\nMy employee ID is EMP1292. I cannot find my payslip in the employee portal. Please help me access it. Could you confirm the expected timeline? Thank you for your time and support.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip chahiye\nDear People Desk Team,\nMy employee ID is EMP1320. Mujhe latest month ki payslip chahiye. Please share kar dijiye. Could you confirm the expected timeline? Kindly advise on the next steps. Thank you.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Request for monthly payslip\nDear People Desk Team,\nMy employee ID is EMP1348. Could you please share my latest payslip for my records? Please let me know whether I need to raise a formal request. Kindly advise on the next steps. Thank you.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Unable to download payslip\nHello Team,\nMy employee ID is EMP1376. I cannot find my payslip in the employee portal. Please help me access it. Please let me know whether I need to raise a formal request. Thank you for your time and support.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip chahiye\nDear HR Operations,\nMy employee ID is EMP1404. Mujhe latest month ki payslip chahiye. Please share kar dijiye. I am contacting People Desk as the central point of contact. Kindly advise on the next steps. Thank you.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip portal par nahi dikh rahi\nHello Team,\nMy employee ID is EMP1432. Employee portal par meri payslip show nahi ho rahi hai. Please check karke help karein. I checked the employee portal but could not find a clear update. Please let me know if additional information is required.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Unable to download payslip\nHi People Desk,\nMy employee ID is EMP1460. I cannot find my payslip in the employee portal. Please help me access it. Could you confirm the expected timeline? Thank you for your time and support.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip chahiye\nHello HR Team,\nMy employee ID is EMP1488. Mujhe latest month ki payslip chahiye. Please share kar dijiye. Please let me know whether I need to raise a formal request. Kindly advise on the next steps. Thank you.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip portal par nahi dikh rahi\nHello Team,\nMy employee ID is EMP1516. Employee portal par meri payslip show nahi ho rahi hai. Please check karke help karein. Please let me know whether I need to raise a formal request. Thank you for your time and support.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Request for monthly payslip\nDear People Desk Team,\nMy employee ID is EMP1544. Could you please share my latest payslip for my records? Could you confirm the expected timeline? I would appreciate your guidance and an update.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip chahiye\nDear HR Operations,\nMy employee ID is EMP1572. Mujhe latest month ki payslip chahiye. Please share kar dijiye. I checked the employee portal but could not find a clear update. Kindly advise on the next steps. Thank you.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip portal par nahi dikh rahi\nHello Team,\nMy employee ID is EMP1600. Employee portal par meri payslip show nahi ho rahi hai. Please check karke help karein. Could you confirm the expected timeline? Thank you for your time and support.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Request for monthly payslip\nHi People Desk,\nMy employee ID is EMP1628. Could you please share my latest payslip for my records? Please let me know whether I need to raise a formal request. Thank you for your time and support.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Unable to download payslip\nDear HR Operations,\nMy employee ID is EMP1656. I cannot find my payslip in the employee portal. Please help me access it. I checked the employee portal but could not find a clear update. Kindly advise on the next steps. Thank you.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip portal par nahi dikh rahi\nDear People Desk Team,\nMy employee ID is EMP1684. Employee portal par meri payslip show nahi ho rahi hai. Please check karke help karein. I checked the employee portal but could not find a clear update. Please let me know if additional information is required.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Request for monthly payslip\nHello Team,\nMy employee ID is EMP1712. Could you please share my latest payslip for my records? Could you confirm the expected timeline? Thank you for your time and support.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Unable to download payslip\nHi People Desk,\nMy employee ID is EMP1740. I cannot find my payslip in the employee portal. Please help me access it. Please let me know whether I need to raise a formal request. Please let me know if additional information is required.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip chahiye\nHello Team,\nMy employee ID is EMP1768. Mujhe latest month ki payslip chahiye. Please share kar dijiye. Please let me know whether I need to raise a formal request. Thank you for your time and support.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Request for monthly payslip\nDear People Desk Team,\nMy employee ID is EMP1796. Could you please share my latest payslip for my records? I am contacting People Desk as the central point of contact. Kindly advise on the next steps. Thank you.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip portal par nahi dikh rahi\nDear HR team,\nMera employee ID EMP1824 hai. Employee portal par meri payslip show nahi ho rahi hai. Please check karke help karein. Please bata dein ki formal request raise karni hai ya nahi. Is issue mein help kar dein, thank you.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip portal par nahi dikh rahi\nHi team,\nMera employee ID EMP1852 hai. Employee portal par meri payslip show nahi ho rahi hai. Please check karke help karein. Portal par check kiya, lekin clear update nahi mila. Is issue mein help kar dein, thank you.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip portal par nahi dikh rahi\nDear HR team,\nMera employee ID EMP1880 hai. Employee portal par meri payslip show nahi ho rahi hai. Please check karke help karein. Please expected timeline aur next steps share kar dein. Is issue mein help kar dein, thank you.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip chahiye\nHi People Desk,\nMera employee ID EMP1008 hai. Mujhe latest month ki payslip chahiye. Please share kar dijiye. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Please check karke update de dein.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip chahiye\nDear HR team,\nMera employee ID EMP1036 hai. Mujhe latest month ki payslip chahiye. Please share kar dijiye. Portal par check kiya, lekin clear update nahi mila. Is issue mein help kar dein, thank you.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip chahiye\nHi team,\nMera employee ID EMP1064 hai. Mujhe latest month ki payslip chahiye. Please share kar dijiye. Portal par check kiya, lekin clear update nahi mila. Please check karke update de dein.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip portal par nahi dikh rahi\nHi People Desk,\nMera employee ID EMP1092 hai. Employee portal par meri payslip show nahi ho rahi hai. Please check karke help karein. Portal par check kiya, lekin clear update nahi mila. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip portal par nahi dikh rahi\nHi People Desk,\nMera employee ID EMP1120 hai. Employee portal par meri payslip show nahi ho rahi hai. Please check karke help karein. Please bata dein ki formal request raise karni hai ya nahi. Please check karke update de dein.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip portal par nahi dikh rahi\nHi team,\nMera employee ID EMP1148 hai. Employee portal par meri payslip show nahi ho rahi hai. Please check karke help karein. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Is issue mein help kar dein, thank you.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip chahiye\nDear HR team,\nMera employee ID EMP1176 hai. Mujhe latest month ki payslip chahiye. Please share kar dijiye. Please expected timeline aur next steps share kar dein. Agar aur details chahiye toh bata dena.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip chahiye\nHi team,\nMera employee ID EMP1204 hai. Mujhe latest month ki payslip chahiye. Please share kar dijiye. Please bata dein ki formal request raise karni hai ya nahi. Please check karke update de dein.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip chahiye\nHi People Desk,\nMera employee ID EMP1232 hai. Mujhe latest month ki payslip chahiye. Please share kar dijiye. Please bata dein ki formal request raise karni hai ya nahi. Is issue mein help kar dein, thank you.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip portal par nahi dikh rahi\nHi People Desk,\nMera employee ID EMP1260 hai. Employee portal par meri payslip show nahi ho rahi hai. Please check karke help karein. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip portal par nahi dikh rahi\nHello HR team,\nMera employee ID EMP1288 hai. Employee portal par meri payslip show nahi ho rahi hai. Please check karke help karein. Portal par check kiya, lekin clear update nahi mila. Is issue mein help kar dein, thank you.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip portal par nahi dikh rahi\nHi team,\nMera employee ID EMP1316 hai. Employee portal par meri payslip show nahi ho rahi hai. Please check karke help karein. Portal par check kiya, lekin clear update nahi mila. Agar aur details chahiye toh bata dena.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip chahiye\nHello HR team,\nMera employee ID EMP1344 hai. Mujhe latest month ki payslip chahiye. Please share kar dijiye. Please expected timeline aur next steps share kar dein. Agar aur details chahiye toh bata dena.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Payslip chahiye\nHi People Desk,\nMera employee ID EMP1372 hai. Mujhe latest month ki payslip chahiye. Please share kar dijiye. Portal par check kiya, lekin clear update nahi mila. Is issue mein help kar dein, thank you.",
+      "intent": "AL03"
+    },
+    {
+      "text": "Subject: Leave balance and application guidance\nHello HR Team,\nMy employee ID is EMP1750. Please confirm my available leave balance and explain how I can submit a leave request. I am contacting People Desk as the central point of contact. I would appreciate your guidance and an update.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Attendance record correction\nHello Team,\nMy employee ID is EMP1778. My attendance for the reported date appears incorrect. Please check the record and advise on regularization. Could you confirm the expected timeline? Thank you for your time and support.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Leave apply karni hai\nDear HR Operations,\nMy employee ID is EMP1806. Mujhe chhutti apply karni hai. Please leave process aur available balance bata dein. Could you confirm the expected timeline? Please let me know if additional information is required.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Attendance galat mark hui hai\nDear People Desk Team,\nMy employee ID is EMP1834. Meri attendance galat mark hui hai. Please record check karke correction karwane mein help karein. Please let me know whether I need to raise a formal request. Kindly advise on the next steps. Thank you.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Attendance record correction\nDear People Desk Team,\nMy employee ID is EMP1862. My attendance for the reported date appears incorrect. Please check the record and advise on regularization. Could you confirm the expected timeline? I would appreciate your guidance and an update.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Leave apply karni hai\nHello HR Team,\nMy employee ID is EMP1890. Mujhe chhutti apply karni hai. Please leave process aur available balance bata dein. Please let me know whether I need to raise a formal request. Thank you for your time and support.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Attendance galat mark hui hai\nDear HR Operations,\nMy employee ID is EMP1018. Meri attendance galat mark hui hai. Please record check karke correction karwane mein help karein. I am contacting People Desk as the central point of contact. Thank you for your time and support.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Leave balance and application guidance\nDear HR Operations,\nMy employee ID is EMP1046. Please confirm my available leave balance and explain how I can submit a leave request. Please let me know whether I need to raise a formal request. Kindly advise on the next steps. Thank you.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Leave apply karni hai\nHi People Desk,\nMy employee ID is EMP1074. Mujhe chhutti apply karni hai. Please leave process aur available balance bata dein. I checked the employee portal but could not find a clear update. Kindly advise on the next steps. Thank you.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Attendance galat mark hui hai\nDear People Desk Team,\nMy employee ID is EMP1102. Meri attendance galat mark hui hai. Please record check karke correction karwane mein help karein. I am contacting People Desk as the central point of contact. Kindly advise on the next steps. Thank you.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Leave balance and application guidance\nHi People Desk,\nMy employee ID is EMP1130. Please confirm my available leave balance and explain how I can submit a leave request. Please let me know whether I need to raise a formal request. I would appreciate your guidance and an update.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Attendance record correction\nDear People Desk Team,\nMy employee ID is EMP1158. My attendance for the reported date appears incorrect. Please check the record and advise on regularization. Please let me know whether I need to raise a formal request. Please let me know if additional information is required.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Attendance galat mark hui hai\nDear HR Operations,\nMy employee ID is EMP1186. Meri attendance galat mark hui hai. Please record check karke correction karwane mein help karein. Could you confirm the expected timeline? Please let me know if additional information is required.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Leave balance and application guidance\nDear HR Operations,\nMy employee ID is EMP1214. Please confirm my available leave balance and explain how I can submit a leave request. I checked the employee portal but could not find a clear update. Thank you for your time and support.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Attendance record correction\nHi People Desk,\nMy employee ID is EMP1242. My attendance for the reported date appears incorrect. Please check the record and advise on regularization. I am contacting People Desk as the central point of contact. Kindly advise on the next steps. Thank you.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Leave apply karni hai\nHello Team,\nMy employee ID is EMP1270. Mujhe chhutti apply karni hai. Please leave process aur available balance bata dein. I checked the employee portal but could not find a clear update. Kindly advise on the next steps. Thank you.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Leave balance and application guidance\nHello Team,\nMy employee ID is EMP1298. Please confirm my available leave balance and explain how I can submit a leave request. Please let me know whether I need to raise a formal request. Please let me know if additional information is required.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Attendance record correction\nDear People Desk Team,\nMy employee ID is EMP1326. My attendance for the reported date appears incorrect. Please check the record and advise on regularization. I am contacting People Desk as the central point of contact. Kindly advise on the next steps. Thank you.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Leave apply karni hai\nHello HR Team,\nMy employee ID is EMP1354. Mujhe chhutti apply karni hai. Please leave process aur available balance bata dein. Please let me know whether I need to raise a formal request. I would appreciate your guidance and an update.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Attendance galat mark hui hai\nHi People Desk,\nMy employee ID is EMP1382. Meri attendance galat mark hui hai. Please record check karke correction karwane mein help karein. Could you confirm the expected timeline? I would appreciate your guidance and an update.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Attendance record correction\nHello HR Team,\nMy employee ID is EMP1410. My attendance for the reported date appears incorrect. Please check the record and advise on regularization. Please let me know whether I need to raise a formal request. Kindly advise on the next steps. Thank you.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Leave apply karni hai\nHello Team,\nMy employee ID is EMP1438. Mujhe chhutti apply karni hai. Please leave process aur available balance bata dein. Please let me know whether I need to raise a formal request. Please let me know if additional information is required.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Attendance galat mark hui hai\nHello HR Team,\nMy employee ID is EMP1466. Meri attendance galat mark hui hai. Please record check karke correction karwane mein help karein. I am contacting People Desk as the central point of contact. Please let me know if additional information is required.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Leave balance and application guidance\nHello Team,\nMy employee ID is EMP1494. Please confirm my available leave balance and explain how I can submit a leave request. Could you confirm the expected timeline? Kindly advise on the next steps. Thank you.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Leave apply karni hai\nDear People Desk Team,\nMy employee ID is EMP1522. Mujhe chhutti apply karni hai. Please leave process aur available balance bata dein. Could you confirm the expected timeline? I would appreciate your guidance and an update.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Attendance galat mark hui hai\nDear People Desk Team,\nMy employee ID is EMP1550. Meri attendance galat mark hui hai. Please record check karke correction karwane mein help karein. Could you confirm the expected timeline? Please let me know if additional information is required.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Leave balance and application guidance\nHello Team,\nMy employee ID is EMP1578. Please confirm my available leave balance and explain how I can submit a leave request. I am contacting People Desk as the central point of contact. Please let me know if additional information is required.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Attendance record correction\nHi People Desk,\nMy employee ID is EMP1606. My attendance for the reported date appears incorrect. Please check the record and advise on regularization. I checked the employee portal but could not find a clear update. Kindly advise on the next steps. Thank you.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Attendance galat mark hui hai\nDear People Desk Team,\nMy employee ID is EMP1634. Meri attendance galat mark hui hai. Please record check karke correction karwane mein help karein. Could you confirm the expected timeline? Please let me know if additional information is required.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Leave balance and application guidance\nDear People Desk Team,\nMy employee ID is EMP1662. Please confirm my available leave balance and explain how I can submit a leave request. Please let me know whether I need to raise a formal request. I would appreciate your guidance and an update.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Attendance record correction\nDear People Desk Team,\nMy employee ID is EMP1690. My attendance for the reported date appears incorrect. Please check the record and advise on regularization. Please let me know whether I need to raise a formal request. Please let me know if additional information is required.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Leave apply karni hai\nHello HR Team,\nMy employee ID is EMP1718. Mujhe chhutti apply karni hai. Please leave process aur available balance bata dein. I am contacting People Desk as the central point of contact. Thank you for your time and support.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Leave balance and application guidance\nDear HR Operations,\nMy employee ID is EMP1746. Please confirm my available leave balance and explain how I can submit a leave request. Could you confirm the expected timeline? Thank you for your time and support.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Attendance galat mark hui hai\nHello HR team,\nMera employee ID EMP1774 hai. Meri attendance galat mark hui hai. Please record check karke correction karwane mein help karein. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Is issue mein help kar dein, thank you.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Attendance galat mark hui hai\nHi team,\nMera employee ID EMP1802 hai. Meri attendance galat mark hui hai. Please record check karke correction karwane mein help karein. Portal par check kiya, lekin clear update nahi mila. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Attendance galat mark hui hai\nHi People Desk,\nMera employee ID EMP1830 hai. Meri attendance galat mark hui hai. Please record check karke correction karwane mein help karein. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Leave apply karni hai\nHi team,\nMera employee ID EMP1858 hai. Mujhe chhutti apply karni hai. Please leave process aur available balance bata dein. Please expected timeline aur next steps share kar dein. Is issue mein help kar dein, thank you.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Leave apply karni hai\nHi team,\nMera employee ID EMP1886 hai. Mujhe chhutti apply karni hai. Please leave process aur available balance bata dein. Portal par check kiya, lekin clear update nahi mila. Please check karke update de dein.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Leave apply karni hai\nHi People Desk,\nMera employee ID EMP1014 hai. Mujhe chhutti apply karni hai. Please leave process aur available balance bata dein. Portal par check kiya, lekin clear update nahi mila. Is issue mein help kar dein, thank you.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Attendance galat mark hui hai\nHi team,\nMera employee ID EMP1042 hai. Meri attendance galat mark hui hai. Please record check karke correction karwane mein help karein. Please expected timeline aur next steps share kar dein. Is issue mein help kar dein, thank you.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Attendance galat mark hui hai\nHello HR team,\nMera employee ID EMP1070 hai. Meri attendance galat mark hui hai. Please record check karke correction karwane mein help karein. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Agar aur details chahiye toh bata dena.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Attendance galat mark hui hai\nHello HR team,\nMera employee ID EMP1098 hai. Meri attendance galat mark hui hai. Please record check karke correction karwane mein help karein. Portal par check kiya, lekin clear update nahi mila. Please check karke update de dein.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Leave apply karni hai\nHello HR team,\nMera employee ID EMP1126 hai. Mujhe chhutti apply karni hai. Please leave process aur available balance bata dein. Please expected timeline aur next steps share kar dein. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Leave apply karni hai\nDear HR team,\nMera employee ID EMP1154 hai. Mujhe chhutti apply karni hai. Please leave process aur available balance bata dein. Please expected timeline aur next steps share kar dein. Is issue mein help kar dein, thank you.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Leave apply karni hai\nHi team,\nMera employee ID EMP1182 hai. Mujhe chhutti apply karni hai. Please leave process aur available balance bata dein. Please expected timeline aur next steps share kar dein. Agar aur details chahiye toh bata dena.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Attendance galat mark hui hai\nHello HR team,\nMera employee ID EMP1210 hai. Meri attendance galat mark hui hai. Please record check karke correction karwane mein help karein. Please expected timeline aur next steps share kar dein. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Attendance galat mark hui hai\nDear HR team,\nMera employee ID EMP1238 hai. Meri attendance galat mark hui hai. Please record check karke correction karwane mein help karein. Please expected timeline aur next steps share kar dein. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Attendance galat mark hui hai\nHi team,\nMera employee ID EMP1266 hai. Meri attendance galat mark hui hai. Please record check karke correction karwane mein help karein. Please bata dein ki formal request raise karni hai ya nahi. Please check karke update de dein.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Leave apply karni hai\nHi team,\nMera employee ID EMP1294 hai. Mujhe chhutti apply karni hai. Please leave process aur available balance bata dein. Please expected timeline aur next steps share kar dein. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: Leave apply karni hai\nHi People Desk,\nMera employee ID EMP1322 hai. Mujhe chhutti apply karni hai. Please leave process aur available balance bata dein. Please expected timeline aur next steps share kar dein. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL04"
+    },
+    {
+      "text": "Subject: New joiner onboarding support\nHello Team,\nMy employee ID is EMP1700. I recently joined and need help completing onboarding and accessing the employee portal. I am contacting People Desk as the central point of contact. Thank you for your time and support.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Pending joining documents\nDear People Desk Team,\nMy employee ID is EMP1728. Please confirm which joining documents are pending and how I should submit them. Please let me know whether I need to raise a formal request. Kindly advise on the next steps. Thank you.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Joining formalities pending hain\nDear People Desk Team,\nMy employee ID is EMP1756. Meri joining ho gayi hai lekin kuch onboarding steps pending hain. Please help kar dein. I checked the employee portal but could not find a clear update. Please let me know if additional information is required.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Employee ID nahi mila\nHi People Desk,\nMy employee ID is EMP1784. Abhi tak mujhe employee ID nahi mili hai. Please status check karke update dein. Could you confirm the expected timeline? Thank you for your time and support.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Pending joining documents\nDear People Desk Team,\nMy employee ID is EMP1812. Please confirm which joining documents are pending and how I should submit them. I checked the employee portal but could not find a clear update. I would appreciate your guidance and an update.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Joining formalities pending hain\nHello HR Team,\nMy employee ID is EMP1840. Meri joining ho gayi hai lekin kuch onboarding steps pending hain. Please help kar dein. Could you confirm the expected timeline? I would appreciate your guidance and an update.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Employee ID nahi mila\nHi People Desk,\nMy employee ID is EMP1868. Abhi tak mujhe employee ID nahi mili hai. Please status check karke update dein. I checked the employee portal but could not find a clear update. I would appreciate your guidance and an update.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: New joiner onboarding support\nDear People Desk Team,\nMy employee ID is EMP1896. I recently joined and need help completing onboarding and accessing the employee portal. I am contacting People Desk as the central point of contact. I would appreciate your guidance and an update.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Joining formalities pending hain\nHello Team,\nMy employee ID is EMP1024. Meri joining ho gayi hai lekin kuch onboarding steps pending hain. Please help kar dein. I checked the employee portal but could not find a clear update. I would appreciate your guidance and an update.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Employee ID nahi mila\nDear HR Operations,\nMy employee ID is EMP1052. Abhi tak mujhe employee ID nahi mili hai. Please status check karke update dein. Please let me know whether I need to raise a formal request. I would appreciate your guidance and an update.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: New joiner onboarding support\nHi People Desk,\nMy employee ID is EMP1080. I recently joined and need help completing onboarding and accessing the employee portal. Please let me know whether I need to raise a formal request. I would appreciate your guidance and an update.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Pending joining documents\nHello HR Team,\nMy employee ID is EMP1108. Please confirm which joining documents are pending and how I should submit them. Could you confirm the expected timeline? Kindly advise on the next steps. Thank you.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Employee ID nahi mila\nHi People Desk,\nMy employee ID is EMP1136. Abhi tak mujhe employee ID nahi mili hai. Please status check karke update dein. Could you confirm the expected timeline? Thank you for your time and support.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: New joiner onboarding support\nHi People Desk,\nMy employee ID is EMP1164. I recently joined and need help completing onboarding and accessing the employee portal. Please let me know whether I need to raise a formal request. Please let me know if additional information is required.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Pending joining documents\nHello HR Team,\nMy employee ID is EMP1192. Please confirm which joining documents are pending and how I should submit them. Please let me know whether I need to raise a formal request. Thank you for your time and support.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Joining formalities pending hain\nHi People Desk,\nMy employee ID is EMP1220. Meri joining ho gayi hai lekin kuch onboarding steps pending hain. Please help kar dein. I checked the employee portal but could not find a clear update. Kindly advise on the next steps. Thank you.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: New joiner onboarding support\nDear HR Operations,\nMy employee ID is EMP1248. I recently joined and need help completing onboarding and accessing the employee portal. I am contacting People Desk as the central point of contact. Kindly advise on the next steps. Thank you.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Pending joining documents\nHello Team,\nMy employee ID is EMP1276. Please confirm which joining documents are pending and how I should submit them. Please let me know whether I need to raise a formal request. Kindly advise on the next steps. Thank you.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Joining formalities pending hain\nDear People Desk Team,\nMy employee ID is EMP1304. Meri joining ho gayi hai lekin kuch onboarding steps pending hain. Please help kar dein. Please let me know whether I need to raise a formal request. I would appreciate your guidance and an update.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Employee ID nahi mila\nDear HR Operations,\nMy employee ID is EMP1332. Abhi tak mujhe employee ID nahi mili hai. Please status check karke update dein. I checked the employee portal but could not find a clear update. Thank you for your time and support.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Pending joining documents\nHi People Desk,\nMy employee ID is EMP1360. Please confirm which joining documents are pending and how I should submit them. I am contacting People Desk as the central point of contact. Thank you for your time and support.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Joining formalities pending hain\nDear People Desk Team,\nMy employee ID is EMP1388. Meri joining ho gayi hai lekin kuch onboarding steps pending hain. Please help kar dein. Please let me know whether I need to raise a formal request. Please let me know if additional information is required.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Employee ID nahi mila\nDear HR Operations,\nMy employee ID is EMP1416. Abhi tak mujhe employee ID nahi mili hai. Please status check karke update dein. I am contacting People Desk as the central point of contact. Thank you for your time and support.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: New joiner onboarding support\nHi People Desk,\nMy employee ID is EMP1444. I recently joined and need help completing onboarding and accessing the employee portal. Please let me know whether I need to raise a formal request. Kindly advise on the next steps. Thank you.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Joining formalities pending hain\nHello HR Team,\nMy employee ID is EMP1472. Meri joining ho gayi hai lekin kuch onboarding steps pending hain. Please help kar dein. I checked the employee portal but could not find a clear update. Thank you for your time and support.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Employee ID nahi mila\nDear People Desk Team,\nMy employee ID is EMP1500. Abhi tak mujhe employee ID nahi mili hai. Please status check karke update dein. I am contacting People Desk as the central point of contact. Thank you for your time and support.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: New joiner onboarding support\nDear HR Operations,\nMy employee ID is EMP1528. I recently joined and need help completing onboarding and accessing the employee portal. I checked the employee portal but could not find a clear update. I would appreciate your guidance and an update.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Pending joining documents\nHi People Desk,\nMy employee ID is EMP1556. Please confirm which joining documents are pending and how I should submit them. I am contacting People Desk as the central point of contact. I would appreciate your guidance and an update.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Employee ID nahi mila\nHello HR Team,\nMy employee ID is EMP1584. Abhi tak mujhe employee ID nahi mili hai. Please status check karke update dein. Could you confirm the expected timeline? I would appreciate your guidance and an update.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: New joiner onboarding support\nDear People Desk Team,\nMy employee ID is EMP1612. I recently joined and need help completing onboarding and accessing the employee portal. I am contacting People Desk as the central point of contact. Thank you for your time and support.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Pending joining documents\nHi People Desk,\nMy employee ID is EMP1640. Please confirm which joining documents are pending and how I should submit them. I am contacting People Desk as the central point of contact. I would appreciate your guidance and an update.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Joining formalities pending hain\nHi People Desk,\nMy employee ID is EMP1668. Meri joining ho gayi hai lekin kuch onboarding steps pending hain. Please help kar dein. I checked the employee portal but could not find a clear update. Kindly advise on the next steps. Thank you.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: New joiner onboarding support\nHi People Desk,\nMy employee ID is EMP1696. I recently joined and need help completing onboarding and accessing the employee portal. I am contacting People Desk as the central point of contact. Kindly advise on the next steps. Thank you.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Employee ID nahi mila\nHi team,\nMera employee ID EMP1724 hai. Abhi tak mujhe employee ID nahi mili hai. Please status check karke update dein. Please bata dein ki formal request raise karni hai ya nahi. Is issue mein help kar dein, thank you.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Employee ID nahi mila\nHi People Desk,\nMera employee ID EMP1752 hai. Abhi tak mujhe employee ID nahi mili hai. Please status check karke update dein. Please bata dein ki formal request raise karni hai ya nahi. Is issue mein help kar dein, thank you.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Employee ID nahi mila\nHi team,\nMera employee ID EMP1780 hai. Abhi tak mujhe employee ID nahi mili hai. Please status check karke update dein. Please expected timeline aur next steps share kar dein. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Joining formalities pending hain\nDear HR team,\nMera employee ID EMP1808 hai. Meri joining ho gayi hai lekin kuch onboarding steps pending hain. Please help kar dein. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Please check karke update de dein.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Joining formalities pending hain\nHi team,\nMera employee ID EMP1836 hai. Meri joining ho gayi hai lekin kuch onboarding steps pending hain. Please help kar dein. Portal par check kiya, lekin clear update nahi mila. Is issue mein help kar dein, thank you.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Joining formalities pending hain\nHello HR team,\nMera employee ID EMP1864 hai. Meri joining ho gayi hai lekin kuch onboarding steps pending hain. Please help kar dein. Portal par check kiya, lekin clear update nahi mila. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Employee ID nahi mila\nHi People Desk,\nMera employee ID EMP1892 hai. Abhi tak mujhe employee ID nahi mili hai. Please status check karke update dein. Please bata dein ki formal request raise karni hai ya nahi. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Employee ID nahi mila\nHi team,\nMera employee ID EMP1020 hai. Abhi tak mujhe employee ID nahi mili hai. Please status check karke update dein. Portal par check kiya, lekin clear update nahi mila. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Employee ID nahi mila\nHi team,\nMera employee ID EMP1048 hai. Abhi tak mujhe employee ID nahi mili hai. Please status check karke update dein. Portal par check kiya, lekin clear update nahi mila. Please check karke update de dein.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Joining formalities pending hain\nHello HR team,\nMera employee ID EMP1076 hai. Meri joining ho gayi hai lekin kuch onboarding steps pending hain. Please help kar dein. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Joining formalities pending hain\nDear HR team,\nMera employee ID EMP1104 hai. Meri joining ho gayi hai lekin kuch onboarding steps pending hain. Please help kar dein. Portal par check kiya, lekin clear update nahi mila. Agar aur details chahiye toh bata dena.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Joining formalities pending hain\nHello HR team,\nMera employee ID EMP1132 hai. Meri joining ho gayi hai lekin kuch onboarding steps pending hain. Please help kar dein. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Is issue mein help kar dein, thank you.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Employee ID nahi mila\nHi People Desk,\nMera employee ID EMP1160 hai. Abhi tak mujhe employee ID nahi mili hai. Please status check karke update dein. Please bata dein ki formal request raise karni hai ya nahi. Please check karke update de dein.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Employee ID nahi mila\nDear HR team,\nMera employee ID EMP1188 hai. Abhi tak mujhe employee ID nahi mili hai. Please status check karke update dein. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Please check karke update de dein.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Employee ID nahi mila\nHi team,\nMera employee ID EMP1216 hai. Abhi tak mujhe employee ID nahi mili hai. Please status check karke update dein. Please bata dein ki formal request raise karni hai ya nahi. Please check karke update de dein.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Joining formalities pending hain\nHi People Desk,\nMera employee ID EMP1244 hai. Meri joining ho gayi hai lekin kuch onboarding steps pending hain. Please help kar dein. Please expected timeline aur next steps share kar dein. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Joining formalities pending hain\nDear HR team,\nMera employee ID EMP1272 hai. Meri joining ho gayi hai lekin kuch onboarding steps pending hain. Please help kar dein. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Agar aur details chahiye toh bata dena.",
+      "intent": "AL05"
+    },
+    {
+      "text": "Subject: Update employee personal details\nHi People Desk,\nMy employee ID is EMP1650. I need to correct information in my employee profile. Please share the approved process. I am contacting People Desk as the central point of contact. Please let me know if additional information is required.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Request to update salary bank account\nHi People Desk,\nMy employee ID is EMP1678. I changed my bank account and need to update the details used for salary processing. Could you confirm the expected timeline? Please let me know if additional information is required.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Employee details update karni hain\nDear HR Operations,\nMy employee ID is EMP1706. Mujhe employee profile mein apni details update karni hain. Please process bata dein. Could you confirm the expected timeline? Thank you for your time and support.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Bank details update karni hain\nHello HR Team,\nMy employee ID is EMP1734. Salary ke liye bank details update karni hain. Please secure process bata dijiye. Please let me know whether I need to raise a formal request. Thank you for your time and support.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Request to update salary bank account\nHello Team,\nMy employee ID is EMP1762. I changed my bank account and need to update the details used for salary processing. I checked the employee portal but could not find a clear update. Thank you for your time and support.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Employee details update karni hain\nHello Team,\nMy employee ID is EMP1790. Mujhe employee profile mein apni details update karni hain. Please process bata dein. I am contacting People Desk as the central point of contact. Kindly advise on the next steps. Thank you.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Bank details update karni hain\nDear HR Operations,\nMy employee ID is EMP1818. Salary ke liye bank details update karni hain. Please secure process bata dijiye. Could you confirm the expected timeline? I would appreciate your guidance and an update.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Update employee personal details\nDear People Desk Team,\nMy employee ID is EMP1846. I need to correct information in my employee profile. Please share the approved process. I checked the employee portal but could not find a clear update. Kindly advise on the next steps. Thank you.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Employee details update karni hain\nHello HR Team,\nMy employee ID is EMP1874. Mujhe employee profile mein apni details update karni hain. Please process bata dein. Please let me know whether I need to raise a formal request. Please let me know if additional information is required.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Bank details update karni hain\nHi People Desk,\nMy employee ID is EMP1002. Salary ke liye bank details update karni hain. Please secure process bata dijiye. Could you confirm the expected timeline? I would appreciate your guidance and an update.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Update employee personal details\nDear HR Operations,\nMy employee ID is EMP1030. I need to correct information in my employee profile. Please share the approved process. Please let me know whether I need to raise a formal request. I would appreciate your guidance and an update.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Request to update salary bank account\nDear HR Operations,\nMy employee ID is EMP1058. I changed my bank account and need to update the details used for salary processing. Please let me know whether I need to raise a formal request. I would appreciate your guidance and an update.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Bank details update karni hain\nDear People Desk Team,\nMy employee ID is EMP1086. Salary ke liye bank details update karni hain. Please secure process bata dijiye. Could you confirm the expected timeline? I would appreciate your guidance and an update.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Update employee personal details\nDear HR Operations,\nMy employee ID is EMP1114. I need to correct information in my employee profile. Please share the approved process. I checked the employee portal but could not find a clear update. Please let me know if additional information is required.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Request to update salary bank account\nDear HR Operations,\nMy employee ID is EMP1142. I changed my bank account and need to update the details used for salary processing. I checked the employee portal but could not find a clear update. Please let me know if additional information is required.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Employee details update karni hain\nHello Team,\nMy employee ID is EMP1170. Mujhe employee profile mein apni details update karni hain. Please process bata dein. Please let me know whether I need to raise a formal request. I would appreciate your guidance and an update.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Update employee personal details\nHello Team,\nMy employee ID is EMP1198. I need to correct information in my employee profile. Please share the approved process. Could you confirm the expected timeline? I would appreciate your guidance and an update.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Request to update salary bank account\nDear People Desk Team,\nMy employee ID is EMP1226. I changed my bank account and need to update the details used for salary processing. I checked the employee portal but could not find a clear update. Please let me know if additional information is required.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Employee details update karni hain\nHello Team,\nMy employee ID is EMP1254. Mujhe employee profile mein apni details update karni hain. Please process bata dein. Please let me know whether I need to raise a formal request. Thank you for your time and support.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Bank details update karni hain\nHello HR Team,\nMy employee ID is EMP1282. Salary ke liye bank details update karni hain. Please secure process bata dijiye. Could you confirm the expected timeline? Please let me know if additional information is required.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Request to update salary bank account\nDear People Desk Team,\nMy employee ID is EMP1310. I changed my bank account and need to update the details used for salary processing. I am contacting People Desk as the central point of contact. I would appreciate your guidance and an update.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Employee details update karni hain\nDear HR Operations,\nMy employee ID is EMP1338. Mujhe employee profile mein apni details update karni hain. Please process bata dein. Please let me know whether I need to raise a formal request. Please let me know if additional information is required.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Bank details update karni hain\nHello HR Team,\nMy employee ID is EMP1366. Salary ke liye bank details update karni hain. Please secure process bata dijiye. Please let me know whether I need to raise a formal request. I would appreciate your guidance and an update.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Update employee personal details\nHi People Desk,\nMy employee ID is EMP1394. I need to correct information in my employee profile. Please share the approved process. I am contacting People Desk as the central point of contact. I would appreciate your guidance and an update.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Employee details update karni hain\nDear HR Operations,\nMy employee ID is EMP1422. Mujhe employee profile mein apni details update karni hain. Please process bata dein. I checked the employee portal but could not find a clear update. Thank you for your time and support.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Bank details update karni hain\nHello HR Team,\nMy employee ID is EMP1450. Salary ke liye bank details update karni hain. Please secure process bata dijiye. Could you confirm the expected timeline? I would appreciate your guidance and an update.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Update employee personal details\nDear HR Operations,\nMy employee ID is EMP1478. I need to correct information in my employee profile. Please share the approved process. Please let me know whether I need to raise a formal request. Thank you for your time and support.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Request to update salary bank account\nHi People Desk,\nMy employee ID is EMP1506. I changed my bank account and need to update the details used for salary processing. Could you confirm the expected timeline? I would appreciate your guidance and an update.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Bank details update karni hain\nHello HR Team,\nMy employee ID is EMP1534. Salary ke liye bank details update karni hain. Please secure process bata dijiye. I checked the employee portal but could not find a clear update. Please let me know if additional information is required.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Update employee personal details\nHello Team,\nMy employee ID is EMP1562. I need to correct information in my employee profile. Please share the approved process. I checked the employee portal but could not find a clear update. I would appreciate your guidance and an update.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Request to update salary bank account\nHi People Desk,\nMy employee ID is EMP1590. I changed my bank account and need to update the details used for salary processing. Could you confirm the expected timeline? Please let me know if additional information is required.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Employee details update karni hain\nHello Team,\nMy employee ID is EMP1618. Mujhe employee profile mein apni details update karni hain. Please process bata dein. Could you confirm the expected timeline? I would appreciate your guidance and an update.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Update employee personal details\nHello Team,\nMy employee ID is EMP1646. I need to correct information in my employee profile. Please share the approved process. Please let me know whether I need to raise a formal request. Please let me know if additional information is required.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Bank details update karni hain\nHello HR team,\nMera employee ID EMP1674 hai. Salary ke liye bank details update karni hain. Please secure process bata dijiye. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Please check karke update de dein.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Bank details update karni hain\nDear HR team,\nMera employee ID EMP1702 hai. Salary ke liye bank details update karni hain. Please secure process bata dijiye. Portal par check kiya, lekin clear update nahi mila. Agar aur details chahiye toh bata dena.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Bank details update karni hain\nHi People Desk,\nMera employee ID EMP1730 hai. Salary ke liye bank details update karni hain. Please secure process bata dijiye. Please bata dein ki formal request raise karni hai ya nahi. Agar aur details chahiye toh bata dena.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Employee details update karni hain\nHello HR team,\nMera employee ID EMP1758 hai. Mujhe employee profile mein apni details update karni hain. Please process bata dein. Please bata dein ki formal request raise karni hai ya nahi. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Employee details update karni hain\nHi team,\nMera employee ID EMP1786 hai. Mujhe employee profile mein apni details update karni hain. Please process bata dein. Please bata dein ki formal request raise karni hai ya nahi. Agar aur details chahiye toh bata dena.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Employee details update karni hain\nDear HR team,\nMera employee ID EMP1814 hai. Mujhe employee profile mein apni details update karni hain. Please process bata dein. Please bata dein ki formal request raise karni hai ya nahi. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Bank details update karni hain\nDear HR team,\nMera employee ID EMP1842 hai. Salary ke liye bank details update karni hain. Please secure process bata dijiye. Please bata dein ki formal request raise karni hai ya nahi. Agar aur details chahiye toh bata dena.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Bank details update karni hain\nHi team,\nMera employee ID EMP1870 hai. Salary ke liye bank details update karni hain. Please secure process bata dijiye. Please bata dein ki formal request raise karni hai ya nahi. Agar aur details chahiye toh bata dena.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Bank details update karni hain\nHi People Desk,\nMera employee ID EMP1898 hai. Salary ke liye bank details update karni hain. Please secure process bata dijiye. Portal par check kiya, lekin clear update nahi mila. Please check karke update de dein.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Employee details update karni hain\nDear HR team,\nMera employee ID EMP1026 hai. Mujhe employee profile mein apni details update karni hain. Please process bata dein. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Please check karke update de dein.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Employee details update karni hain\nHi People Desk,\nMera employee ID EMP1054 hai. Mujhe employee profile mein apni details update karni hain. Please process bata dein. Portal par check kiya, lekin clear update nahi mila. Is issue mein help kar dein, thank you.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Employee details update karni hain\nDear HR team,\nMera employee ID EMP1082 hai. Mujhe employee profile mein apni details update karni hain. Please process bata dein. Portal par check kiya, lekin clear update nahi mila. Please check karke update de dein.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Bank details update karni hain\nDear HR team,\nMera employee ID EMP1110 hai. Salary ke liye bank details update karni hain. Please secure process bata dijiye. Please bata dein ki formal request raise karni hai ya nahi. Agar aur details chahiye toh bata dena.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Bank details update karni hain\nHello HR team,\nMera employee ID EMP1138 hai. Salary ke liye bank details update karni hain. Please secure process bata dijiye. Portal par check kiya, lekin clear update nahi mila. Agar aur details chahiye toh bata dena.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Bank details update karni hain\nHi team,\nMera employee ID EMP1166 hai. Salary ke liye bank details update karni hain. Please secure process bata dijiye. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Is issue mein help kar dein, thank you.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Employee details update karni hain\nHi People Desk,\nMera employee ID EMP1194 hai. Mujhe employee profile mein apni details update karni hain. Please process bata dein. Please expected timeline aur next steps share kar dein. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Employee details update karni hain\nHello HR team,\nMera employee ID EMP1222 hai. Mujhe employee profile mein apni details update karni hain. Please process bata dein. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL06"
+    },
+    {
+      "text": "Subject: Employee benefits clarification\nHi People Desk,\nMy employee ID is EMP1600. Could you explain the benefits available to employees and how to access them? I checked the employee portal but could not find a clear update. Kindly advise on the next steps. Thank you.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Clarification on HR policy\nHello Team,\nMy employee ID is EMP1628. Please clarify the HR policy applicable to my situation and share the latest guidance. Could you confirm the expected timeline? Thank you for your time and support.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Insurance benefits ki details chahiye\nDear HR Operations,\nMy employee ID is EMP1656. Mujhe company insurance aur benefits ki details chahiye. Please guide karein. Please let me know whether I need to raise a formal request. Thank you for your time and support.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Employment letter chahiye\nDear HR Operations,\nMy employee ID is EMP1684. Mujhe official purpose ke liye employment letter chahiye. Please request ka process bata dein. Could you confirm the expected timeline? Thank you for your time and support.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Clarification on HR policy\nHello Team,\nMy employee ID is EMP1712. Please clarify the HR policy applicable to my situation and share the latest guidance. I checked the employee portal but could not find a clear update. Kindly advise on the next steps. Thank you.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Insurance benefits ki details chahiye\nDear People Desk Team,\nMy employee ID is EMP1740. Mujhe company insurance aur benefits ki details chahiye. Please guide karein. I am contacting People Desk as the central point of contact. Kindly advise on the next steps. Thank you.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Employment letter chahiye\nHello HR Team,\nMy employee ID is EMP1768. Mujhe official purpose ke liye employment letter chahiye. Please request ka process bata dein. Please let me know whether I need to raise a formal request. Thank you for your time and support.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Employee benefits clarification\nDear People Desk Team,\nMy employee ID is EMP1796. Could you explain the benefits available to employees and how to access them? Please let me know whether I need to raise a formal request. Please let me know if additional information is required.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Insurance benefits ki details chahiye\nDear People Desk Team,\nMy employee ID is EMP1824. Mujhe company insurance aur benefits ki details chahiye. Please guide karein. Could you confirm the expected timeline? Please let me know if additional information is required.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Employment letter chahiye\nDear HR Operations,\nMy employee ID is EMP1852. Mujhe official purpose ke liye employment letter chahiye. Please request ka process bata dein. Could you confirm the expected timeline? Kindly advise on the next steps. Thank you.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Employee benefits clarification\nHi People Desk,\nMy employee ID is EMP1880. Could you explain the benefits available to employees and how to access them? Please let me know whether I need to raise a formal request. I would appreciate your guidance and an update.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Clarification on HR policy\nDear HR Operations,\nMy employee ID is EMP1008. Please clarify the HR policy applicable to my situation and share the latest guidance. Could you confirm the expected timeline? Please let me know if additional information is required.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Employment letter chahiye\nHello HR Team,\nMy employee ID is EMP1036. Mujhe official purpose ke liye employment letter chahiye. Please request ka process bata dein. Please let me know whether I need to raise a formal request. Kindly advise on the next steps. Thank you.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Employee benefits clarification\nHello HR Team,\nMy employee ID is EMP1064. Could you explain the benefits available to employees and how to access them? I am contacting People Desk as the central point of contact. Thank you for your time and support.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Clarification on HR policy\nHello HR Team,\nMy employee ID is EMP1092. Please clarify the HR policy applicable to my situation and share the latest guidance. I checked the employee portal but could not find a clear update. Thank you for your time and support.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Insurance benefits ki details chahiye\nDear People Desk Team,\nMy employee ID is EMP1120. Mujhe company insurance aur benefits ki details chahiye. Please guide karein. Please let me know whether I need to raise a formal request. Please let me know if additional information is required.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Employee benefits clarification\nHello Team,\nMy employee ID is EMP1148. Could you explain the benefits available to employees and how to access them? Could you confirm the expected timeline? I would appreciate your guidance and an update.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Clarification on HR policy\nHello HR Team,\nMy employee ID is EMP1176. Please clarify the HR policy applicable to my situation and share the latest guidance. Could you confirm the expected timeline? I would appreciate your guidance and an update.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Insurance benefits ki details chahiye\nHi People Desk,\nMy employee ID is EMP1204. Mujhe company insurance aur benefits ki details chahiye. Please guide karein. Please let me know whether I need to raise a formal request. Kindly advise on the next steps. Thank you.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Employment letter chahiye\nHi People Desk,\nMy employee ID is EMP1232. Mujhe official purpose ke liye employment letter chahiye. Please request ka process bata dein. I am contacting People Desk as the central point of contact. Kindly advise on the next steps. Thank you.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Clarification on HR policy\nHi People Desk,\nMy employee ID is EMP1260. Please clarify the HR policy applicable to my situation and share the latest guidance. I checked the employee portal but could not find a clear update. Kindly advise on the next steps. Thank you.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Insurance benefits ki details chahiye\nDear HR Operations,\nMy employee ID is EMP1288. Mujhe company insurance aur benefits ki details chahiye. Please guide karein. I am contacting People Desk as the central point of contact. I would appreciate your guidance and an update.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Employment letter chahiye\nDear HR Operations,\nMy employee ID is EMP1316. Mujhe official purpose ke liye employment letter chahiye. Please request ka process bata dein. Could you confirm the expected timeline? I would appreciate your guidance and an update.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Employee benefits clarification\nDear People Desk Team,\nMy employee ID is EMP1344. Could you explain the benefits available to employees and how to access them? Please let me know whether I need to raise a formal request. Please let me know if additional information is required.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Insurance benefits ki details chahiye\nDear People Desk Team,\nMy employee ID is EMP1372. Mujhe company insurance aur benefits ki details chahiye. Please guide karein. Could you confirm the expected timeline? Thank you for your time and support.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Employment letter chahiye\nDear HR Operations,\nMy employee ID is EMP1400. Mujhe official purpose ke liye employment letter chahiye. Please request ka process bata dein. Please let me know whether I need to raise a formal request. Thank you for your time and support.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Employee benefits clarification\nDear People Desk Team,\nMy employee ID is EMP1428. Could you explain the benefits available to employees and how to access them? I checked the employee portal but could not find a clear update. Please let me know if additional information is required.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Clarification on HR policy\nHi People Desk,\nMy employee ID is EMP1456. Please clarify the HR policy applicable to my situation and share the latest guidance. I am contacting People Desk as the central point of contact. Thank you for your time and support.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Employment letter chahiye\nHello Team,\nMy employee ID is EMP1484. Mujhe official purpose ke liye employment letter chahiye. Please request ka process bata dein. Could you confirm the expected timeline? Kindly advise on the next steps. Thank you.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Employee benefits clarification\nHi People Desk,\nMy employee ID is EMP1512. Could you explain the benefits available to employees and how to access them? I am contacting People Desk as the central point of contact. Please let me know if additional information is required.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Clarification on HR policy\nDear HR Operations,\nMy employee ID is EMP1540. Please clarify the HR policy applicable to my situation and share the latest guidance. Please let me know whether I need to raise a formal request. Thank you for your time and support.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Insurance benefits ki details chahiye\nDear People Desk Team,\nMy employee ID is EMP1568. Mujhe company insurance aur benefits ki details chahiye. Please guide karein. I checked the employee portal but could not find a clear update. Thank you for your time and support.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Employee benefits clarification\nHello HR Team,\nMy employee ID is EMP1596. Could you explain the benefits available to employees and how to access them? Please let me know whether I need to raise a formal request. Thank you for your time and support.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Employment letter chahiye\nHi team,\nMera employee ID EMP1624 hai. Mujhe official purpose ke liye employment letter chahiye. Please request ka process bata dein. Please expected timeline aur next steps share kar dein. Is issue mein help kar dein, thank you.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Employment letter chahiye\nHi People Desk,\nMera employee ID EMP1652 hai. Mujhe official purpose ke liye employment letter chahiye. Please request ka process bata dein. Portal par check kiya, lekin clear update nahi mila. Please check karke update de dein.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Employment letter chahiye\nDear HR team,\nMera employee ID EMP1680 hai. Mujhe official purpose ke liye employment letter chahiye. Please request ka process bata dein. Please bata dein ki formal request raise karni hai ya nahi. Is issue mein help kar dein, thank you.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Insurance benefits ki details chahiye\nHi team,\nMera employee ID EMP1708 hai. Mujhe company insurance aur benefits ki details chahiye. Please guide karein. Portal par check kiya, lekin clear update nahi mila. Agar aur details chahiye toh bata dena.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Insurance benefits ki details chahiye\nDear HR team,\nMera employee ID EMP1736 hai. Mujhe company insurance aur benefits ki details chahiye. Please guide karein. Portal par check kiya, lekin clear update nahi mila. Please check karke update de dein.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Insurance benefits ki details chahiye\nHello HR team,\nMera employee ID EMP1764 hai. Mujhe company insurance aur benefits ki details chahiye. Please guide karein. Please expected timeline aur next steps share kar dein. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Employment letter chahiye\nHello HR team,\nMera employee ID EMP1792 hai. Mujhe official purpose ke liye employment letter chahiye. Please request ka process bata dein. Please expected timeline aur next steps share kar dein. Agar aur details chahiye toh bata dena.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Employment letter chahiye\nHi People Desk,\nMera employee ID EMP1820 hai. Mujhe official purpose ke liye employment letter chahiye. Please request ka process bata dein. Please bata dein ki formal request raise karni hai ya nahi. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Employment letter chahiye\nHi team,\nMera employee ID EMP1848 hai. Mujhe official purpose ke liye employment letter chahiye. Please request ka process bata dein. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Please check karke update de dein.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Insurance benefits ki details chahiye\nDear HR team,\nMera employee ID EMP1876 hai. Mujhe company insurance aur benefits ki details chahiye. Please guide karein. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Agar aur details chahiye toh bata dena.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Insurance benefits ki details chahiye\nHello HR team,\nMera employee ID EMP1004 hai. Mujhe company insurance aur benefits ki details chahiye. Please guide karein. Please expected timeline aur next steps share kar dein. Is issue mein help kar dein, thank you.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Insurance benefits ki details chahiye\nDear HR team,\nMera employee ID EMP1032 hai. Mujhe company insurance aur benefits ki details chahiye. Please guide karein. Portal par check kiya, lekin clear update nahi mila. Agar aur details chahiye toh bata dena.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Employment letter chahiye\nHi People Desk,\nMera employee ID EMP1060 hai. Mujhe official purpose ke liye employment letter chahiye. Please request ka process bata dein. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Is issue mein help kar dein, thank you.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Employment letter chahiye\nDear HR team,\nMera employee ID EMP1088 hai. Mujhe official purpose ke liye employment letter chahiye. Please request ka process bata dein. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Agar aur details chahiye toh bata dena.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Employment letter chahiye\nHi People Desk,\nMera employee ID EMP1116 hai. Mujhe official purpose ke liye employment letter chahiye. Please request ka process bata dein. Please expected timeline aur next steps share kar dein. Is issue mein help kar dein, thank you.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Insurance benefits ki details chahiye\nHi team,\nMera employee ID EMP1144 hai. Mujhe company insurance aur benefits ki details chahiye. Please guide karein. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Please check karke update de dein.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Insurance benefits ki details chahiye\nHi team,\nMera employee ID EMP1172 hai. Mujhe company insurance aur benefits ki details chahiye. Please guide karein. Portal par check kiya, lekin clear update nahi mila. Agar aur details chahiye toh bata dena.",
+      "intent": "AL07"
+    },
+    {
+      "text": "Subject: Performance review process query\nHello HR Team,\nMy employee ID is EMP1550. Could you explain the performance review timeline and how I can check my status? I am contacting People Desk as the central point of contact. Thank you for your time and support.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Internal transfer process\nHello HR Team,\nMy employee ID is EMP1578. I would like guidance on the internal transfer process and required approvals. Could you confirm the expected timeline? Thank you for your time and support.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Resignation ka process bata dein\nDear People Desk Team,\nMy employee ID is EMP1606. Mujhe resignation submit karna hai. Please process aur next steps bata dijiye. I checked the employee portal but could not find a clear update. Please let me know if additional information is required.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Final settlement pending hai\nHello Team,\nMy employee ID is EMP1634. Mera full and final settlement abhi tak receive nahi hua. Please status check karke update dein. I am contacting People Desk as the central point of contact. Please let me know if additional information is required.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Internal transfer process\nDear HR Operations,\nMy employee ID is EMP1662. I would like guidance on the internal transfer process and required approvals. I checked the employee portal but could not find a clear update. Kindly advise on the next steps. Thank you.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Resignation ka process bata dein\nDear People Desk Team,\nMy employee ID is EMP1690. Mujhe resignation submit karna hai. Please process aur next steps bata dijiye. I checked the employee portal but could not find a clear update. Kindly advise on the next steps. Thank you.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Final settlement pending hai\nDear HR Operations,\nMy employee ID is EMP1718. Mera full and final settlement abhi tak receive nahi hua. Please status check karke update dein. I checked the employee portal but could not find a clear update. Thank you for your time and support.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Performance review process query\nHello HR Team,\nMy employee ID is EMP1746. Could you explain the performance review timeline and how I can check my status? Please let me know whether I need to raise a formal request. Please let me know if additional information is required.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Resignation ka process bata dein\nHi People Desk,\nMy employee ID is EMP1774. Mujhe resignation submit karna hai. Please process aur next steps bata dijiye. Could you confirm the expected timeline? Thank you for your time and support.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Final settlement pending hai\nHello Team,\nMy employee ID is EMP1802. Mera full and final settlement abhi tak receive nahi hua. Please status check karke update dein. Please let me know whether I need to raise a formal request. Kindly advise on the next steps. Thank you.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Performance review process query\nHello Team,\nMy employee ID is EMP1830. Could you explain the performance review timeline and how I can check my status? Please let me know whether I need to raise a formal request. Thank you for your time and support.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Internal transfer process\nHello Team,\nMy employee ID is EMP1858. I would like guidance on the internal transfer process and required approvals. I am contacting People Desk as the central point of contact. Please let me know if additional information is required.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Final settlement pending hai\nHi People Desk,\nMy employee ID is EMP1886. Mera full and final settlement abhi tak receive nahi hua. Please status check karke update dein. I checked the employee portal but could not find a clear update. Thank you for your time and support.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Performance review process query\nDear People Desk Team,\nMy employee ID is EMP1014. Could you explain the performance review timeline and how I can check my status? I am contacting People Desk as the central point of contact. Kindly advise on the next steps. Thank you.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Internal transfer process\nDear People Desk Team,\nMy employee ID is EMP1042. I would like guidance on the internal transfer process and required approvals. I am contacting People Desk as the central point of contact. Thank you for your time and support.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Resignation ka process bata dein\nHi People Desk,\nMy employee ID is EMP1070. Mujhe resignation submit karna hai. Please process aur next steps bata dijiye. I am contacting People Desk as the central point of contact. I would appreciate your guidance and an update.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Performance review process query\nDear People Desk Team,\nMy employee ID is EMP1098. Could you explain the performance review timeline and how I can check my status? Please let me know whether I need to raise a formal request. Kindly advise on the next steps. Thank you.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Internal transfer process\nHi People Desk,\nMy employee ID is EMP1126. I would like guidance on the internal transfer process and required approvals. Please let me know whether I need to raise a formal request. Kindly advise on the next steps. Thank you.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Resignation ka process bata dein\nHello Team,\nMy employee ID is EMP1154. Mujhe resignation submit karna hai. Please process aur next steps bata dijiye. I am contacting People Desk as the central point of contact. Kindly advise on the next steps. Thank you.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Final settlement pending hai\nHello HR Team,\nMy employee ID is EMP1182. Mera full and final settlement abhi tak receive nahi hua. Please status check karke update dein. I checked the employee portal but could not find a clear update. Kindly advise on the next steps. Thank you.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Internal transfer process\nDear HR Operations,\nMy employee ID is EMP1210. I would like guidance on the internal transfer process and required approvals. I checked the employee portal but could not find a clear update. I would appreciate your guidance and an update.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Resignation ka process bata dein\nDear HR Operations,\nMy employee ID is EMP1238. Mujhe resignation submit karna hai. Please process aur next steps bata dijiye. I checked the employee portal but could not find a clear update. I would appreciate your guidance and an update.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Final settlement pending hai\nDear People Desk Team,\nMy employee ID is EMP1266. Mera full and final settlement abhi tak receive nahi hua. Please status check karke update dein. Could you confirm the expected timeline? I would appreciate your guidance and an update.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Performance review process query\nDear HR Operations,\nMy employee ID is EMP1294. Could you explain the performance review timeline and how I can check my status? I am contacting People Desk as the central point of contact. Thank you for your time and support.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Resignation ka process bata dein\nDear HR Operations,\nMy employee ID is EMP1322. Mujhe resignation submit karna hai. Please process aur next steps bata dijiye. I am contacting People Desk as the central point of contact. Kindly advise on the next steps. Thank you.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Final settlement pending hai\nHello Team,\nMy employee ID is EMP1350. Mera full and final settlement abhi tak receive nahi hua. Please status check karke update dein. I checked the employee portal but could not find a clear update. Thank you for your time and support.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Performance review process query\nDear HR Operations,\nMy employee ID is EMP1378. Could you explain the performance review timeline and how I can check my status? Could you confirm the expected timeline? Please let me know if additional information is required.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Internal transfer process\nHello Team,\nMy employee ID is EMP1406. I would like guidance on the internal transfer process and required approvals. Please let me know whether I need to raise a formal request. Kindly advise on the next steps. Thank you.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Final settlement pending hai\nDear HR Operations,\nMy employee ID is EMP1434. Mera full and final settlement abhi tak receive nahi hua. Please status check karke update dein. Please let me know whether I need to raise a formal request. Kindly advise on the next steps. Thank you.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Performance review process query\nHello Team,\nMy employee ID is EMP1462. Could you explain the performance review timeline and how I can check my status? I am contacting People Desk as the central point of contact. Please let me know if additional information is required.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Internal transfer process\nHello HR Team,\nMy employee ID is EMP1490. I would like guidance on the internal transfer process and required approvals. I am contacting People Desk as the central point of contact. Kindly advise on the next steps. Thank you.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Resignation ka process bata dein\nDear People Desk Team,\nMy employee ID is EMP1518. Mujhe resignation submit karna hai. Please process aur next steps bata dijiye. I am contacting People Desk as the central point of contact. Please let me know if additional information is required.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Performance review process query\nDear HR Operations,\nMy employee ID is EMP1546. Could you explain the performance review timeline and how I can check my status? Please let me know whether I need to raise a formal request. Kindly advise on the next steps. Thank you.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Final settlement pending hai\nHello HR team,\nMera employee ID EMP1574 hai. Mera full and final settlement abhi tak receive nahi hua. Please status check karke update dein. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Is issue mein help kar dein, thank you.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Final settlement pending hai\nHello HR team,\nMera employee ID EMP1602 hai. Mera full and final settlement abhi tak receive nahi hua. Please status check karke update dein. Please expected timeline aur next steps share kar dein. Agar aur details chahiye toh bata dena.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Final settlement pending hai\nHi team,\nMera employee ID EMP1630 hai. Mera full and final settlement abhi tak receive nahi hua. Please status check karke update dein. Please bata dein ki formal request raise karni hai ya nahi. Is issue mein help kar dein, thank you.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Resignation ka process bata dein\nHi team,\nMera employee ID EMP1658 hai. Mujhe resignation submit karna hai. Please process aur next steps bata dijiye. Portal par check kiya, lekin clear update nahi mila. Agar aur details chahiye toh bata dena.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Resignation ka process bata dein\nDear HR team,\nMera employee ID EMP1686 hai. Mujhe resignation submit karna hai. Please process aur next steps bata dijiye. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Is issue mein help kar dein, thank you.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Resignation ka process bata dein\nDear HR team,\nMera employee ID EMP1714 hai. Mujhe resignation submit karna hai. Please process aur next steps bata dijiye. Please bata dein ki formal request raise karni hai ya nahi. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Final settlement pending hai\nDear HR team,\nMera employee ID EMP1742 hai. Mera full and final settlement abhi tak receive nahi hua. Please status check karke update dein. Please bata dein ki formal request raise karni hai ya nahi. Is issue mein help kar dein, thank you.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Final settlement pending hai\nHello HR team,\nMera employee ID EMP1770 hai. Mera full and final settlement abhi tak receive nahi hua. Please status check karke update dein. Please bata dein ki formal request raise karni hai ya nahi. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Final settlement pending hai\nHi People Desk,\nMera employee ID EMP1798 hai. Mera full and final settlement abhi tak receive nahi hua. Please status check karke update dein. Please bata dein ki formal request raise karni hai ya nahi. Please check karke update de dein.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Resignation ka process bata dein\nHello HR team,\nMera employee ID EMP1826 hai. Mujhe resignation submit karna hai. Please process aur next steps bata dijiye. Portal par check kiya, lekin clear update nahi mila. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Resignation ka process bata dein\nHello HR team,\nMera employee ID EMP1854 hai. Mujhe resignation submit karna hai. Please process aur next steps bata dijiye. Please bata dein ki formal request raise karni hai ya nahi. Please check karke update de dein.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Resignation ka process bata dein\nHello HR team,\nMera employee ID EMP1882 hai. Mujhe resignation submit karna hai. Please process aur next steps bata dijiye. Please expected timeline aur next steps share kar dein. Please check karke update de dein.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Final settlement pending hai\nDear HR team,\nMera employee ID EMP1010 hai. Mera full and final settlement abhi tak receive nahi hua. Please status check karke update dein. Please bata dein ki formal request raise karni hai ya nahi. Is issue mein help kar dein, thank you.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Final settlement pending hai\nHi People Desk,\nMera employee ID EMP1038 hai. Mera full and final settlement abhi tak receive nahi hua. Please status check karke update dein. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Please check karke update de dein.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Final settlement pending hai\nHi team,\nMera employee ID EMP1066 hai. Mera full and final settlement abhi tak receive nahi hua. Please status check karke update dein. People Desk ko first point of contact ke roop mein contact kar raha/rahi hoon. Agar aur details chahiye toh bata dena.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Resignation ka process bata dein\nHi team,\nMera employee ID EMP1094 hai. Mujhe resignation submit karna hai. Please process aur next steps bata dijiye. Portal par check kiya, lekin clear update nahi mila. Please next steps share kar dijiye. Thanks.",
+      "intent": "AL08"
+    },
+    {
+      "text": "Subject: Resignation ka process bata dein\nHi People Desk,\nMera employee ID EMP1122 hai. Mujhe resignation submit karna hai. Please process aur next steps bata dijiye. Please bata dein ki formal request raise karni hai ya nahi. Please check karke update de dein.",
+      "intent": "AL08"
+    }
+  ],
+  "updated_at": "2026-10-28T12:04:38.063310+00:00"
+}

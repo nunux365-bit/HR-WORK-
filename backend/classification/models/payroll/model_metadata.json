@@ -1,0 +1,72 @@
+{
+    "model_name": "Payroll Operations HR Intent Classification Model",
+    "model_version": "V1.0",
+    "version": "V1.0",
+    "status": "FINAL",
+    "model_type": "LinearSVC",
+    "vectorizer": "TF-IDF",
+    "sklearn_pkl_saved": true,
+    "training_samples": 320,
+    "tfidf_features": 2683,
+    "training_accuracy": 1.0,
+    "intent_count": 8,
+    "default_intent_id": "PA01",
+    "intents": {
+        "PA01": "Salary Not Credited or Delayed",
+        "PA02": "Salary Discrepancy or Incorrect Amount",
+        "PA03": "Payslip Request or Payslip Issue",
+        "PA04": "Salary Deduction or Tax Issue",
+        "PA05": "Bonus Incentive or Arrears Payment",
+        "PA06": "Payroll Reimbursement Issue",
+        "PA07": "Bank Account or Salary Credit Issue",
+        "PA08": "Payroll General Query or Salary Information"
+    },
+    "samples_per_intent": {
+        "PA01": 40,
+        "PA02": 40,
+        "PA03": 40,
+        "PA04": 40,
+        "PA05": 40,
+        "PA06": 40,
+        "PA07": 40,
+        "PA08": 40
+    },
+    "dataset": {
+        "total_examples": 320,
+        "train_examples": 320
+    },
+    "taxonomy": {
+        "number_of_intents": 8,
+        "intents": [
+            "PA01",
+            "PA02",
+            "PA03",
+            "PA04",
+            "PA05",
+            "PA06",
+            "PA07",
+            "PA08"
+        ]
+    },
+    "model": {
+        "algorithm": "LinearSVC",
+        "C": 1.0,
+        "random_state": 42
+    },
+    "tfidf": {
+        "lowercase": true,
+        "ngram_range": [
+            1,
+            2
+        ],
+        "min_df": 1,
+        "max_df": 0.95,
+        "sublinear_tf": true,
+        "vocabulary_size": 2683
+    },
+    "performance": {
+        "train_accuracy": 1.0,
+        "validation_accuracy": 1.0
+    },
+    "created_at": "2026-10-07T04:57:43.893170+00:00"
+}

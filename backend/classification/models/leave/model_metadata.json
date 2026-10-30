@@ -1,0 +1,58 @@
+{
+    "model_name": "Leave Intent Classification Model",
+    "version": "V1.5",
+    "status": "FINAL",
+    "dataset": {
+        "total_examples": 553,
+        "train_examples": 442,
+        "validation_examples": 55,
+        "test_examples": 56,
+        "test_set_locked": true,
+        "test_set_used_for_tuning": false
+    },
+    "taxonomy": {
+        "number_of_intents": 13,
+        "intents": [
+            "L01",
+            "L02",
+            "L03",
+            "L04",
+            "L05",
+            "L06",
+            "L07",
+            "L08",
+            "L09",
+            "L10",
+            "L11",
+            "L12",
+            "L13"
+        ]
+    },
+    "model": {
+        "algorithm": "LinearSVC",
+        "C": 1.0,
+        "random_state": 42
+    },
+    "tfidf": {
+        "lowercase": true,
+        "ngram_range": [
+            1,
+            2
+        ],
+        "min_df": 1,
+        "max_df": 0.95,
+        "sublinear_tf": true,
+        "vocabulary_size": 1470
+    },
+    "performance": {
+        "train_accuracy": 1.0,
+        "validation_accuracy": 0.9818,
+        "validation_macro_f1": 0.98,
+        "validation_weighted_f1": 0.98,
+        "test_accuracy": 0.9643,
+        "test_macro_f1": 0.97,
+        "test_weighted_f1": 0.96,
+        "test_errors": 2
+    },
+    "created_at": "2026-09-29T07:18:25.941265"
+}

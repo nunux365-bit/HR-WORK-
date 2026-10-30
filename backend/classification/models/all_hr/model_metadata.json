@@ -1,0 +1,72 @@
+{
+    "model_name": "PeopleDesk Intent Classification Model",
+    "model_version": "V1.0",
+    "version": "V1.0",
+    "status": "FINAL",
+    "model_type": "LinearSVC",
+    "vectorizer": "TF-IDF",
+    "sklearn_pkl_saved": true,
+    "training_samples": 400,
+    "tfidf_features": 1949,
+    "training_accuracy": 1.0,
+    "intent_count": 8,
+    "default_intent_id": "AL01",
+    "intents": {
+        "AL01": "General People Desk Support",
+        "AL02": "Payroll and Salary Query",
+        "AL03": "Payslip and Payroll Documents",
+        "AL04": "Leave and Attendance Support",
+        "AL05": "Onboarding and Joining Formalities",
+        "AL06": "Employee Profile and Bank Details",
+        "AL07": "Benefits, Policies and Employment Documents",
+        "AL08": "Performance, Transfer and Exit Support"
+    },
+    "samples_per_intent": {
+        "AL01": 50,
+        "AL02": 50,
+        "AL03": 50,
+        "AL04": 50,
+        "AL05": 50,
+        "AL06": 50,
+        "AL07": 50,
+        "AL08": 50
+    },
+    "dataset": {
+        "total_examples": 400,
+        "train_examples": 400
+    },
+    "taxonomy": {
+        "number_of_intents": 8,
+        "intents": [
+            "AL01",
+            "AL02",
+            "AL03",
+            "AL04",
+            "AL05",
+            "AL06",
+            "AL07",
+            "AL08"
+        ]
+    },
+    "model": {
+        "algorithm": "LinearSVC",
+        "C": 1.0,
+        "random_state": 42
+    },
+    "tfidf": {
+        "lowercase": true,
+        "ngram_range": [
+            1,
+            2
+        ],
+        "min_df": 1,
+        "max_df": 0.95,
+        "sublinear_tf": true,
+        "vocabulary_size": 1949
+    },
+    "performance": {
+        "train_accuracy": 1.0,
+        "validation_accuracy": 1.0
+    },
+    "created_at": "2026-10-28T12:04:38.066157+00:00"
+}
