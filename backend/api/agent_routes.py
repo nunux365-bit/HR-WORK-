@@ -957,6 +957,12 @@ def add_managed_employee_route():
         directory = _sync_users_and_members()
         added_record = next((p for p in directory if int(p["id"]) == member_id), None)
 
+        try:
+            from backend.database.neon_sync import trigger_async_backup
+            trigger_async_backup(delay_seconds=0.5)
+        except Exception:
+            pass
+
         return success_response({
             "employee": added_record,
             "welcome_dispatch": smtp_res,
@@ -1280,6 +1286,12 @@ def delete_managed_employee_route(member_id: int):
     )
 
     directory = _sync_users_and_members()
+    try:
+        from backend.database.neon_sync import trigger_async_backup
+        trigger_async_backup(delay_seconds=0.5)
+    except Exception:
+        pass
+
     return success_response({
         "deleted": True,
         "member_id": member_id,

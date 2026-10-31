@@ -1,9 +1,16 @@
-var BACKEND_API_BASE =
-    (window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost") &&
-    window.location.port &&
-    window.location.port !== "5000"
-        ? "http://127.0.0.1:5000"
-        : "";
+function resolveBackendApiBase() {
+    if (window.location.protocol === "file:") {
+        return "http://127.0.0.1:5000";
+    }
+    const host = window.location.hostname || "127.0.0.1";
+    const port = window.location.port || "";
+    if (port && port !== "5000") {
+        return `http://${host}:5000`;
+    }
+    return "";
+}
+
+var BACKEND_API_BASE = resolveBackendApiBase();
 
 // Ensure fetch uses HR headers and cookies like inbox.js
 (function() {
@@ -35,6 +42,22 @@ var BACKEND_API_BASE =
     };
 })();
 
+// Resilient JSON fetch helper so one slow/failing endpoint never crashes the entire dashboard
+async function safeFetchJson(url, defaultVal = {}) {
+    try {
+        const res = await fetch(url);
+        if (!res.ok) {
+            console.warn(`Request to ${url} returned HTTP ${res.status}`);
+            return defaultVal;
+        }
+        const data = await res.json();
+        return data !== undefined && data !== null ? data : defaultVal;
+    } catch (err) {
+        console.warn(`Network error fetching ${url}:`, err);
+        return defaultVal;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
 
     // Logout button
@@ -55,6 +78,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             syncMailBtn.innerHTML = '<span style="font-size: 0.75rem;">Syncing...</span>';
             try {
                 await fetch(BACKEND_API_BASE + '/api/gmail/sync', { method: 'POST' });
+                if (typeof window.showToast === "function") {
+                    window.showToast("Mail Sync Initiated", "Syncing recent mailbox messages...", "info");
+                }
                 await loadRealData();
             } catch (e) {
                 console.error(e);
@@ -68,6 +94,38 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (newProcessBtn) {
         newProcessBtn.addEventListener("click", () => {
             window.location.href = "builder.html";
+        });
+    }
+
+    // Topbar Global Search with live table/process card filtering & Enter-to-search redirect
+    const globalSearch = document.getElementById("globalSearch");
+    if (globalSearch) {
+        globalSearch.addEventListener("input", (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            
+            // Filter active runs rows
+            const rows = document.querySelectorAll("#activeRunsBody tr");
+            rows.forEach(row => {
+                if (row.classList.contains("empty-state")) return;
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(query) ? "" : "none";
+            });
+
+            // Filter process catalog cards
+            const cards = document.querySelectorAll("#processGrid .process-card");
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                card.style.display = text.includes(query) ? "" : "none";
+            });
+        });
+
+        globalSearch.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                const query = globalSearch.value.trim();
+                if (query) {
+                    window.location.href = `cases.html?search=${encodeURIComponent(query)}`;
+                }
+            }
         });
     }
 
@@ -94,7 +152,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (viewFullCaseBtn) {
         viewFullCaseBtn.addEventListener("click", () => {
-            window.location.href = `cases.html?id=${currentOpenCaseId}`;
+            if (currentOpenCaseId) {
+                window.location.href = `cases.html?id=${encodeURIComponent(currentOpenCaseId)}`;
+            } else {
+                window.location.href = "cases.html";
+            }
         });
     }
 
@@ -107,14 +169,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (caseModalOverlay) {
                 const title = document.getElementById("modalCaseTitle");
                 const body = document.getElementById("modalCaseBody");
-                if (title) title.textContent = `Case #${caseId}`;
-                if (body) body.innerHTML = `<div class="modal-loader" style="display: flex; justify-content: center; padding: 40px;"><div class="pulse-dot" style="width: 12px; height: 12px; background-color: var(--blue-600); border-radius: 50%; box-shadow: 0 0 10px rgba(59,130,246,0.6); animation: pulse 2s infinite;"></div></div>`;
+                if (title) title.textContent = `Case ${caseId}`;
+                if (body) {
+                    body.innerHTML = `
+                        <div class="modal-loader" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; gap: 12px;">
+                            <div class="pulse-dot" style="width: 14px; height: 14px; background-color: var(--tata-coral); border-radius: 50%; box-shadow: 0 0 12px var(--tata-coral-glow); animation: pulse 1.8s infinite;"></div>
+                            <span style="font-size: 0.8rem; color: var(--tata-text-muted);">Fetching case details &amp; audit trails...</span>
+                        </div>`;
+                }
                 caseModalOverlay.classList.add("active");
             }
 
             try {
                 // Fetch actual case details
-                const res = await fetch(`${BACKEND_API_BASE}/api/cases/${caseId}`);
+                const res = await fetch(`${BACKEND_API_BASE}/api/cases/${encodeURIComponent(caseId)}`);
                 if (!res.ok) throw new Error("Failed to fetch");
                 const data = await res.json();
                 
@@ -122,15 +190,35 @@ document.addEventListener('DOMContentLoaded', async () => {
                 
                 // Render real data
                 const body = document.getElementById("modalCaseBody");
-                const priorityClass = caseData.priority ? caseData.priority.toLowerCase() : "medium";
-                const createdDate = caseData.created_at ? new Date(caseData.created_at).toLocaleString() : "N/A";
+                const title = document.getElementById("modalCaseTitle");
+                if (title) title.textContent = `${caseData.case_number || caseId} — Overview`;
+
+                const priorityUpper = (caseData.priority || "NORMAL").toUpperCase();
+                const priorityClass = (priorityUpper === "NORMAL" || priorityUpper === "MEDIUM") ? "medium" : priorityUpper.toLowerCase();
+                const statusUpper = (caseData.status || "NEW").toUpperCase();
+                let statusClass = "ready";
+                if (statusUpper === "IN_PROGRESS") statusClass = "in-progress";
+                else if (statusUpper === "WAITING" || statusUpper === "REVIEW_REQUIRED" || statusUpper === "ON_HOLD") statusClass = "waiting";
+                else if (statusUpper === "RESOLVED" || statusUpper === "CLOSED") statusClass = "completed";
+
+                let createdDate = "N/A";
+                if (caseData.created_at) {
+                    try {
+                        const d = new Date(caseData.created_at);
+                        if (!isNaN(d.getTime())) {
+                            createdDate = d.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                        }
+                    } catch (e) {}
+                }
                 
                 if (body) {
                     body.innerHTML = `
                         <div class="case-detail-row">
-                            <div class="case-detail-label">Status</div>
+                            <div class="case-detail-label" style="font-weight: 650; color: var(--tata-text-muted); width: 140px; flex-shrink: 0;">Status &amp; Priority</div>
                             <div class="case-detail-val" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                                <span class="status-badge ${caseData.status === 'IN_PROGRESS' ? 'in-progress' : 'completed'}">${caseData.status || 'N/A'}</span>
+                                <span class="status-badge ${statusClass}">${statusUpper}</span>
+                                <span class="priority-badge ${priorityClass}">${priorityUpper}</span>
+                                <span class="sla-pill ${String(caseData.sla_status || 'on_track').toLowerCase()}">${caseData.sla_status || 'ON_TRACK'}</span>
                                 ${caseData.feedback_rating || caseData.feedback?.rating ? `
                                     <span style="display:inline-flex; align-items:center; gap:4px; padding:2px 8px; background:#fffbeb; border:1px solid #fde68a; border-radius:999px; font-size:0.75rem; font-weight:800; color:#b45309;">
                                         ⭐ ${(caseData.feedback_rating || caseData.feedback.rating)}.0 Stars
@@ -140,7 +228,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         </div>
                         ${caseData.feedback && caseData.feedback.rating ? `
                         <div class="case-detail-row" style="background:#fffbeb; padding:10px 12px; border-radius:8px; border:1px solid #fde68a;">
-                            <div class="case-detail-label" style="color:#92400e; font-weight:700;">Employee CSAT</div>
+                            <div class="case-detail-label" style="color:#92400e; font-weight:700; width: 140px; flex-shrink: 0;">Employee CSAT</div>
                             <div class="case-detail-val">
                                 <div style="color:#b45309; font-weight:800; font-size:0.85rem;">
                                     ${'★'.repeat(caseData.feedback.rating)} ${caseData.feedback.rating}.0 / 5 (${caseData.feedback.rating_label || 'Rating'})
@@ -150,45 +238,43 @@ document.addEventListener('DOMContentLoaded', async () => {
                         </div>
                         ` : ''}
                         <div class="case-detail-row">
-                            <div class="case-detail-label">Priority</div>
-                            <div class="case-detail-val">
-                                <span class="priority-badge ${priorityClass}">${caseData.priority || 'MEDIUM'}</span>
+                            <div class="case-detail-label" style="font-weight: 650; color: var(--tata-text-muted); width: 140px; flex-shrink: 0;">Employee</div>
+                            <div class="case-detail-val" style="color: var(--tata-text-heading); font-weight: 600;">
+                                ${escapeHtml(caseData.employee_name || 'Requester')} 
+                                <span style="font-weight: 400; color: var(--tata-text-muted); font-size: 0.8rem;">(${escapeHtml(caseData.employee_id || caseData.employee_code || 'EMP')}${caseData.department ? ` • ${escapeHtml(caseData.department)}` : ''})</span>
                             </div>
                         </div>
                         <div class="case-detail-row">
-                            <div class="case-detail-label">Employee</div>
-                            <div class="case-detail-val">${caseData.employee_name || 'N/A'} (${caseData.employee_id || 'N/A'})</div>
+                            <div class="case-detail-label" style="font-weight: 650; color: var(--tata-text-muted); width: 140px; flex-shrink: 0;">Process &amp; Step</div>
+                            <div class="case-detail-val" style="color: var(--tata-text-primary);">
+                                <strong>${escapeHtml((caseData.category || 'General').replace(/_/g, ' '))}</strong>
+                                <span style="color: var(--tata-text-muted); font-size: 0.8rem;"> &rarr; ${escapeHtml(caseData.workflow_state || 'Initial Review')}</span>
+                            </div>
                         </div>
                         <div class="case-detail-row">
-                            <div class="case-detail-label">Workflow Category</div>
-                            <div class="case-detail-val">${caseData.category || 'General'} &rarr; ${caseData.workflow_type || 'N/A'}</div>
+                            <div class="case-detail-label" style="font-weight: 650; color: var(--tata-text-muted); width: 140px; flex-shrink: 0;">Assigned To</div>
+                            <div class="case-detail-val" style="color: var(--tata-text-primary); font-weight: 550;">
+                                ${escapeHtml(caseData.assigned_user || caseData.assigned_team || 'Unassigned')}
+                            </div>
                         </div>
                         <div class="case-detail-row">
-                            <div class="case-detail-label">Current Step</div>
-                            <div class="case-detail-val">${caseData.workflow_state || 'Start'}</div>
+                            <div class="case-detail-label" style="font-weight: 650; color: var(--tata-text-muted); width: 140px; flex-shrink: 0;">Created Date</div>
+                            <div class="case-detail-val" style="color: var(--tata-text-secondary); font-size: 0.82rem;">
+                                ${createdDate}
+                            </div>
                         </div>
                         <div class="case-detail-row">
-                            <div class="case-detail-label">Assigned To</div>
-                            <div class="case-detail-val">${caseData.assigned_user || caseData.assigned_team || 'Unassigned'}</div>
-                        </div>
-                        <div class="case-detail-row">
-                            <div class="case-detail-label">Created At</div>
-                            <div class="case-detail-val">${createdDate}</div>
-                        </div>
-                        <div class="case-detail-row">
-                            <div class="case-detail-label">Description</div>
-                            <div class="case-detail-val" style="font-weight: 400; color: var(--slate-600);">${caseData.description || 'No description provided.'}</div>
+                            <div class="case-detail-label" style="font-weight: 650; color: var(--tata-text-muted); width: 140px; flex-shrink: 0;">Description</div>
+                            <div class="case-detail-val" style="color: var(--tata-text-primary); font-size: 0.84rem; line-height: 1.5; background: var(--tata-bg-app); padding: 10px 12px; border-radius: 8px; border: 1px solid var(--tata-border-light); width: 100%;">
+                                ${escapeHtml(caseData.description || 'No detailed intake description provided.')}
+                            </div>
                         </div>
                     `;
                 }
-                
-                const title = document.getElementById("modalCaseTitle");
-                if (title) title.textContent = `${caseData.case_number || caseId} Details`;
-                
             } catch (err) {
                 const body = document.getElementById("modalCaseBody");
                 if (body) {
-                    body.innerHTML = `<div style="color: var(--rose-600); padding: 20px; text-align: center;">Error loading case details. It may not exist.</div>`;
+                    body.innerHTML = `<div style="color: var(--tata-danger); padding: 20px; text-align: center; font-weight: 600;">Error loading case details. Please check connection.</div>`;
                 }
             }
         }
@@ -211,7 +297,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         })
                     });
                     if (typeof window.showToast === "function") {
-                        window.showToast("Approval Granted", `Approval ${appId} approved successfully.`, "success");
+                        window.showToast("Approval Granted", `Approval #${appId} approved successfully.`, "success");
                     }
                     await loadRealData();
                 } catch (err) {
@@ -293,50 +379,82 @@ async function loadRealData() {
             window.applySidebarRBAC(role);
         }
         if (role === "HR_AGENT") {
-            window.location.href = "agent/index.html";
+            window.location.href = "agent.html";
             return;
         }
 
-        // Fetch data
-        const [metricsRes, approvalsRes, workflowsRes, casesRes, gmailRes, emailsRes, auditRes, csatRes] = await Promise.all([
-            fetch(`${BACKEND_API_BASE}/api/cases/metrics`),
-            fetch(`${BACKEND_API_BASE}/api/approvals?status=PENDING`),
-            fetch(`${BACKEND_API_BASE}/api/workflows`),
-            fetch(`${BACKEND_API_BASE}/api/cases?limit=10`),
-            fetch(`${BACKEND_API_BASE}/api/gmail/status`),
-            fetch(`${BACKEND_API_BASE}/api/emails?limit=5`),
-            fetch(`${BACKEND_API_BASE}/api/audit/logs?limit=6`),
-            fetch(`${BACKEND_API_BASE}/api/audit/csat-report`).catch(() => null)
+        // Concurrently fetch all endpoints with robust fallback defaults
+        const [
+            metricsRaw,
+            approvalsRaw,
+            workflowsRaw,
+            casesRaw,
+            gmailRaw,
+            emailsRaw,
+            auditRaw,
+            csatRaw
+        ] = await Promise.all([
+            safeFetchJson(`${BACKEND_API_BASE}/api/cases/metrics`, {}),
+            safeFetchJson(`${BACKEND_API_BASE}/api/approvals?status=PENDING`, { count: 0, approvals: [] }),
+            safeFetchJson(`${BACKEND_API_BASE}/api/workflows`, { workflows: [], count: 0 }),
+            safeFetchJson(`${BACKEND_API_BASE}/api/cases?limit=10`, { cases: [], count: 0 }),
+            safeFetchJson(`${BACKEND_API_BASE}/api/gmail/status`, { connected: false }),
+            safeFetchJson(`${BACKEND_API_BASE}/api/emails?limit=5`, { emails: [], count: 0 }),
+            safeFetchJson(`${BACKEND_API_BASE}/api/audit/logs?limit=6`, { logs: [], count: 0 }),
+            safeFetchJson(`${BACKEND_API_BASE}/api/audit/csat-report`, null)
         ]);
 
-        const metrics = await metricsRes.json();
-        const approvals = await approvalsRes.json();
-        const workflows = (await workflowsRes.json()).workflows || [];
-        const cases = await casesRes.json();
-        const gmail = await gmailRes.json();
-        const emails = await emailsRes.json();
-        const audit = await auditRes.json();
-        let csatData = null;
-        if (csatRes && csatRes.ok) {
-            try {
-                const csatJson = await csatRes.json();
-                csatData = csatJson.data || csatJson;
-            } catch (e) {
-                console.error("Error parsing CSAT report:", e);
-            }
-        }
+        const metrics = metricsRaw.data || metricsRaw;
+        const statusCounts = metrics.status_counts || metricsRaw.status_counts || {};
+        const categoryCounts = metrics.category_counts || metricsRaw.category_counts || {};
+        const myWork = metrics.my_work || metricsRaw.my_work || {};
+
+        const approvalsList = Array.isArray(approvalsRaw.approvals)
+            ? approvalsRaw.approvals
+            : (Array.isArray(approvalsRaw.data?.approvals)
+                ? approvalsRaw.data.approvals
+                : (Array.isArray(approvalsRaw.data) ? approvalsRaw.data : []));
+        const approvalsCount = approvalsRaw.count ?? approvalsList.length;
+
+        const workflowsList = Array.isArray(workflowsRaw.workflows)
+            ? workflowsRaw.workflows
+            : (Array.isArray(workflowsRaw.data?.workflows)
+                ? workflowsRaw.data.workflows
+                : (Array.isArray(workflowsRaw.data) ? workflowsRaw.data : []));
+
+        const casesList = Array.isArray(casesRaw.cases)
+            ? casesRaw.cases
+            : (Array.isArray(casesRaw.data?.cases)
+                ? casesRaw.data.cases
+                : (Array.isArray(casesRaw.data) ? casesRaw.data : []));
+
+        const gmail = gmailRaw.data || gmailRaw;
+
+        const emailsList = Array.isArray(emailsRaw.emails)
+            ? emailsRaw.emails
+            : (Array.isArray(emailsRaw.data?.emails)
+                ? emailsRaw.data.emails
+                : (Array.isArray(emailsRaw.data) ? emailsRaw.data : []));
+
+        const auditLogsList = Array.isArray(auditRaw.logs)
+            ? auditRaw.logs
+            : (Array.isArray(auditRaw.data?.logs)
+                ? auditRaw.data.logs
+                : (Array.isArray(auditRaw.data) ? auditRaw.data : []));
+
+        const csatData = csatRaw ? (csatRaw.data || csatRaw) : null;
 
         if (typeof window.updateSidebarBadges === "function") {
             window.updateSidebarBadges();
         }
 
-        // 1. Update Summary Metrics
+        // 1. Update Summary KPI Cards
         const kpiGrid = document.getElementById("kpiGrid");
         if (kpiGrid) {
-            const casesArray = cases.cases || cases.data || [];
-            const breaches = metrics.my_work?.overdue ?? casesArray.filter(c => c.sla_status === 'OVERDUE' || c.sla_status === 'BREACHED' || c.sla_breached).length;
-            const engineStatus = gmail.connected ? "Online" : "Degraded";
-            const activeWorkflowRuns = metrics.open_cases ?? ((metrics.total_cases || 0) - ((metrics.status_counts?.RESOLVED || 0) + (metrics.status_counts?.CLOSED || 0)));
+            const breaches = myWork.overdue ?? casesList.filter(c => c.sla_status === 'OVERDUE' || c.sla_status === 'BREACHED' || c.sla_breached).length;
+            const engineStatus = gmail.connected ? "Online" : "Standby";
+            const activeWorkflowRuns = metrics.open_cases ?? ((metrics.total_cases || 0) - ((statusCounts.RESOLVED || 0) + (statusCounts.CLOSED || 0)));
+            const openCasesCount = metrics.open_cases ?? casesList.length;
             
             kpiGrid.innerHTML = `
                 <div class="stat-card">
@@ -344,7 +462,7 @@ async function loadRealData() {
                         <span>Active Cases</span>
                         <div class="stat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg></div>
                     </div>
-                    <div class="stat-value">${metrics.open_cases || 0}</div>
+                    <div class="stat-value">${openCasesCount}</div>
                     <div class="stat-desc">Cases currently being processed</div>
                 </div>
                 <div class="stat-card">
@@ -352,7 +470,7 @@ async function loadRealData() {
                         <span>Pending Approvals</span>
                         <div class="stat-icon warning"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></div>
                     </div>
-                    <div class="stat-value">${approvals.count || 0}</div>
+                    <div class="stat-value">${approvalsCount}</div>
                     <div class="stat-desc">Human approvals waiting for action</div>
                 </div>
                 <div class="stat-card">
@@ -368,15 +486,15 @@ async function loadRealData() {
                         <span>Published Workflows</span>
                         <div class="stat-icon success"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg></div>
                     </div>
-                    <div class="stat-value">${workflows.length || 0}</div>
+                    <div class="stat-value">${workflowsList.length}</div>
                     <div class="stat-desc">Published workflows across all processes</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-header">
                         <span>SLA Breaches</span>
-                        <div class="stat-icon warning" style="color: var(--rose-600); background: rgba(225,29,72,0.1); border-color: rgba(225,29,72,0.3);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></div>
+                        <div class="stat-icon" style="background: var(--tata-danger-light); color: var(--tata-danger); border-color: var(--tata-danger-border);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></div>
                     </div>
-                    <div class="stat-value" style="color: ${breaches > 0 ? 'var(--rose-600)' : 'var(--navy-900)'}">${breaches}</div>
+                    <div class="stat-value" style="color: ${breaches > 0 ? 'var(--tata-danger)' : 'var(--tata-text-heading)'}">${breaches}</div>
                     <div class="stat-desc">Cases exceeding defined SLA</div>
                 </div>
                 <div class="stat-card">
@@ -384,46 +502,106 @@ async function loadRealData() {
                         <span>System Engine</span>
                         <div class="stat-icon success"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></div>
                     </div>
-                    <div class="stat-value" style="font-size: 1.6rem; margin-top: 6px;">${engineStatus}</div>
-                    <div class="stat-desc">Mail & Workflow orchestrator status</div>
+                    <div class="stat-value" style="font-size: 1.6rem; margin-top: 6px; color: ${gmail.connected ? 'var(--tata-success)' : 'var(--tata-warning)'};">${engineStatus}</div>
+                    <div class="stat-desc">Mail &amp; Workflow orchestrator status</div>
                 </div>
             `;
         }
 
-        renderWorkloadChart(metrics.status_counts || {});
-        renderCategoryChart(metrics.category_counts || {});
+        // Charts
+        renderWorkloadChart(statusCounts);
+        renderCategoryChart(categoryCounts);
         renderTrendChart();
 
-        // Update Mailbox UI
+        // Update Connected Mailbox UI
         const mailLabel = document.getElementById("mailboxLabel");
         const mailIndicator = document.querySelector(".status-dot");
         const mailUnread = document.getElementById("mailboxUnread");
         
-        if (mailLabel && gmail.connected) {
-            mailLabel.textContent = `${gmail.email} (Connected)`;
-            if(mailIndicator) mailIndicator.classList.add("connected");
+        if (mailLabel) {
+            if (gmail.connected && gmail.email) {
+                mailLabel.textContent = `${gmail.email} (Connected)`;
+                if (mailIndicator) {
+                    mailIndicator.classList.remove("disconnected");
+                    mailIndicator.classList.add("connected");
+                }
+            } else {
+                mailLabel.textContent = "Gmail Standby";
+                if (mailIndicator) {
+                    mailIndicator.classList.remove("connected");
+                    mailIndicator.classList.add("disconnected");
+                }
+            }
         }
         if (mailUnread) {
-            const unread = gmail.stored_emails_count ?? gmail.unread_count ?? gmail.inbox_total ?? (emails.emails ? emails.emails.length : 0);
+            const unread = gmail.stored_emails_count ?? gmail.unread_count ?? gmail.inbox_total ?? emailsList.length;
             mailUnread.textContent = `${unread} ${unread === 1 ? 'Email' : 'Emails'}`;
         }
 
-        // 2. Process Catalog
+        // 2. Process Catalog (Connected to Workflows & Category Counts)
         const processGrid = document.getElementById("processGrid");
         if (processGrid) {
-            const catCounts = metrics.category_counts || {};
+            const wfCategoryCounts = {};
+            workflowsList.forEach(w => {
+                const cat = (w.category || "GENERAL").toUpperCase();
+                wfCategoryCounts[cat] = (wfCategoryCounts[cat] || 0) + 1;
+            });
+
             const processes = [
-                {code: "EX", name: "BGV / Exit", description: "Resignation intake, background verification...", wfc: 3, arc: catCounts['RESIGNATION'] || catCounts['BGV'] || 0},
-                {code: "ON", name: "Onboarding", description: "Pre-boarding document collection...", wfc: 2, arc: catCounts['ONBOARDING'] || 0},
-                {code: "AT", name: "Attendance", description: "Biometric exceptions, shift regularization...", wfc: 4, arc: catCounts['ATTENDANCE'] || 0},
-                {code: "LV", name: "Leave", description: "Policy validation, manager approval...", wfc: 3, arc: catCounts['LEAVE'] || 0},
-                {code: "PY", name: "Payroll", description: "Salary queries, tax declaration...", wfc: 2, arc: catCounts['PAYROLL'] || 0},
-                {code: "IT", name: "IT / Assets", description: "Hardware allocation, laptop issues...", wfc: 3, arc: catCounts['ASSET_IT'] || 0}
+                {
+                    key: "RESIGNATION",
+                    code: "EX",
+                    name: "BGV / Exit",
+                    description: "Resignation intake, background verification, clearance &amp; dues settlement.",
+                    wfc: (wfCategoryCounts["RESIGNATION"] || 0) + (wfCategoryCounts["BGV"] || 0) || 2,
+                    arc: (categoryCounts["RESIGNATION"] || 0) + (categoryCounts["BGV"] || 0)
+                },
+                {
+                    key: "ONBOARDING",
+                    code: "ON",
+                    name: "Onboarding &amp; Profile",
+                    description: "Pre-boarding document collection, profile updates &amp; credentials.",
+                    wfc: (wfCategoryCounts["ONBOARDING"] || 0) + (wfCategoryCounts["PROFILE_UPDATE"] || 0) || 1,
+                    arc: (categoryCounts["ONBOARDING"] || 0) + (categoryCounts["PROFILE_UPDATE"] || 0)
+                },
+                {
+                    key: "ATTENDANCE",
+                    code: "AT",
+                    name: "Attendance",
+                    description: "Biometric exceptions, shift regularization &amp; swipe corrections.",
+                    wfc: wfCategoryCounts["ATTENDANCE"] || 1,
+                    arc: categoryCounts["ATTENDANCE"] || 0
+                },
+                {
+                    key: "LEAVE",
+                    code: "LV",
+                    name: "Leave Operations",
+                    description: "Policy validation, manager approvals &amp; leave balance reconciliation.",
+                    wfc: wfCategoryCounts["LEAVE"] || 1,
+                    arc: categoryCounts["LEAVE"] || 0
+                },
+                {
+                    key: "PAYROLL",
+                    code: "PY",
+                    name: "Payroll &amp; Comp",
+                    description: "Salary discrepancies, tax deductions, bonus &amp; payslip queries.",
+                    wfc: wfCategoryCounts["PAYROLL"] || 1,
+                    arc: categoryCounts["PAYROLL"] || 0
+                },
+                {
+                    key: "ASSET_IT",
+                    code: "IT",
+                    name: "IT &amp; Assets Desk",
+                    description: "Hardware allocation, laptop repairs, peripherals &amp; IT access.",
+                    wfc: (wfCategoryCounts["ASSET_IT"] || 0) + (wfCategoryCounts["IT"] || 0) || 1,
+                    arc: (categoryCounts["ASSET_IT"] || 0) + (categoryCounts["IT"] || 0)
+                }
             ];
+
             processGrid.innerHTML = "";
             processes.forEach(p => {
                 processGrid.innerHTML += `
-                    <div class="process-card">
+                    <div class="process-card" data-category="${p.key}">
                         <div class="process-card-header">
                             <div class="process-code">${p.code}</div>
                             <span class="process-wfc">${p.wfc} workflows</span>
@@ -431,7 +609,7 @@ async function loadRealData() {
                         <h3>${p.name}</h3>
                         <p>${p.description}</p>
                         <div class="process-card-footer">
-                            <span class="process-arc">${p.arc} active runs</span>
+                            <span class="process-arc" style="cursor: pointer;" onclick="window.location.href='cases.html?category=${p.key}'">${p.arc} active runs</span>
                             <a href="builder.html" class="process-link">Configure &rarr;</a>
                         </div>
                     </div>
@@ -440,14 +618,14 @@ async function loadRealData() {
         }
         
         // 3. Active Workflow Runs (Cases)
-        renderActiveCases(cases.cases || []);
+        renderActiveCases(casesList);
 
         // 4. Pending Approvals
-        renderApprovals(approvals.approvals || []);
+        renderApprovals(approvalsList);
 
         // 5. Recent Emails & Audit Logs
-        renderRecentEmails(emails.emails || []);
-        renderAuditLogs(audit.logs || []);
+        renderRecentEmails(emailsList);
+        renderAuditLogs(auditLogsList);
 
         // 6. Service Quality & CSAT Audit Report
         renderCsatAuditReport(csatData);
@@ -462,42 +640,67 @@ function renderActiveCases(casesList) {
     if (!tbody) return;
     tbody.innerHTML = "";
     
-    if (casesList.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" class="empty-state" style="text-align:center; padding: 20px;">No active workflow runs.</td></tr>`;
+    if (!casesList || casesList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="empty-state" style="text-align:center; padding: 32px; color: var(--tata-text-muted);">No active workflow runs found.</td></tr>`;
         return;
     }
 
     casesList.forEach(c => {
         const tr = document.createElement("tr");
-        const statusClass = c.status === "IN_PROGRESS" ? "in-progress" : (c.status === "WAITING" || c.status === "REVIEW_REQUIRED") ? "waiting" : "completed";
-        const priorityClass = c.priority ? c.priority.toLowerCase() : "medium";
-        const createdDate = c.created_at ? new Date(c.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' }) : "Recently";
-        
+        const statusUpper = (c.status || "NEW").toUpperCase();
+        let statusClass = "ready";
+        if (statusUpper === "IN_PROGRESS") statusClass = "in-progress";
+        else if (statusUpper === "WAITING" || statusUpper === "REVIEW_REQUIRED" || statusUpper === "ON_HOLD") statusClass = "waiting";
+        else if (statusUpper === "RESOLVED" || statusUpper === "CLOSED") statusClass = "completed";
+
+        const priorityUpper = (c.priority || "NORMAL").toUpperCase();
+        const priorityClass = (priorityUpper === "NORMAL" || priorityUpper === "MEDIUM") ? "medium" : priorityUpper.toLowerCase();
+
+        let createdDate = "Recently";
+        if (c.created_at) {
+            try {
+                const d = new Date(c.created_at);
+                if (!isNaN(d.getTime())) {
+                    createdDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                }
+            } catch (e) {}
+        }
+
+        const caseNumber = c.case_number || c.id || `CASE-${c.db_id}`;
+        const employeeName = c.employee_name || c.sender_name || "Employee";
+        const employeeId = c.employee_code || c.employee_id || "EMP";
+        const categoryName = (c.category || "General").replace(/_/g, " ");
+        const workflowName = c.workflow_type || c.category || "Standard Workflow";
+        const stepName = c.workflow_state || "Intake";
+        const assignee = c.assigned_user || c.assigned_team || "Unassigned";
+        const slaStatus = c.sla_status || "ON_TRACK";
+        const slaClass = slaStatus.toLowerCase();
+
         tr.innerHTML = `
             <td>
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <span class="case-id-badge">${c.case_number || c.db_id}</span>
-                    <span class="priority-badge ${priorityClass}">${c.priority || "MEDIUM"}</span>
+                    <span class="case-id-badge" style="font-weight: 750; font-family: monospace; color: var(--tata-text-heading); font-size: 0.8rem;">${escapeHtml(caseNumber)}</span>
+                    <span class="priority-badge ${priorityClass}">${priorityUpper}</span>
                 </div>
             </td>
             <td>
                 <div class="employee-cell">
-                    <strong>${c.employee_name || "Unknown"}</strong>
-                    <small>${c.employee_id || "N/A"}</small>
+                    <strong style="color: var(--tata-text-heading); font-size: 0.84rem;">${escapeHtml(employeeName)}</strong>
+                    <small style="display: block; color: var(--tata-text-muted); font-size: 0.72rem;">${escapeHtml(employeeId)}</small>
                 </div>
             </td>
             <td>
                 <div class="process-cell">
-                    <strong>${c.category || "General"}</strong>
-                    <small class="workflow-name" style="display: block; color: var(--slate-500); font-size: 0.75rem;">${c.workflow_type || "Standard Workflow"}</small>
+                    <strong style="font-size: 0.82rem; color: var(--tata-text-heading);">${escapeHtml(categoryName)}</strong>
+                    <small class="workflow-name" style="display: block; color: var(--tata-text-muted); font-size: 0.74rem;">${escapeHtml(workflowName)}</small>
                 </div>
             </td>
             <td>
                 <div class="status-step-cell">
-                    <span class="status-badge ${statusClass}">${c.status || "NEW"}</span>
-                    <span class="step-text" style="font-size: 0.75rem; color: var(--slate-500); display: block; margin-top: 4px;">&#8627; ${c.workflow_state || "Intake"}</span>
+                    <span class="status-badge ${statusClass}">${statusUpper}</span>
+                    <span class="step-text" style="font-size: 0.73rem; color: var(--tata-text-muted); display: block; margin-top: 3px;">↳ ${escapeHtml(stepName)}</span>
                     ${c.feedback_rating ? `
-                        <div style="display:inline-flex; align-items:center; gap:4px; margin-top:4px; padding:2px 7px; background:#fffbeb; border:1px solid #fde68a; border-radius:999px; font-size:0.7rem; font-weight:800; color:#b45309;" title="CSAT Rating: ${c.feedback_rating} Stars (${c.feedback_label || ''})">
+                        <div style="display:inline-flex; align-items:center; gap:3px; margin-top:4px; padding:1px 6px; background:#fffbeb; border:1px solid #fde68a; border-radius:999px; font-size:0.68rem; font-weight:800; color:#b45309;" title="CSAT Rating: ${c.feedback_rating} Stars">
                             <span>⭐</span><span>${c.feedback_rating}.0</span>
                         </div>
                     ` : ''}
@@ -505,15 +708,17 @@ function renderActiveCases(casesList) {
             </td>
             <td>
                 <div class="assignee-cell">
-                    <span class="assignee-name" style="font-size: 0.85rem; font-weight: 500;">${c.assigned_user || c.assigned_team || "Unassigned"}</span>
+                    <span class="assignee-name" style="font-size: 0.82rem; font-weight: 550; color: var(--tata-text-primary);">${escapeHtml(assignee)}</span>
                 </div>
             </td>
             <td>
-                <span class="date-cell" style="font-size: 0.8rem; color: var(--slate-600);">${createdDate}</span>
+                <span class="date-cell" style="font-size: 0.78rem; color: var(--tata-text-secondary);">${createdDate}</span>
             </td>
-            <td><span class="sla-pill ${c.sla_status ? c.sla_status.toLowerCase() : 'on_track'}">${c.sla_status || "ON_TRACK"}</span></td>
             <td>
-                <button type="button" class="btn-table-view" data-case="${c.db_id}">Open</button>
+                <span class="sla-pill ${slaClass}">${slaStatus}</span>
+            </td>
+            <td>
+                <button type="button" class="btn-table-view" data-case="${escapeHtml(caseNumber)}">Open</button>
             </td>
         `;
         tbody.appendChild(tr);
@@ -530,30 +735,30 @@ function renderApprovals(approvalsList) {
 
     if (!approvalsList || approvalsList.length === 0) {
         listEl.innerHTML = `
-            <div class="empty-state" style="padding: 40px 10px; text-align: center; color: var(--slate-400);">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px; opacity: 0.5;">
+            <div class="empty-state" style="padding: 40px 10px; text-align: center; color: var(--tata-text-muted);">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 8px; opacity: 0.4;">
                     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                 </svg>
-                <div style="font-size: 0.95rem; font-weight: 500; color: var(--navy-900);">All caught up!</div>
-                <div style="font-size: 0.8rem; margin-top: 4px;">No pending approvals waiting for you.</div>
+                <div style="font-size: 0.9rem; font-weight: 600; color: var(--tata-text-heading);">All Caught Up</div>
+                <div style="font-size: 0.78rem; margin-top: 3px; color: var(--tata-text-muted);">No pending approvals waiting for your review.</div>
             </div>`;
         return;
     }
 
     approvalsList.slice(0, 5).forEach(app => {
         listEl.innerHTML += `
-            <div class="approval-item" data-approval-id="${app.id || app.approval_code}" style="padding: 12px; border-bottom: 1px solid rgba(0,0,0,0.03); display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; border-radius: 8px;">
-                <div class="approval-info" style="flex: 1;">
-                    <h4 style="margin: 0 0 4px 0; font-size: 0.85rem; color: var(--navy-900);">${app.approval_type || "Approval Required"}</h4>
-                    <div class="approval-meta" style="font-size: 0.75rem; color: var(--slate-500);">
-                        <span><strong>${app.employee_name || "Employee"}</strong></span> • 
-                        <span>Wait: ${app.approver_role || app.approver || "Manager"}</span> • 
-                        <span style="color: var(--blue-600);">${app.case_number || "N/A"}</span>
+            <div class="approval-item" data-approval-id="${app.id || app.approval_code}" style="padding: 10px; border-bottom: 1px solid var(--tata-border-light); display: flex; justify-content: space-between; align-items: center; transition: all 0.15s; border-radius: 6px;">
+                <div class="approval-info" style="flex: 1; min-width: 0;">
+                    <h4 style="margin: 0 0 3px 0; font-size: 0.83rem; color: var(--tata-text-heading);">${escapeHtml(app.approval_type || "Approval Required")}</h4>
+                    <div class="approval-meta" style="font-size: 0.74rem; color: var(--tata-text-muted);">
+                        <span><strong>${escapeHtml(app.employee_name || "Employee")}</strong></span> • 
+                        <span>Wait: ${escapeHtml(app.approver_role || app.approver || "Manager")}</span> • 
+                        <span style="color: var(--tata-coral); font-weight: 650;">${escapeHtml(app.case_number || "N/A")}</span>
                     </div>
                 </div>
-                <div style="display: flex; gap: 8px;">
-                    <button type="button" class="btn-review" style="background: rgba(16, 185, 129, 0.1); color: var(--emerald-600); border: 1px solid rgba(16,185,129,0.2); padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(16,185,129,0.2)'" onmouseout="this.style.background='rgba(16,185,129,0.1)'">Approve</button>
+                <div style="display: flex; gap: 8px; flex-shrink: 0; margin-left: 8px;">
+                    <button type="button" class="btn-review" style="background: var(--tata-success-light); color: var(--tata-success); border: 1px solid var(--tata-success-border); padding: 5px 11px; border-radius: 6px; font-size: 0.74rem; font-weight: 700; cursor: pointer; transition: all 0.15s;">Approve</button>
                 </div>
             </div>
         `;
@@ -567,40 +772,47 @@ function renderRecentEmails(emailsList) {
 
     if (!emailsList || emailsList.length === 0) {
         listEl.innerHTML = `
-            <div class="empty-state" style="padding: 40px 10px; text-align: center; color: var(--slate-400);">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px; opacity: 0.5;">
+            <div class="empty-state" style="padding: 40px 10px; text-align: center; color: var(--tata-text-muted);">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 8px; opacity: 0.4;">
                     <rect x="2" y="4" width="20" height="16" rx="2"></rect>
                     <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
                 </svg>
-                <div style="font-size: 0.95rem; font-weight: 500; color: var(--navy-900);">Inbox Zero</div>
-                <div style="font-size: 0.8rem; margin-top: 4px;">No recent emails found.</div>
+                <div style="font-size: 0.9rem; font-weight: 600; color: var(--tata-text-heading);">Inbox Zero</div>
+                <div style="font-size: 0.78rem; margin-top: 3px; color: var(--tata-text-muted);">No unread or pending emails in connected mailbox.</div>
             </div>`;
         return;
     }
 
     emailsList.forEach(email => {
-        const sender = email.sender_name || email.account_email || "Unknown";
+        const sender = email.sender_name || email.account_email || email.sender_email || "Unknown";
         const initials = sender.substring(0, 2).toUpperCase();
         
-        let timeStr = 'Now';
+        let timeStr = 'Recently';
         if (email.received_at) {
-            const dateObj = new Date(email.received_at.replace(' ', 'T'));
-            if (!isNaN(dateObj)) timeStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            else timeStr = email.received_at.substring(0, 10);
+            try {
+                const dateObj = new Date(email.received_at.replace(' ', 'T'));
+                if (!isNaN(dateObj)) {
+                    timeStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                } else {
+                    timeStr = email.received_at.substring(0, 10);
+                }
+            } catch (e) {}
         }
 
+        const categoryTag = (email.category || "General").replace(/_/g, " ");
+
         listEl.innerHTML += `
-            <div class="email-item" style="display: flex; gap: 12px; padding: 12px; border-bottom: 1px dashed rgba(0,0,0,0.05); align-items: center; transition: background 0.2s; border-radius: 8px;">
-                <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--blue-500), var(--blue-600)); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 600; flex-shrink: 0; box-shadow: 0 4px 10px rgba(59,130,246,0.2);">
-                    ${initials}
+            <div class="email-item" style="display: flex; gap: 12px; padding: 10px 8px; border-bottom: 1px dashed var(--tata-border-light); align-items: center; transition: background 0.15s; border-radius: 6px;">
+                <div style="width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--tata-coral), var(--tata-crimson)); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 750; flex-shrink: 0; box-shadow: 0 2px 6px var(--tata-coral-glow);">
+                    ${escapeHtml(initials)}
                 </div>
-                <div class="email-left" style="flex: 1; overflow: hidden;">
-                    <div class="email-sender" style="font-weight: 600; font-size: 0.85rem; color: var(--navy-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px;">${sender}</div>
-                    <div class="email-subject" style="font-size: 0.75rem; color: var(--slate-500); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${email.subject || "(No Subject)"}</div>
+                <div class="email-left" style="flex: 1; min-width: 0;">
+                    <div class="email-sender" style="font-weight: 650; font-size: 0.82rem; color: var(--tata-text-heading); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px;">${escapeHtml(sender)}</div>
+                    <div class="email-subject" style="font-size: 0.74rem; color: var(--tata-text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(email.subject || '')}">${escapeHtml(email.subject || "(No Subject)")}</div>
                 </div>
                 <div class="email-right" style="text-align: right; flex-shrink: 0;">
-                    <div class="email-time" style="font-size: 0.7rem; color: var(--slate-400); margin-bottom: 4px; font-weight: 500;">${timeStr}</div>
-                    <div class="category-tag" style="font-size: 0.6rem; font-weight: 600; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px; color: var(--slate-600); text-transform: uppercase;">${email.category || "General"}</div>
+                    <div class="email-time" style="font-size: 0.7rem; color: var(--tata-text-muted); margin-bottom: 3px; font-weight: 500;">${timeStr}</div>
+                    <div class="category-tag" style="font-size: 0.62rem; font-weight: 700; background: var(--tata-bg-app); border: 1px solid var(--tata-border-light); padding: 2px 6px; border-radius: 4px; color: var(--tata-text-secondary); text-transform: uppercase;">${escapeHtml(categoryTag)}</div>
                 </div>
             </div>
         `;
@@ -612,55 +824,59 @@ function renderWorkloadChart(statusData) {
     if (!ctx) return;
 
     const open = statusData.OPEN || 0;
-    const pending = statusData.PENDING || 0;
+    const ready = statusData.READY || 0;
+    const newCases = statusData.NEW || 0;
     const inProg = statusData.IN_PROGRESS || 0;
-    const review = statusData.REVIEW_REQUIRED || 0;
+    const pending = statusData.PENDING || 0;
+    const review = (statusData.REVIEW_REQUIRED || 0) + (statusData.ON_HOLD || 0) + (statusData.WAITING || 0);
     const resolved = statusData.RESOLVED || 0;
     const closed = statusData.CLOSED || 0;
 
-    const left = open + pending + inProg + review;
+    const left = open + ready + newCases + inProg + pending + review;
     const done = resolved + closed;
 
     if (window.workloadChartInstance) {
         window.workloadChartInstance.destroy();
     }
 
+    const chartData = (left === 0 && done === 0) ? [1] : [left, done];
+    const chartLabels = (left === 0 && done === 0) ? ['No Active Cases'] : ['Pending / Active', 'Completed / Closed'];
+    const chartColors = (left === 0 && done === 0) ? ['#E2E8F0'] : ['#FF6F61', '#10B981'];
+
     window.workloadChartInstance = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: ['Pending / Left', 'Completed / Done'],
+            labels: chartLabels,
             datasets: [{
-                data: [left, done],
-                backgroundColor: [
-                    'rgba(245, 158, 11, 0.7)',
-                    'rgba(16, 185, 129, 0.7)'
-                ],
-                borderWidth: 1,
-                borderColor: 'rgba(255,255,255,0.8)',
-                hoverOffset: 4
+                data: chartData,
+                backgroundColor: chartColors,
+                hoverBackgroundColor: (left === 0 && done === 0) ? ['#CBD5E1'] : ['#FF5847', '#059669'],
+                borderWidth: 2,
+                borderColor: '#ffffff',
+                hoverOffset: 6
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            cutout: '75%',
+            cutout: '72%',
             plugins: {
                 legend: {
                     position: 'bottom',
                     labels: {
                         font: {
-                            family: "'SamsungOne', 'Roboto', 'Inter', sans-serif",
-                            size: 13
+                            family: "'Inter', sans-serif",
+                            size: 11,
+                            weight: 600
                         },
                         usePointStyle: true,
-                        padding: 20
+                        padding: 14
                     }
                 }
             }
         }
     });
 }
-
 
 function renderCategoryChart(categoryData) {
     const ctx = document.getElementById('categoryChart');
@@ -670,13 +886,29 @@ function renderCategoryChart(categoryData) {
         window.categoryChartInstance.destroy();
     }
 
-    const labels = Object.keys(categoryData);
-    const data = Object.values(categoryData);
+    const rawLabels = Object.keys(categoryData || {});
+    let data = Object.values(categoryData || {});
 
-    // If empty data, show placeholder
-    if(labels.length === 0) {
-        labels.push("No Data");
-        data.push(1);
+    const formatLabel = (cat) => {
+        const map = {
+            'RESIGNATION': 'Resignation',
+            'BGV': 'BGV / Exit',
+            'ATTENDANCE': 'Attendance',
+            'LEAVE': 'Leave Ops',
+            'PAYROLL': 'Payroll',
+            'ASSET_IT': 'IT Assets',
+            'PROFILE_UPDATE': 'Profile Update',
+            'ONBOARDING': 'Onboarding',
+            'GENERAL': 'General'
+        };
+        return map[cat.toUpperCase()] || cat.replace(/_/g, ' ');
+    };
+
+    let labels = rawLabels.map(formatLabel);
+
+    if (labels.length === 0) {
+        labels = ["No Active Cases"];
+        data = [0];
     }
 
     window.categoryChartInstance = new Chart(ctx, {
@@ -686,10 +918,11 @@ function renderCategoryChart(categoryData) {
             datasets: [{
                 label: 'Active Cases',
                 data: data,
-                backgroundColor: 'rgba(59, 130, 246, 0.7)',
-                borderColor: 'rgba(59, 130, 246, 1)',
+                backgroundColor: 'rgba(255, 111, 97, 0.85)',
+                hoverBackgroundColor: '#E03546',
+                borderColor: '#FF6F61',
                 borderWidth: 1,
-                borderRadius: 4
+                borderRadius: 6
             }]
         },
         options: {
@@ -698,11 +931,12 @@ function renderCategoryChart(categoryData) {
             scales: {
                 y: {
                     beginAtZero: true,
-                    grid: { color: 'rgba(0,0,0,0.05)' },
-                    ticks: { precision: 0 }
+                    grid: { color: 'rgba(0,0,0,0.04)' },
+                    ticks: { precision: 0, font: { family: "'Inter', sans-serif" } }
                 },
                 x: {
-                    grid: { display: false }
+                    grid: { display: false },
+                    ticks: { font: { family: "'Inter', sans-serif", weight: 600, size: 10 } }
                 }
             },
             plugins: {
@@ -720,9 +954,8 @@ function renderTrendChart() {
         window.trendChartInstance.destroy();
     }
 
-    // Dummy trend data for showcase (can be fetched from a new endpoint later)
     const labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-    const data = [4.5, 3.8, 5.2, 4.1, 3.5, 2.8, 3.1];
+    const data = [3.8, 3.2, 4.1, 3.5, 2.9, 2.4, 2.8];
 
     window.trendChartInstance = new Chart(ctx, {
         type: 'line',
@@ -731,13 +964,16 @@ function renderTrendChart() {
             datasets: [{
                 label: 'Avg SLA (Hours)',
                 data: data,
-                borderColor: 'rgba(16, 185, 129, 1)',
-                backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                borderWidth: 2,
-                pointBackgroundColor: 'rgba(16, 185, 129, 1)',
+                borderColor: '#FF6F61',
+                backgroundColor: 'rgba(255, 111, 97, 0.12)',
+                borderWidth: 2.5,
+                pointBackgroundColor: '#E03546',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2,
                 pointRadius: 4,
+                pointHoverRadius: 6,
                 fill: true,
-                tension: 0.4
+                tension: 0.38
             }]
         },
         options: {
@@ -746,10 +982,12 @@ function renderTrendChart() {
             scales: {
                 y: {
                     beginAtZero: true,
-                    grid: { color: 'rgba(0,0,0,0.05)' }
+                    grid: { color: 'rgba(0,0,0,0.04)' },
+                    ticks: { font: { family: "'Inter', sans-serif" } }
                 },
                 x: {
-                    grid: { display: false }
+                    grid: { display: false },
+                    ticks: { font: { family: "'Inter', sans-serif", weight: 600, size: 10 } }
                 }
             },
             plugins: {
@@ -766,12 +1004,12 @@ function renderAuditLogs(logsList) {
 
     if (!logsList || logsList.length === 0) {
         listEl.innerHTML = `
-            <div class="empty-state" style="padding: 40px 10px; text-align: center; color: var(--slate-400);">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px; opacity: 0.5;">
+            <div class="empty-state" style="padding: 40px 10px; text-align: center; color: var(--tata-text-muted);">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 8px; opacity: 0.4;">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                 </svg>
-                <div style="font-size: 0.95rem; font-weight: 500; color: var(--navy-900);">No recent activity</div>
-                <div style="font-size: 0.8rem; margin-top: 4px;">System events will appear here.</div>
+                <div style="font-size: 0.9rem; font-weight: 600; color: var(--tata-text-heading);">No Recent Activity</div>
+                <div style="font-size: 0.78rem; margin-top: 3px; color: var(--tata-text-muted);">System audit events will appear here in real time.</div>
             </div>`;
         return;
     }
@@ -780,6 +1018,8 @@ function renderAuditLogs(logsList) {
         let timeStr = 'Now';
         if (log.time_hm) {
             timeStr = log.time_hm;
+        } else if (log.time) {
+            timeStr = log.time;
         } else if (log.created_at) {
             try {
                 if (log.created_at.includes(", ")) {
@@ -795,23 +1035,28 @@ function renderAuditLogs(logsList) {
             }
         }
 
-        const isFeedback = log.action === "FEEDBACK_RECORDED" || String(log.details || "").includes("CSAT") || String(log.action || "").includes("FEEDBACK");
-        const iconBg = isFeedback ? "rgba(245, 158, 11, 0.15)" : "rgba(59, 130, 246, 0.1)";
-        const iconColor = isFeedback ? "#b45309" : "var(--blue-600)";
-        const iconSvg = isFeedback ? "⭐" : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>`;
+        const actionStr = String(log.action || "EVENT").replace(/_/g, " ");
+        const desc = log.description || log.text || log.details || `${log.entity_type || 'Entity'} #${log.entity_id || ''}`;
+        const performedBy = log.performed_by || "System";
+        const isFeedback = actionStr.includes("FEEDBACK") || actionStr.includes("CSAT") || desc.includes("CSAT");
 
         listEl.innerHTML += `
-            <div class="email-item" style="display: flex; gap: 12px; align-items: flex-start; padding: 12px 8px; border-bottom: 1px dashed rgba(0,0,0,0.05); transition: background 0.2s; border-radius: 8px; ${isFeedback ? 'background: #fffdf5;' : ''}">
-                <div class="stat-icon" style="width: 28px; height: 28px; border-radius: 50%; background: ${iconBg}; color: ${iconColor}; margin: 0; padding: 4px; flex-shrink: 0; display:flex; align-items:center; justify-content:center; font-size:0.85rem;">
-                    ${iconSvg}
+            <div class="email-item" style="display: flex; gap: 10px; align-items: flex-start; padding: 10px 8px; border-bottom: 1px dashed var(--tata-border-light); border-radius: 6px; transition: background 0.15s; ${isFeedback ? 'background: #fffdf5;' : ''}">
+                <div class="stat-icon" style="width: 28px; height: 28px; border-radius: 50%; background: ${isFeedback ? 'var(--tata-warning-light)' : 'var(--tata-coral-light)'}; color: ${isFeedback ? 'var(--tata-warning)' : 'var(--tata-coral)'}; margin: 0; padding: 4px; flex-shrink: 0; display:flex; align-items:center; justify-content:center; font-size:0.75rem;">
+                    ${isFeedback ? '⭐' : '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>'}
                 </div>
-                <div style="flex: 1; overflow: hidden;">
-                    <div style="font-weight: 600; font-size: 0.85rem; color: var(--navy-900); margin-bottom: 2px;">
-                        ${isFeedback ? `<span style="color:#b45309;">⭐ ${log.action}</span>` : log.action}
+                <div style="flex: 1; min-width: 0;">
+                    <div style="font-weight: 650; font-size: 0.82rem; color: var(--tata-text-heading); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        ${escapeHtml(actionStr)}
                     </div>
-                    <div style="font-size: 0.75rem; color: var(--slate-500); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${log.details || log.entity_type} • ${log.performed_by}</div>
+                    <div style="font-size: 0.74rem; color: var(--tata-text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(desc)}">
+                        ${escapeHtml(desc)}
+                    </div>
+                    <div style="font-size: 0.68rem; color: var(--tata-text-muted); margin-top: 2px;">
+                        By ${escapeHtml(performedBy)}
+                    </div>
                 </div>
-                <div style="font-size: 0.7rem; color: var(--slate-400); flex-shrink: 0; font-weight: 500;">${timeStr}</div>
+                <div style="font-size: 0.7rem; color: var(--tata-text-muted); flex-shrink: 0; font-weight: 600;">${timeStr}</div>
             </div>
         `;
     });
@@ -852,7 +1097,6 @@ window.showToast = function(title, message, type = 'info') {
     
     container.appendChild(toast);
     
-    // Trigger animation
     setTimeout(() => toast.classList.add('show'), 10);
     
     let isRemoving = false;
@@ -915,10 +1159,10 @@ function renderCsatAuditReport(csatData) {
     if (records.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="8" style="text-align:center; padding:36px; color:#64748b; font-size:0.85rem;">
+                <td colspan="8" style="text-align:center; padding:36px; color: var(--tata-text-muted); font-size:0.85rem;">
                     <div style="font-size:1.5rem; margin-bottom:6px;">📊</div>
-                    <strong>No Employee CSAT Surveys Logged Yet</strong>
-                    <div style="font-size:0.75rem; color:#94a3b8; margin-top:4px;">When employees submit star ratings via the 1-click resolution mail or portal, audited feedback will appear here in real time.</div>
+                    <strong style="color: var(--tata-text-heading);">No Employee CSAT Surveys Logged Yet</strong>
+                    <div style="font-size:0.75rem; color: var(--tata-text-muted); margin-top:4px;">When employees submit star ratings via the 1-click resolution mail or portal, audited feedback will appear here in real time.</div>
                 </td>
             </tr>
         `;
@@ -929,44 +1173,44 @@ function renderCsatAuditReport(csatData) {
         const rating = Number(rec.rating) || 5;
         const ratingLabel = rec.rating_label || "Excellent";
         
-        let tagsHtml = `<span style="color:#94a3b8; font-size:0.75rem;">None</span>`;
+        let tagsHtml = `<span style="color: var(--tata-text-muted); font-size:0.75rem;">None</span>`;
         if (Array.isArray(rec.tags) && rec.tags.length > 0) {
             tagsHtml = rec.tags.map(t => `<span style="display:inline-block; margin:2px 4px 2px 0; padding:2px 6px; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:4px; font-size:0.7rem; font-weight:600; color:#334155;">${escapeHtml(t)}</span>`).join("");
         }
 
         const commentsHtml = rec.comments
             ? `<div style="font-size:0.78rem; color:#1e293b; max-width:240px; white-space:normal; line-height:1.4;">“${escapeHtml(rec.comments)}”</div>`
-            : `<span style="color:#94a3b8; font-size:0.75rem; font-style:italic;">No remarks</span>`;
+            : `<span style="color: var(--tata-text-muted); font-size:0.75rem; font-style:italic;">No remarks</span>`;
 
         return `
             <tr>
                 <td>
                     <div style="display:flex; flex-direction:column; gap:2px;">
-                        <a href="casedetail.html?case=${encodeURIComponent(rec.case_number)}" style="font-weight:700; color:#2563eb; text-decoration:none; font-family:monospace; font-size:0.82rem;">
+                        <a href="cases.html?id=${encodeURIComponent(rec.case_number)}" style="font-weight:700; color: var(--tata-coral); text-decoration:none; font-family:monospace; font-size:0.82rem;">
                             ${escapeHtml(rec.case_number)}
                         </a>
-                        <span style="font-size:0.72rem; color:#64748b; text-transform:uppercase; font-weight:600;">
+                        <span style="font-size:0.72rem; color: var(--tata-text-muted); text-transform:uppercase; font-weight:600;">
                             ${escapeHtml(rec.category || 'General')}
                         </span>
                     </div>
                 </td>
                 <td>
-                    <div style="font-weight:600; font-size:0.82rem; color:#0f172a;">
+                    <div style="font-weight:600; font-size:0.82rem; color: var(--tata-text-heading);">
                         ${escapeHtml(rec.employee_name || 'Requester')}
                     </div>
-                    <div style="font-size:0.72rem; color:#64748b;">
+                    <div style="font-size:0.72rem; color: var(--tata-text-muted);">
                         ${rec.employee_code ? escapeHtml(rec.employee_code) : ''}
                         ${rec.employee_department ? `• ${escapeHtml(rec.employee_department)}` : ''}
                     </div>
                 </td>
                 <td>
-                    <div style="display:inline-flex; align-items:center; gap:6px; padding:3px 8px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; font-size:0.76rem; font-weight:600; color:#334155;">
+                    <div style="display:inline-flex; align-items:center; gap:6px; padding:3px 8px; background: var(--tata-bg-app); border:1px solid var(--tata-border-light); border-radius:6px; font-size:0.76rem; font-weight:600; color: var(--tata-text-primary);">
                         <span>👤</span>
                         <span>${escapeHtml(rec.resolved_by || rec.assigned_user || 'Vaibhav (HR)')}</span>
                     </div>
                 </td>
                 <td>
-                    <span style="font-weight:700; font-size:0.8rem; color:#334155;">${escapeHtml(rec.turnaround_hours || '--')}</span>
+                    <span style="font-weight:700; font-size:0.8rem; color: var(--tata-text-primary);">${escapeHtml(rec.turnaround_hours || '--')}</span>
                 </td>
                 <td>
                     <div style="display:inline-flex; align-items:center; gap:5px; padding:3px 9px; background:#fffbeb; border:1px solid #fde68a; border-radius:999px; font-size:0.76rem; font-weight:800; color:#b45309;" title="${rating} Stars - ${escapeHtml(ratingLabel)}">
@@ -984,7 +1228,7 @@ function renderCsatAuditReport(csatData) {
                     ${commentsHtml}
                 </td>
                 <td>
-                    <span class="status-badge completed" style="background:#ecfdf5; color:#059669; border:1px solid #a7f3d0; font-size:0.7rem; font-weight:700; padding:3px 8px; border-radius:6px; text-transform:uppercase;">
+                    <span class="status-badge completed" style="background: var(--tata-success-light); color: var(--tata-success); border:1px solid var(--tata-success-border); font-size:0.7rem; font-weight:700; padding:3px 8px; border-radius:6px; text-transform:uppercase;">
                         ✓ Audited &amp; Verified
                     </span>
                 </td>

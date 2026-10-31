@@ -1,0 +1,22 @@
+# Environment & Secrets
+.env
+*.env
+credentials*
+*password*
+
+# Serialized AI Models
+*.pkl
+*.joblib
+
+# Database & Storage
+*.db
+*.sqlite
+*.sqlite3
+storage/attachments/*
+storage/logs/*
+
+# Python Bytecode & Virtual Environments
+__pycache__/
+*.py[cod]
+venv/
+.venv/

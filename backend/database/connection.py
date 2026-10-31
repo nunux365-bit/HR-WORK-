@@ -56,6 +56,11 @@ def execute_query(
         cur.execute(query, params)
         if commit:
             conn.commit()
+            try:
+                from backend.database.neon_sync import trigger_async_backup
+                trigger_async_backup(delay_seconds=3.0)
+            except Exception:
+                pass
             if query.strip().upper().startswith("INSERT"):
                 return cur.lastrowid
             return cur.rowcount

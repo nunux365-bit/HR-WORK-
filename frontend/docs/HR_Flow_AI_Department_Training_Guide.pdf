@@ -1,132 +1,117 @@
 %PDF-1.4
+%“Œ‹ž ReportLab Generated PDF document http://www.reportlab.com
 1 0 obj
-<< /Type /Catalog /Pages 2 0 R >>
+<<
+/F1 2 0 R /F2 3 0 R /F3 4 0 R /F4 5 0 R /F5 6 0 R /F6 7 0 R
+>>
 endobj
 2 0 obj
-<< /Type /Pages /Kids [3 0 R 4 0 R] /Count 2 >>
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
 endobj
 3 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 5 0 R /F2 6 0 R /F3 7 0 R >> >> /Contents 8 0 R >>
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
 endobj
 4 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 5 0 R /F2 6 0 R /F3 7 0 R >> >> /Contents 9 0 R >>
+<<
+/BaseFont /Helvetica-Oblique /Encoding /WinAnsiEncoding /Name /F3 /Subtype /Type1 /Type /Font
+>>
 endobj
 5 0 obj
-<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+<<
+/BaseFont /ZapfDingbats /Name /F4 /Subtype /Type1 /Type /Font
+>>
 endobj
 6 0 obj
-<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+<<
+/BaseFont /Courier /Encoding /WinAnsiEncoding /Name /F5 /Subtype /Type1 /Type /Font
+>>
 endobj
 7 0 obj
-<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+<<
+/BaseFont /Helvetica-BoldOblique /Encoding /WinAnsiEncoding /Name /F6 /Subtype /Type1 /Type /Font
+>>
 endobj
 8 0 obj
-<< /Length 4794 >>
-stream
-0.11 0.30 0.85 rg 36 780 540 36 re f
-BT /F2 13 Tf 1 1 1 rg 48 793.0 Td (HR FLOW - ENTERPRISE AI DOCUMENTATION & SOP) Tj ET
-BT /F2 10 Tf 0.15 0.23 0.35 rg 36 761.0 Td (How to Add a New HR Department & Train Its 2-Stage AI Model \(English + Hinglish\)) Tj ET
-0.82 0.87 0.95 RG 1 w 36 747.0 m 576 747.0 l S
-BT /F2 11 Tf 0.11 0.30 0.85 rg 36 731.0 Td (1. EXECUTIVE OVERVIEW: 2-STAGE AI CLASSIFICATION ARCHITECTURE) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 715.0 Td (Whenever an employee sends an email to the HR Inbox, HR Flow processes the email through a) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 702.5 Td (two-stage machine learning and rule pipeline matching the exact architecture of LEAVE and) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 690.0 Td (ATTENDANCE:) Tj ET
-BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 677.5 Td (Stage 1 - Department Detection Router \(backend/classification/category_classifier.py\):) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 664.5 Td (Scans the email Subject and Body against each department Strong Multi-Word Phrases) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 652.0 Td (\(keywords_strong\) and Weak Single-Word Keywords \(keywords_weak\) stored in) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 639.5 Td (backend/data/categories.json.) Tj ET
-BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 627.0 Td (   * Strong Multi-Word Phrase Match: +3.2 points in Subject | +2.2 points in Body) Tj ET
-BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 614.0 Td (   * Weak Single-Word Keyword Match: +1.5 points in Subject | +0.8 points in Body) Tj ET
-BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 601.0 Td (   * Minimum Routing Threshold: >= 1.5 points routes the email to that HR Department.) Tj ET
-BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 582.0 Td (Stage 2 - Specialized Intent Model \(backend/classification/intent_model_service.py\):) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 569.0 Td (Once Stage 1 detects the department \(e.g., LEAVE, ATTENDANCE, PAYROLL, BGV, RESIGNATION, or) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 556.5 Td (any newly created department\), Stage 2 executes that department dedicated scikit-learn model) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 544.0 Td (files stored in backend/classification/models/<category_lower>/:) Tj ET
-BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 531.5 Td (   * <dept>_tfidf_vectorizer.pkl : TfidfVectorizer\(lowercase=True, ngram_range=\(1, 2\),) Tj ET
-BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 518.5 Td (min_df=1, max_df=0.95, sublinear_tf=True\)) Tj ET
-BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 505.5 Td (   * <dept>_linear_svm.pkl       : LinearSVC\(C=1.0, random_state=42\)) Tj ET
-BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 492.5 Td (   * <dept>_intents.json         : Maps 8 Intent Codes \(e.g., PA01..PA08\) to Intent) Tj ET
-BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 479.5 Td (Names) Tj ET
-BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 466.5 Td (   * training_dataset.json       : Stores the 400 English + Hinglish labeled email) Tj ET
-BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 453.5 Td (samples) Tj ET
-BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 440.5 Td (   * model_metadata.json         : Stores version, accuracy %, TF-IDF feature count, and) Tj ET
-BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 427.5 Td (timestamp) Tj ET
-0.82 0.87 0.95 RG 1 w 36 414.5 m 576 414.5 l S
-BT /F2 11 Tf 0.11 0.30 0.85 rg 36 398.5 Td (2. STEP-BY-STEP GUIDE FOR HR ADMINISTRATORS) Tj ET
-BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 382.5 Td (STEP 1: Create the New HR Department Desk) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 369.5 Td (1. Open HR Departments from the left sidebar \(http://127.0.0.1:5000/inbox.html#departments\).) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 357.0 Td (2. Click + Add New HR Department in the top-right header.) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 344.5 Td (3. Enter Department Name, Shared Gmail, SLA Target Hours, Default Priority, and Description.) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 332.0 Td (Notice Department Code and Primary Category Code auto-populate.) Tj ET
-BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 313.5 Td (STEP 2: Configure Stage 1 Department Detection Keywords \(Via ChatGPT\)) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 300.5 Td (1. Inside the Create Department form \(or inside any card Train AI drawer under Stage 1\),) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 288.0 Td (click Copy ChatGPT Prompt for Department Keywords.) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 275.5 Td (2. Paste the prompt into ChatGPT. It generates 20-28 Strong Multi-Word Phrases and 15-22) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 263.0 Td (Weak Single-Word Keywords covering both English and Indian workplace Hinglish.) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 250.5 Td (3. Paste those comma-separated lists into Strong Multi-Word Phrases and Weak Single-Word) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 238.0 Td (Keywords and click Save / Create Department.) Tj ET
-endstream
+<<
+/Contents 13 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 12 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
 endobj
 9 0 obj
-<< /Length 4159 >>
+<<
+/Contents 14 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 12 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+10 0 obj
+<<
+/PageMode /UseNone /Pages 12 0 R /Type /Catalog
+>>
+endobj
+11 0 obj
+<<
+/Author (\(anonymous\)) /CreationDate (D:20261030150443+00'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20261030150443+00'00') /Producer (ReportLab PDF Library - www.reportlab.com) 
+  /Subject (\(unspecified\)) /Title (\(anonymous\)) /Trapped /False
+>>
+endobj
+12 0 obj
+<<
+/Count 2 /Kids [ 8 0 R 9 0 R ] /Type /Pages
+>>
+endobj
+13 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 3895
+>>
 stream
-0.11 0.30 0.85 rg 36 780 540 36 re f
-BT /F2 13 Tf 1 1 1 rg 48 793.0 Td (HR FLOW - STAGE 2 INTENT TRAINING & JSON SCHEMA) Tj ET
-BT /F2 10 Tf 0.15 0.23 0.35 rg 36 761.0 Td (Training 400 English + Hinglish Samples \(.pkl + TF-IDF\) & Live Testing) Tj ET
-0.82 0.87 0.95 RG 1 w 36 747.0 m 576 747.0 l S
-BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 731.0 Td (STEP 3: Train Stage 2 Intent Identification Model \(400 English + Hinglish Samples\)) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 718.0 Td (1. On the department card, click Train AI to open the AI Department Detection & Intent) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 705.5 Td (Trainer Studio.) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 693.0 Td (2. Under Stage 2 - Intent Identification Model Training, click Copy ChatGPT Intent &) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 680.5 Td (Training Prompt.) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 668.0 Td (3. Paste the prompt into ChatGPT. It generates a single JSON object with 8 Intent Codes \(01) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 655.5 Td (to 08\) and 400 realistic employee emails \(~65% English + ~35% Hinglish, ~50 emails per) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 643.0 Td (intent\).) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 630.5 Td (4. Paste ChatGPT JSON output into the Stage 2 textarea. Verify the green indicator: Valid) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 618.0 Td (JSON Ready.) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 605.5 Td (5. Click Train Stage 2 Intent Model Now \(.pkl + TF-IDF Vectorizer\). The backend trains the) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 593.0 Td (LinearSVC + TF-IDF model, writes the .pkl files, and hot-reloads the model immediately.) Tj ET
-BT /F2 9.5 Tf 0.06 0.09 0.16 rg 36 574.5 Td (STEP 4: Live Email Verification \(Stage 3 Tester\)) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 561.5 Td (1. In Stage 3 - Live Email Verification, enter a test Email Subject and Body \(in English or) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 549.0 Td (Hinglish\).) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 536.5 Td (2. Click Test Stage 1 Department Detection & Stage 2 Intent Prediction.) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 524.0 Td (3. Verify the Stage 1 Detected Department + Confidence %, Stage 2 Predicted Intent Code +) Tj ET
-BT /F1 9.2 Tf 0.20 0.25 0.33 rg 36 511.5 Td (Name + SVM Score + Margin, and Routed HR Desk.) Tj ET
-0.82 0.87 0.95 RG 1 w 36 499.0 m 576 499.0 l S
-BT /F2 11 Tf 0.11 0.30 0.85 rg 36 483.0 Td (3. CHATGPT TRAINING JSON SCHEMA EXAMPLE) Tj ET
-BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 467.0 Td ({) Tj ET
-BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 455.5 Td (  "category_code": "PAYROLL",) Tj ET
-BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 444.0 Td (  "display_name": "Payroll Operations HR",) Tj ET
-BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 432.5 Td (  "keywords_strong": ["salary slip", "salary not credited", "salary nahi aayi", "payslip chahiye"],) Tj ET
-BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 421.0 Td (  "keywords_weak": ["payroll", "salary", "payslip", "tds", "pf", "reimbursement"],) Tj ET
-BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 409.5 Td (  "required_fields": ["employee_id", "date", "description"],) Tj ET
-BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 398.0 Td (  "default_intent_id": "PA01",) Tj ET
-BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 386.5 Td (  "intents": {) Tj ET
-BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 375.0 Td (    "PA01": "Salary Not Credited or Delayed",) Tj ET
-BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 363.5 Td (    "PA02": "Salary Deduction or Discrepancy",) Tj ET
-BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 352.0 Td (    "PA03": "Payslip Request or Payslip Issue") Tj ET
-BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 340.5 Td (  },) Tj ET
-BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 329.0 Td (  "training_samples": [) Tj ET
-BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 317.5 Td (    {"text": "Subject: Salary not credited\\nHi HR, EMP1002 here, October salary not credited.", "intent": "PA01"},) Tj ET
-BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 306.0 Td (    {"text": "Subject: Salary abhi tak nahi aayi\\nMera ID EMP1008 hai, salary bank me nahi aayi.", "intent": "PA01"}) Tj ET
-BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 294.5 Td (  ]) Tj ET
-BT /F3 8.5 Tf 0.08 0.35 0.24 rg 44 283.0 Td (}) Tj ET
-endstream
+Gb!;f>BAM#&q9SYka1fp1Ec"48aUC1_6Ur]"+q;c;WTBp%*,#C8;nh\GTQRfDkB4V&0S4;A05u"1MDHekrsOkqWen(aS;[[J#>qipHG*Q.%mNshh.Xr3qrerrKFukPi>9ZPSDBJ_3/BO[N-<RiO:RjS'FgP%:n0Xh-2La/W1qMjQ<<liM4S*_:aMLQ=SGS+R,>g3]]g#/SgB(18*`Qr@TMA3K2eAGi51*hFG(Q9aeO\3/)GOp3kP6Tf_Lekkf8Ds"n`3)nWf_7DIIIqkN,Ri-tq12m1l,ppX*r8&\375s`KLqFR]AfD_kS-s'>F/R-h'=cNDHV%ps)%8unIeEcbQhiRs\Y.8Rqff=8sI]#hRE'5a/Wagje>Q'R3X(LNuPLNLV%R-Pd`<1HZbFgm*.]WoEe1NUY$rU(`<D,:?ZV['*W`u8KRdZcKJi$i?3/:h_Jil_9E8u3\1ULsO9%GdX&+\X2aB5EHCWt3Xb]4IpfhoY]PQo$gQF\BAL+1F2Cn"H`Cg0@.bDrY`-L-NCb,-k0f6?,7802jEGRI!i4LnrNE$JBfm\l#q]\9jVTeATTHcsHD10[Q=gg0i&XH(e-c&I`X5%m!I+W9s_<kt#[QNF%N/6<G,)$K2G&a!nuYL=VG+J(m)@O_*Us8O]TZW.p<UZTZC9B.^t6ZEsN'[mE?H*Rj!2M2O(\o4LCD]cjsZ_fKE\ZQD;;preY@*W-tTGm%oL]p*Pb/?FmpZH6%df#XN7S4A,$ht`+K];Rbf/@?WV\prqFn0Ln@)u.T&R+3?bNC>GrZ&^g-`H=a_0qK`h^hJ_;3GK0X5IOt',Jnr.Q'WR+8G<VPC5ui>b3@"5>NX]3Go--V0N1b/_pbD'hh-$JFCeg?o0IK#)n>dNMNO/$,_^WPem<:Y6RrEF<R=a,'UlRk!:D'<Sd#nndl`P%7*"A[T4\d)d9\f=p7E@7\N$f`**E;ldFmNN*+]&pfHn17gS>iI=BQ_F?QgZ@rR3irLs,%0!epP1.uM,)?3<ME)3A<nl8C.crXb,30CpD=[FV_(?gd[<Z0*lrHZ4gL:N*PO%D*$Q96Z7AomOe(g[=gVK&%KW+6J#O=qGHbDRcoJpr*6Hu%35ll!]i$1&V#Y&jSQ$rn4T@>;jbil7?)i=rXC8#bte#@g;gFcK?Md#o\X_g''[rWFf"J3723n7B*<V\ofZA7d8W8]Jp7YY8X[_K<AEJ_Rk].>>At]'d3mm(!aNB;e-$;q,[X*!`uR&4OpL8s@:Lj1#`?cOdE1<4B`7Rhh4M;S.S`XYaX*^udr4/le3/<Bl<7RdTgO2/^L!]+'015-S]XA(a3ghP7(=_`Yi;bNfUn(L,bo8h,V>-(BU%37Npq$MBg\XrJ"`[AHf_A`8&n=9D?-^;/3-*hl5)Z3#<(V2rl?;Mu^3MP2@b0Q^SU2Mb0PJ>A"r;6d.CFpSG_K-qd4:b6-a!Ycp#im@sn,GH8ED,iC723s+qdMf^n:*;8Oql$_ejR5hfCsYQ4RlH!8[QFm[j^#R(S24KUGQ^^eQn1C62[+KbNsSkE_#VA58A4=1k"eaBV/kcc_4"g1TO<`eIUmEB;A:u'L"+;tZS4BfeH?'O>SH]TCj)Tmo-K4LKSdfD#H+.19Ei_GE5(6br/j-,-0YiNBnB#d?6_78'<9A;MIiK-Bn?p[?DPZtZ?Mda>Wg^9]qh.*jXouQG@/aiE7V6YD-HEmR6=WQ98NSkJqm7Q7`gNuI%Oq;o2eNW(RWF),auCk$aKZ4r_7T?s+3]\3#Wt@'6*DVmB'Hj,gA+n.F0Gj:==nt'MMXuIWj?(VuqWL%#ab$",s]"_D\mf3b$diKP@I*L*_/DmgGh*)Erh"LH$=&2?*`)PRG"\Y^[pUF;\k1E5s.b#$E6><<&"nr5-_*`mjj]7f7F)Do7OcX;H@hVm1hI_A";/4"Doqipf&$^d!OBct7lQQ@?H*#QSbKa/-.h+HB^SdXu?+qf$_.qhW(B8V8RWYM>8q(%i=Mloiq-]3tI8:R#o<b_8qd]!Fe2B(-tc3tiAU!I&RU^lg:5o_BmJrBsVPE(9597XZ:FiCq$b%p<lbYp2I*Z//L6G"QJ%g99(P<fGO(rLJ"ieiA.+J0*aDLE;oE0mS89`+W@Mg#88"bJkta^jKFEf][S*?%OBW=i1%Yb!5@k$Eesp\I1SlM7iGU!+L<g$hp1MBa.j,#=+j\>q?6PGZj?6p=LZh6fdH%d2a+j/)&LHArLe),^rOYZ7K*)?#l[M:Hcl_Er@0OFi.B4f&Al!MYda$2?#T8X?E^pq<,6_B6F(O0.rN-'%"FS%F)'>8L&X\loKRjIqWNFK/mSp`&(MDdFm#rRUU'i*I$@il1!#iY%Bd6?2$LHgE0b=kL&AN`F/?6J(Dg\MLO&\R]b.$RMXbU=<)enh_ZkO=IFmb1!GfDl5F!BMNTHH-C,c32Oeltm#n]hIT+s9GLop:(LjKq9A5kK+8YnS"0f3'rdMg5[;@j.nn@AbVuuGtTIWA''HrgSjN0j"f@1FkbuJQthL$@Qh_Xc9i3BFm0Y6WF%[SU0#K0Sof\YiWWp_#D_Q.&jipaVLTMSVo/b1`2X!7]UmOaB>UWH^M#$&A%.^,h_]dQ9lYg61O7E-A^45d6WgHNZrU.3CL`ERT?Ou<KhjiofNa#81#J.p!scFhk1jZXsU1ojgCei4,$e)\hak(Yrldr<9O^u>9X!_HB;V9'o:pZ2'PKTi=Z]]*fclL'YW`=O1fdNu2_^Y+@?9a_#Bb;l6RBXRGY$sCK,h$<7:'R%2`3Momnk<42T$=MDGRRb[cbkY8Zlc0l9M&[\VgEQ4A(B<GORh!\Gd0T%T)oa^%^727n3h%FN'fWq-SFTU!ic%W1S?Na-nJ/p1!h_P"c7\`p^#Ij\atJkRXe)5q#kH0D?Zip>'H,kY$Is`>*+V&[fDVHgl^0Iss*IAoB]Z"`o)``18rj`TNT1=T2^?Du!c$3HW:GqJROU'e%/-nmWi\\0Ng_I&I9ZNPQ17n56#d1)lZYq7W3rH"GSUL'eWV"LPFm0"_cbFCm^DocNHa>]DWbU&IOn!J.W0`.NbHIR"DMm$8A;'>TRF%CqQV=9BqeaWHW(ZE=W0E-ZjkLHi`+7,aoOpqp=^ePZVb"o4'BAV<l#k!EYib>cG!^+`WA-U+FLL6V#LHeLGDY,)km1H5in:VG+&ll@oQ,JDJ9N.djerIFX*"9=`".a>0]r&K7u3o!?^u9!sU4_Bcc+9;a._RQ#)TDSWlSJR2ELWcV`M5,arYp;3/(7?f0\bJfKn"QbI'gn4II`/4d2'--HDi<;dCi"mpjh>7=)`AZScin>BfuI^H+4-LBKG-$WN(m01@uQ,'se5H2k]l+%W'`=/0s0#a3(.sJNe%j_W+eI9TEd]ZFbXdSXlXgeU5ZpF)c?ko8uDc+Fur+nidTc2&;i/p(>S1h'8jK1p9[<^UI)RX;16R*Wa=CUXg6J\YTdQt:1"/'hs18]rN)5]i*L(MI=(u&1_0:c1pY6/N'^.Z1K#))3k_f))Q1Lq-C\7ko]oh/elqG[&Ie+RP(_&)"UFnH3Pl,A(`WWlDqAo;-\K;kUF(AI&kgt.68qR/;^/@=B.p&!Md1rloepKnbJ2'8K]NDSZ]PD$q5:=8jO1e#hd,eXolLOW([nhtkXl$N%DHgBi_Vr3R"1P'$3YbQl)EYS[$;D2>l)nLV"hc3*g,gB;J8tkYB;K(Q<MpXf?;0uZ)^$VFK_.2m,6<s/FJ2><Mg]B5ke8XWOn;rK#Vmrc69/g'WZAXj.9!]iCRhji4SIXRqWk!!.hIq/]5KAu\]7ZG%BG@3aPFE2CKS9UfSK0/:-'r)d^C7_Ur>p18cArCTV*c'&`ZrgES@JK0-G@7ZdlBI<iq5Il*H"SVC'"eH92e3!(/i0%,k1QggMI[qr"h9"\LI~>endstream
+endobj
+14 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 3736
+>>
+stream
+Gb!;f>BAfD&q8_FdBsK(Dg!_uMBHh@OM,28"j&-)cZ+g\9*8iZ,ZY]p-^F^\H=eFRKYZGDEiNT8/XT1,GL&32?T0AUj0-?"HQ.JG/mM[4TW$d$6.$u!g_&3,X08^k@\hS;'[>urBkgPTg[!iUm$6XlC?c!oZJ!bc"XHMk41Ya?l;`Md<#H*EK1gS='UIXkP.<F9/JjZIK'La(?-pOt-r\_+[ASYQF_.\Q(:0:K!aY)C]0UEdR$,%IGN%2&G;u.Dp(lF:i-s!Qp^)HEX-hEm22S>D0Sr+)PM9RV.$sr\/%?EuY4]VOCp<(#O$a^"\t.UF"su722k)krc.mJk)F8j0]cDXpH.)^PT2(.@Z'[j0lMQHf?Wq9:hn2k6]H-aD$leV0)+&<;e3dG^1r%M?p86N>F\ub]D09VOalMU,bfUOT(R+Z:$0Y,U2>!K!:Q>BnlT`\R3fJ7oDeVNnRKA%_YZbDngLZmk8E<Y+7Z'@fU+QX1#qlN/,PNI[?mXYjaJbHe#q^m4X'U<PdpNnf+&EsT7["ZU>UT*6J4)SG@@[5Qk6\[0_B=2g^eI@a&haXP-jBGtp%"&.(jdM:T1X$/O;/(r1]uML>T%]N[Y@N7-#lPj(r[7`]SG<(#V"OBmt!t-Q!^J;("#!EUed+#D,H?VM`2mhp_!l#D29j5/(05idrh1WON#78R%Ok,B_"]XOJZ`ggFQ++<C0Qj@qXS&=?el4[[1]uB5:,flr(B@bJ^<(neaJeT\D?[i)YLb7u_57qP5!#Z;`lAHk$IbK#CG:-f$JgP-I79`Q=D[!=)WhFl[FcckV2(6@RLN%RptKg<9(3L*-P?0gsKe:,,0%R1*IGo`X4Cfi9o)RNu[Fgk/0U\VPP(>K-/qbrIG;9a4'X7I$0.WR.JjVY1TnB2X%"U0_6W(tgUJ`qINF;:M'4A$L`h"6o]moZ@(@rTWNh4E3%nYp]eDkF(_->YR#cIt"fkgPL`jDd[J/7`.D#DrC8cZd\WAFU/SS]KZh[(lWZZ:I[Sm\e&@lkF=b:iD1'Ff?(n->D2j-7Tk&oVm9H/q9i9.*eK"tCd:K1a"D_s_L[d2E]A&Ip?D#4H\fat@Y8IrgLY;#Vek>2r__Eb6\;O'p%qK"4'$@lZq*=gWX#lYO=\t&StogUCoV+EF@l$W>ATKG:,!+-ek3V$fWoa([@W-R3_*s,oFAL_nYBq;%^b7JOVo,s7BENVar"V&7Njue0YjG`&2+(Q%+OPcQ,(DtpB4ehd:T"0mS/!o7i!i0,H42;(P2o[h//#Na!;iZb-lU\,DimY]Ygu"D[(Bm,T%k\BQZB0):2Bt'acSqi8T;OmGc&k,WS?gZY2`BV>X\-4A`!A\c,Q\)8g%o$k*$_7@GNBZmr9^5<@7bXa<R[6XtF"#SET"q\Rp(DkV:n1(EBS20oIXVMZqcY6(A\+\m!<:Dq,ZVdN#WT\tM0%K_f!e&&of3^Li_#I_:o,k^Gn.]I[31.X,u/&Tc!GD]p9]p#9Fp*2YuAqp4-B#biR5bdH["R>-Ymf1HA\=oC=R[hD>?Gu"+++$>\"cJTsa:k0"^JEjn*]t;`,di02O+_4rJ)Gql[?E'=h2\'/*dU3Ll[ZI@?9l@-BdQE>b5>S/?m&o9`]K,jhq^a-Q6[dRRp^bD&G<c2&Yj>iDnffB[L%@mp96pd)(Irg$1'kJd9f&Z6i7gjLS:lXY.gTe<8?p,rc[IjS;%0!g(J-",5mD#Rk?1fb?&?"?X7kJ0t=W]lgBVsR;H?)m!^H2^iZE"!g?:<mftdl#u)]9f^e"-CKp#K%D"JmWF#a*n/GZg5;=4?",Ahp`eAg+Zb's<34=QOgMs@cloA=9#.7p<EdS%ae*)FB50nIGLBH[A.7+HL'e4cgRE-[!r#"%5Lni+[q`&3ao(Ns>J;&Kf==3QM_3,\`;oC\ghT%V`o_8.o'?md*+$G.;@ISjDD%j9((*\OQ"LOqm"u:'6\Mou)e!XVqP=:8n%^H8#b_k"'Tfl.jb8.WH9(]U;(+D`#_d?J.4HCn:q!55@V[oMS^F\,b@NaD#9@9o@66l1d>['";:@,N0Qb#Uc7-3MBI%%X?LnqcU7B=]cah<6aUiA"m1Xs<am@R4BdJns<b\'VPL4-RSloC$,M03<hD7kKT)7m4FQa>r3"_[2I?so%Ms0Cg[s0cBqTm'`8$bQ&6ENiG#$OoH+k'\sRIARjV8=9(6nBqb"i6>cW]SFlN_0^Vj/gpS0V@eoBM].2S@cMH+#.sVK7CL#Inu*tKU76!:5>`n42Xb$Q42![G^*)'EW#sr&,k"%[KfQ"p5upF3$d7E1aO?7k!=_mhI`DhQii[sA\ik?3,[43'kcUd4hL[#q_C+U+db0sg<!dYg"F=JT_<Sp4N7Vmab#'a>i5685#34YF_rNQ`6Wd>%&2;ZHpl12*Na2^6]S_!Y6GR>rP;(6*+VA:`2aFh+,^q"I=q0*9n<%Ps%N*ODSEBHo*T4je$..#K/=k&&'bIft(W\Z[mP3.nMr]ViEL='In(tMM5XVur8o:moaTU+s0qVop]Yt3+4C_gWLFCH",qECYL;h7OmS&r*`hO)X"C!3ImhkN4IatH*9Dm,ZASfibC7Mp(a:U4eY/qS`3D"2EkaqVGPS%NO!u](/*Q+[$l`F[2qs,NQ18KG:m56MaY/pc/?dI0FhUqn.)ng`)J2CRD+AW]E7&2r(O[A\V4rrDckq$<HGA[j;_oW?@(-+9Ba8SSUCa&@g-Z<fhr:P.q[b;)pInc`g%HHfpWTIXV)YkO3$f&3$rg4Ep/.730=dB0/bAZ7N2V*VI9[L5"@30C5F+!fXl@<2s;K2GV>t`+Cs%r/(ff.LGp%sr:r?0pNjGBd47s!pp81Vi[2mmjs).tt1ajaMkaG.T_`P#G2b=^(DdARg;<;H"Kn44?2ANX.PXQ2c5WAS);'@:$+Pdl@Gi_S6fM%N3k05D'li]P?:(B<J"#-ju=h4,8:O&nNA;<d/:Sri$t;(M/Y@tp1g)CP/m*['oY/-?gel&j9Q`Jqua;`q\RO4s;M_fMlEPt0%f7A>9b_AcW<!us&!WU7gV!\M8.$ek"+YV>aG8$2Ftd4_r/hT0o:ehfTZjbpKFRp&Pkep0]MJWIr/$C''OkUl[6-R0/C7;D5-1sHOBocgfNVHVjk'C%W>aF-nfgUHP7)Fb./!DQpnddW=H5UlN\+sj/r4i6s:N;icu7Xr[CXNp8P8ZoN\G=[C]H5N@*0='ZEC"_tV;B!<t<!J&g]BEa$G8L]<olGqdOp:bd'L@%7]QHT,V?'EAm.!c3<D@5"HuUFt52qS;5X)kOJ(iGTkKZ.QGM&-Ze.g^tTVQIg9?F&Kc&&KQZpo[BI5u:?e@1&W60u'/<Bi/J"B1(ZbF/PC7gkZl3P1)_J"6*$0Dc56VR?2nLlXPBQ*FKc6oLq3iep^c)`T>tl4*[aZaH-P;75+NeR!8W:9GG#jb0sAOK7PhYh"B._V*Inb<E.02Ck0Je(Me`fZkkS;j$0M/nE:@o-+"N`N]07$YML^n4:Cb)G3QE&I-ZP]uZiUS^YZ7.WS>53ij6&."mKflksCl]SOq,gK*iiBCuE>p>$3tAp/ZK?%2eKW(H9*6K]h-*PO&J"#@&<)*Ru!-n9@)lP?UkW$o'#pdC\;aN\ItmcFFiE]kD8AOC8*]EaGUU\'S^P[pLU42&W`MCFn8Pbf5h@=MfJcJCj79A@321UH8icuJGEhl^`o<O>aD2*c@$X3B3D4Y$>^;6:iHGkF;?Hqho~>endstream
 endobj
 xref
-0 10
+0 15
 0000000000 65535 f 
-0000000009 00000 n 
-0000000058 00000 n 
-0000000121 00000 n 
-0000000267 00000 n 
-0000000413 00000 n 
-0000000483 00000 n 
-0000000558 00000 n 
-0000000626 00000 n 
-0000005472 00000 n 
+0000000073 00000 n 
+0000000154 00000 n 
+0000000261 00000 n 
+0000000373 00000 n 
+0000000488 00000 n 
+0000000571 00000 n 
+0000000676 00000 n 
+0000000795 00000 n 
+0000001000 00000 n 
+0000001205 00000 n 
+0000001275 00000 n 
+0000001559 00000 n 
+0000001625 00000 n 
+0000005612 00000 n 
 trailer
-<< /Size 10 /Root 1 0 R >>
+<<
+/ID 
+[<bcbb554561cda7409a0ee7a706d57da1><bcbb554561cda7409a0ee7a706d57da1>]
+% ReportLab generated PDF document -- digest (http://www.reportlab.com)
+
+/Info 11 0 R
+/Root 10 0 R
+/Size 15
+>>
 startxref
-9683
+9440
 %%EOF

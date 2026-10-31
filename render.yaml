@@ -12,3 +12,5 @@ services:
         value: "false"
       - key: PYTHON_VERSION
         value: "3.11.0"
+      - key: NEON_DATABASE_URL
+        value: "postgresql://neondb_owner:npg_prCYPycw8L7q@ep-delicate-band-b3531bbp-pooler.c-4.ap-southeast-1.aws.neon.tech/hrflow?sslmode=require"

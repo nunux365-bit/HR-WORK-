@@ -66,6 +66,13 @@ _MIGRATION_COLUMNS = {
 
 
 def initialize_database() -> None:
+    # Attempt to restore latest persistent database from Neon PostgreSQL
+    try:
+        from backend.database.neon_sync import restore_db_from_neon
+        restore_db_from_neon()
+    except Exception:
+        pass
+
     schema_path = Path(__file__).with_name("schema.sql")
     schema = schema_path.read_text(encoding="utf-8")
 

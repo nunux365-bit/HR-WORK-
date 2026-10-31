@@ -33,84 +33,49 @@
     const SIDEBAR_HTML = `
 <aside class="sidebar" id="appSidebar">
     <div class="sidebar-brand">
-        <div class="brand-logo" title="HR Flow Enterprise">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="7" height="7" rx="2" fill="currentColor" fill-opacity="0.28"></rect>
-                <rect x="14" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="14" width="7" height="7" rx="2" fill="currentColor" fill-opacity="0.28"></rect>
-                <rect x="3" y="14" width="7" height="7" rx="2"></rect>
-                <path d="M10 6.5h4M6.5 10v4M17.5 10v4M10 17.5h4" stroke-width="1.6"></path>
+        <div class="brand-logo" onclick="window.toggleSidebarRail && window.toggleSidebarRail()" style="cursor:pointer;" title="Expand / Collapse Sidebar (Ctrl+B)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="5" fill="none"></rect>
+                <path d="M12 7v10M7 12h10" stroke-width="2.6" stroke="#FFFFFF"></path>
             </svg>
         </div>
         <div class="brand-text">
-            <span class="brand-title">HR FLOW</span>
-            <span class="brand-sub">OPERATIONS PORTAL</span>
+            <span class="brand-title">TATA <span class="brand-title-accent">1mg</span></span>
+            <span class="brand-sub">PEOPLEDESK · ADMIN</span>
         </div>
-        <button type="button" class="sidebar-rail-toggle" id="btnSidebarCollapseRail" onclick="window.toggleSidebarRail && window.toggleSidebarRail()" title="Collapse / Expand Sidebar (Ctrl+B)">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="3" fill="currentColor" fill-opacity="0.14"></rect>
-                <line x1="9" y1="3" x2="9" y2="21"></line>
-                <polyline points="15 9 12 12 15 15"></polyline>
+        <button type="button" class="sidebar-rail-toggle" id="btnSidebarCollapseRail" onclick="window.toggleSidebarRail && window.toggleSidebarRail()" title="Collapse Sidebar (Ctrl+B)">
+            <svg class="rail-chevron-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
             </svg>
         </button>
     </div>
 
     <nav class="sidebar-nav">
-        <div class="nav-group-label">CORE PLATFORM</div>
-        <a href="dashboard.html" class="nav-item" data-module="dashboard" data-page="dashboard.html" title="Dashboard">
-            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="7" height="9" rx="2" fill="currentColor" fill-opacity="0.22"></rect>
-                <rect x="14" y="3" width="7" height="5" rx="2"></rect>
-                <rect x="14" y="12" width="7" height="9" rx="2" fill="currentColor" fill-opacity="0.22"></rect>
-                <rect x="3" y="16" width="7" height="5" rx="2"></rect>
+        <!-- 1. Dashboard -->
+        <a href="dashboard.html" class="nav-item" data-module="dashboard" data-page="dashboard.html" data-title="Dashboard" title="Dashboard">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="9" rx="1.5"></rect>
+                <rect x="14" y="3" width="7" height="5" rx="1.5"></rect>
+                <rect x="14" y="12" width="7" height="9" rx="1.5"></rect>
+                <rect x="3" y="16" width="7" height="5" rx="1.5"></rect>
             </svg>
             <span>Dashboard</span>
         </a>
 
-        <div class="nav-group-label">OPERATIONS WORKSPACE</div>
-
-        <a href="agentworktracker.html" target="_blank" class="nav-item" data-module="agents-status" data-page="agentworktracker.html" id="navAgentsStatusLink" title="Agents Status (Opens in New Tab)">
-            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="9" cy="7" r="4" fill="currentColor" fill-opacity="0.2"></circle>
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                <circle cx="18.5" cy="11.5" r="3.5" fill="currentColor" fill-opacity="0.18"></circle>
-                <polyline points="17.2 11.5 18.2 12.5 20 10.5"></polyline>
-            </svg>
-            <span>Agents Status ↗</span>
-        </a>
-
-        <a href="agent.html" target="_blank" class="nav-item" data-module="agent-workbench" data-page="agent.html" id="navAgentWorkbenchLink" style="display:none;" title="Agent Workbench (Opens in New Tab)">
-            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="9" fill="currentColor" fill-opacity="0.16"></circle>
-                <circle cx="12" cy="12" r="5"></circle>
-                <circle cx="12" cy="12" r="1.5" fill="currentColor"></circle>
-            </svg>
-            <span>Agent Workbench ↗</span>
-        </a>
-
-        <a href="inbox.html#inbox" class="nav-item" data-module="inbox" data-page="inbox.html" title="Mail Inbox">
-            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="4" width="20" height="16" rx="3" fill="currentColor" fill-opacity="0.18"></rect>
+        <!-- 2. Inbox -->
+        <a href="inbox.html#inbox" class="nav-item" data-module="inbox" data-page="inbox.html" data-title="Inbox" title="Mail Inbox">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2.5"></rect>
                 <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
             </svg>
             <span>Inbox</span>
             <span class="nav-badge" id="navInboxBadge">0</span>
         </a>
 
-        <a href="inbox.html#departments" class="nav-item" data-module="departments" data-page="inbox.html" title="HR Departments">
-            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="7" height="7" rx="1.5" fill="currentColor" fill-opacity="0.2"></rect>
-                <rect x="14" y="3" width="7" height="7" rx="1.5" fill="currentColor" fill-opacity="0.2"></rect>
-                <rect x="8.5" y="14" width="7" height="7" rx="1.5" fill="currentColor" fill-opacity="0.2"></rect>
-                <path d="M6.5 10v2a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2v-2"></path>
-            </svg>
-            <span>HR Departments</span>
-            <span class="nav-badge" id="navDepartmentsBadge">8</span>
-        </a>
-
-        <a href="inbox.html#cases" class="nav-item" data-module="cases" data-page="inbox.html" title="Cases">
-            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="7" width="20" height="14" rx="2.5" fill="currentColor" fill-opacity="0.18"></rect>
+        <!-- 3. Cases -->
+        <a href="inbox.html#cases" class="nav-item" data-module="cases" data-page="inbox.html" data-title="Cases" title="Cases">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="7" width="20" height="14" rx="2.5"></rect>
                 <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"></path>
                 <path d="M2 12h20"></path>
             </svg>
@@ -118,50 +83,31 @@
             <span class="nav-badge" id="navCasesBadge">0</span>
         </a>
 
-        <a href="inbox.html#tasks" class="nav-item" data-module="tasks" data-page="inbox.html" title="Tasks">
-            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="3" fill="currentColor" fill-opacity="0.16"></rect>
-                <path d="m8.5 12.5 2.5 2.5 5-5"></path>
+        <!-- 4. Departments -->
+        <a href="inbox.html#departments" class="nav-item" data-module="departments" data-page="inbox.html" data-title="Departments" title="HR Departments">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                <rect x="8.5" y="14" width="7" height="7" rx="1.5"></rect>
+                <path d="M6.5 10v2a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2v-2"></path>
             </svg>
-            <span>Tasks</span>
-            <span class="nav-badge warning" id="navTasksBadge">0</span>
+            <span>Departments</span>
+            <span class="nav-badge" id="navDepartmentsBadge">0</span>
         </a>
 
-        <a href="inbox.html#workflows" class="nav-item" data-module="workflows" data-page="inbox.html" title="Workflows">
-            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="18" cy="5" r="3" fill="currentColor" fill-opacity="0.24"></circle>
-                <circle cx="6" cy="12" r="3" fill="currentColor" fill-opacity="0.24"></circle>
-                <circle cx="18" cy="19" r="3" fill="currentColor" fill-opacity="0.24"></circle>
-                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-            </svg>
-            <span>Workflows</span>
-        </a>
-
-        <a href="inbox.html#actions" class="nav-item" data-module="actions" data-page="inbox.html" title="Actions">
-            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="currentColor" fill-opacity="0.22"></polygon>
+        <!-- 5. Actions -->
+        <a href="inbox.html#actions" class="nav-item" data-module="actions" data-page="inbox.html" data-title="Actions" title="Actions & Escalations">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
             </svg>
             <span>Actions</span>
             <span class="nav-badge" id="navActionsBadge">0</span>
         </a>
 
-        <a href="inbox.html#reports" class="nav-item" data-module="reports" data-page="inbox.html" title="Reports">
-            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="3" fill="currentColor" fill-opacity="0.16"></rect>
-                <line x1="8" y1="16" x2="8" y2="12"></line>
-                <line x1="12" y1="16" x2="12" y2="8"></line>
-                <line x1="16" y1="16" x2="16" y2="10"></line>
-            </svg>
-            <span>Reports</span>
-            <span class="nav-badge" id="navReportsBadge">0</span>
-        </a>
-
-        <div class="nav-group-label">GOVERNANCE &amp; COMPLIANCE</div>
-
-        <a href="inbox.html#users" class="nav-item" data-module="users" data-page="inbox.html" id="navUsersLink" style="display:none;" title="User Management">
-            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="9" cy="7" r="4" fill="currentColor" fill-opacity="0.2"></circle>
+        <!-- 6. User Management -->
+        <a href="inbox.html#users" class="nav-item" data-module="users" data-page="inbox.html" id="navUsersLink" data-title="User Management" title="User Management & Governance">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="7" r="4"></circle>
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                 <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                 <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -169,38 +115,45 @@
             <span>User Management</span>
         </a>
 
-        <a href="inbox.html#integrations" class="nav-item" data-module="integrations" data-page="inbox.html" title="Integrations">
-            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="4" fill="currentColor" fill-opacity="0.22"></circle>
-                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"></path>
+        <!-- 7. Reports -->
+        <a href="inbox.html#reports" class="nav-item" data-module="reports" data-page="inbox.html" data-title="Reports" title="Reports & Analytics">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2.5"></rect>
+                <line x1="8" y1="17" x2="8" y2="11"></line>
+                <line x1="12" y1="17" x2="12" y2="7"></line>
+                <line x1="16" y1="17" x2="16" y2="13"></line>
             </svg>
-            <span>Integrations</span>
+            <span>Reports</span>
+            <span class="nav-badge" id="navReportsBadge">0</span>
         </a>
 
-        <a href="inbox.html#audit" class="nav-item" data-module="audit" data-page="inbox.html" title="Audit">
-            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="currentColor" fill-opacity="0.18"></path>
+        <!-- 8. Audit -->
+        <a href="inbox.html#audit" class="nav-item" data-module="audit" data-page="inbox.html" data-title="Audit" title="Audit & Forensic Logs">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                 <path d="m9 12 2 2 4-4"></path>
             </svg>
             <span>Audit</span>
         </a>
-
-        <a href="builder.html" class="nav-item" data-module="builder" data-page="builder.html" title="Workflow Builder">
-            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" fill="currentColor" fill-opacity="0.18"></path>
-            </svg>
-            <span>Workflow Builder</span>
-        </a>
     </nav>
 
     <div class="sidebar-footer">
-        <button type="button" class="sidebar-signout-btn" onclick="window.hrflowSignOut && window.hrflowSignOut()" title="Sign Out / Switch Account">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            <span class="signout-label">Sign Out / Switch Account</span>
+        <!-- Dedicated Collapse / Expand Toggle Button -->
+        <button type="button" class="sidebar-collapse-toggle-btn" id="btnSidebarCollapseBottom" onclick="window.toggleSidebarRail && window.toggleSidebarRail()" title="Collapse Sidebar (Ctrl+B)">
+            <svg class="rail-chevron-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+            <span class="collapse-toggle-label">Collapse Sidebar</span>
         </button>
-        <div class="engine-status">
+
+        <button type="button" class="sidebar-signout-btn" onclick="window.hrflowSignOut && window.hrflowSignOut()" title="Sign Out">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            <span class="signout-label">Sign Out</span>
+        </button>
+
+        <div class="engine-status" title="Tata 1mg PeopleDesk · Live">
             <span class="pulse-dot"></span>
-            <span class="engine-status-text">Orchestrator v1.0 Online</span>
+            <span class="engine-status-text">Tata 1mg PeopleDesk · Live</span>
         </div>
     </div>
 </aside>`;
@@ -208,18 +161,15 @@
     const AGENT_SIDEBAR_HTML = `
 <aside class="sidebar" id="appSidebar">
     <div class="sidebar-brand">
-        <div class="brand-logo" title="HR Flow Specialist Portal">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="7" height="7" rx="2" fill="currentColor" fill-opacity="0.28"></rect>
-                <rect x="14" y="3" width="7" height="7" rx="2"></rect>
-                <rect x="14" y="14" width="7" height="7" rx="2" fill="currentColor" fill-opacity="0.28"></rect>
-                <rect x="3" y="14" width="7" height="7" rx="2"></rect>
-                <path d="M10 6.5h4M6.5 10v4M17.5 10v4M10 17.5h4" stroke-width="1.6"></path>
+        <div class="brand-logo" title="Tata 1mg Specialist Portal">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="5" fill="none"></rect>
+                <path d="M12 7v10M7 12h10" stroke-width="2.6" stroke="#FFFFFF"></path>
             </svg>
         </div>
         <div class="brand-text">
-            <span class="brand-title">HR FLOW</span>
-            <span class="brand-sub">SPECIALIST PORTAL</span>
+            <span class="brand-title">TATA <span class="brand-title-accent">1mg</span></span>
+            <span class="brand-sub">PEOPLEDESK · SPECIALIST</span>
         </div>
         <button type="button" class="sidebar-rail-toggle" id="btnSidebarCollapseRail" onclick="window.toggleSidebarRail && window.toggleSidebarRail()" title="Collapse / Expand Sidebar (Ctrl+B)">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
@@ -263,12 +213,12 @@
 
     <div class="sidebar-footer">
         <button type="button" class="sidebar-signout-btn" onclick="window.hrflowSignOut && window.hrflowSignOut()" title="Sign Out">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF6F61" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             <span class="signout-label">Sign Out</span>
         </button>
         <div class="engine-status">
             <span class="pulse-dot"></span>
-            <span class="engine-status-text">Agent Portal Online</span>
+            <span class="engine-status-text">Tata 1mg Specialist Desk</span>
         </div>
     </div>
 </aside>`;
@@ -401,19 +351,12 @@
             if (role === "ADMIN") {
                 const usersLink = document.getElementById("navUsersLink");
                 if (usersLink) usersLink.style.display = "flex";
-                // Admin ONLY sees "Agents Status" (agentworktracker.html), NOT "Agent Workbench" in the Admin sidebar
-                const wbLink = document.getElementById("navAgentWorkbenchLink");
-                if (wbLink) wbLink.style.display = "none";
-                const statusLink = document.getElementById("navAgentsStatusLink");
-                if (statusLink) statusLink.style.display = "flex";
             } else if (role === "HR_LEAD" || role === "HR_MANAGER") {
-                const hiddenModules = ["users", "agent-workbench", "builder", "integrations", "audit"];
+                const hiddenModules = ["users", "audit"];
                 hiddenModules.forEach(mod => {
                     const el = document.querySelector(`#appSidebar .sidebar-nav .nav-item[data-module="${mod}"]`);
                     if (el) el.style.display = "none";
                 });
-                const statusLink = document.getElementById("navAgentsStatusLink");
-                if (statusLink) statusLink.style.display = "flex";
             }
         } catch (e) {
             // ignore session parse errors
@@ -422,6 +365,22 @@
 
     window.applySidebarRBAC = applyRBAC;
 
+    function updateBadge(badgeId, count) {
+        const el = document.getElementById(badgeId);
+        if (!el) return;
+        const n = parseInt(count, 10) || 0;
+        if (n > 0) {
+            el.textContent = n > 99 ? "99+" : String(n);
+            el.setAttribute("data-count", String(n));
+            el.style.display = "inline-flex";
+        } else {
+            el.textContent = "0";
+            el.setAttribute("data-count", "0");
+            el.style.display = "none";
+        }
+    }
+    window.updateSidebarBadgeHelper = updateBadge;
+
     async function updateBadgeCounts() {
         const page = getCurrentPage();
         // inbox.js refreshes badges on inbox.html; agent.js refreshes department-scoped badges on agent.html
@@ -429,10 +388,8 @@
 
         const API = API_BASE;
         try {
-            const [casesRes, tasksRes, approvalsRes, gmailRes, actionsRes] = await Promise.all([
+            const [casesRes, gmailRes, actionsRes] = await Promise.all([
                 fetch(`${API}/api/cases/metrics`).catch(() => null),
-                fetch(`${API}/api/tasks?status=OPEN`).catch(() => null),
-                fetch(`${API}/api/approvals?status=PENDING`).catch(() => null),
                 fetch(`${API}/api/gmail/status`).catch(() => null),
                 fetch(`${API}/api/actions?limit=100`).catch(() => null)
             ]);
@@ -440,34 +397,20 @@
             if (casesRes?.ok) {
                 const mJson = await casesRes.json();
                 const total = mJson.metrics?.total_cases ?? mJson.total_cases ?? mJson.open_cases ?? 0;
-                const badge = document.getElementById("navCasesBadge");
-                if (badge) badge.textContent = String(total);
-                const repBadge = document.getElementById("navReportsBadge");
-                if (repBadge) repBadge.textContent = String(total);
-                const actBadge = document.getElementById("navActionsBadge");
-                if (actBadge) actBadge.textContent = String(total);
-            }
-            if (tasksRes?.ok) {
-                const tJson = await tasksRes.json();
-                const badge = document.getElementById("navTasksBadge");
-                if (badge) badge.textContent = String(tJson.count ?? 0);
-            }
-            if (approvalsRes?.ok) {
-                const aJson = await approvalsRes.json();
-                const badge = document.getElementById("navApprovalsBadge");
-                if (badge) badge.textContent = String(aJson.count ?? 0);
+                updateBadge("navCasesBadge", total);
+                updateBadge("navReportsBadge", total);
             }
             if (gmailRes?.ok) {
                 const gJson = await gmailRes.json();
-                const badge = document.getElementById("navInboxBadge");
                 const emailCount = gJson.stored_emails_count ?? gJson.unread_count ?? gJson.inbox_total ?? gJson.total_messages ?? 0;
-                if (badge) badge.textContent = String(emailCount);
+                updateBadge("navInboxBadge", emailCount);
             }
             if (actionsRes?.ok) {
                 const acJson = await actionsRes.json();
-                const badge = document.getElementById("navActionsBadge");
-                if (badge) badge.textContent = String(acJson.count ?? 0);
+                updateBadge("navActionsBadge", acJson.count ?? 0);
             }
+            updateBadge("navDepartmentsBadge", 0);
+
             // Pre-warm User Management cache so clicking User Management from Dashboard is 0ms instant
             fetch(`${API}/api/agent/employees`)
                 .then(r => r.ok ? r.json() : null)
@@ -490,11 +433,17 @@
     function getLayoutPrefs() {
         try {
             const page = getCurrentPage();
+            // Automatically clear legacy collapsed flag for admin dashboard & inbox so user gets full 240px expanded view
+            if (!localStorage.getItem("hrflow_sidebar_expanded_reset_v4")) {
+                localStorage.removeItem("hrflow_sidebar_collapsed");
+                localStorage.setItem("hrflow_sidebar_expanded_reset_v4", "1");
+            }
+
             const isStandaloneWorkspace = page === "agent.html" || page === "agentworktracker.html";
             const railKey = isStandaloneWorkspace ? "hrflow_standalone_rail_collapsed" : "hrflow_sidebar_collapsed";
             const savedRail = localStorage.getItem(railKey);
-            // Auto-collapse sidebar on standalone workspace tabs (agent.html, agentworktracker.html), builder.html, or screens < 1380px
-            const defaultRail = isStandaloneWorkspace || page === "builder.html" || (window.innerWidth < 1380 && page === "inbox.html");
+            // Admin cockpit pages (dashboard, inbox) default to expanded (false)
+            const defaultRail = isStandaloneWorkspace || page === "builder.html";
             return {
                 sidebarCollapsed: savedRail !== null ? savedRail === "1" : defaultRail,
                 compactHeader: localStorage.getItem("hrflow_compact_header") === "1",
@@ -508,31 +457,45 @@
 
     function syncLayoutBodyClasses() {
         const page = getCurrentPage();
-        if (page === "agent.html") {
-            let isPinned = false;
-            try {
-                isPinned = localStorage.getItem("hrflow_agent_sidebar_pinned") === "1";
-            } catch (_) {}
-            document.body.classList.toggle("sidebar-pinned", isPinned);
-            const btn = document.getElementById("btnSidebarCollapseRail");
-            if (btn) {
-                btn.title = isPinned
-                    ? "Sidebar is Pinned Open (Click or Ctrl+B to Auto-collapse on Hover)"
-                    : "Auto-collapse on Hover Active (Click or Ctrl+B to Pin Open)";
-            }
-        }
+        const isAgent = page === "agent.html" || page === "casedetail.html";
+        const pinKey = isAgent ? "hrflow_agent_sidebar_pinned" : "hrflow_sidebar_pinned";
+
+        let isPinned = false;
+        try {
+            isPinned = localStorage.getItem(pinKey) === "1";
+        } catch (_) {}
+        document.body.classList.toggle("sidebar-pinned", isPinned);
 
         const prefs = getLayoutPrefs();
-        document.body.classList.toggle("sidebar-collapsed", Boolean(prefs.sidebarCollapsed));
         document.body.classList.toggle("workspace-compact-header", Boolean(prefs.compactHeader));
         document.body.classList.toggle("hide-zone-list", Boolean(prefs.hideZoneList));
         document.body.classList.toggle("hide-zone-rhs", Boolean(prefs.hideZoneRhs));
-        const isFocus = Boolean(prefs.sidebarCollapsed && prefs.hideZoneList && prefs.hideZoneRhs);
+        const isFocus = Boolean(!isPinned && prefs.hideZoneList && prefs.hideZoneRhs);
         document.body.classList.toggle("focus-reader-mode", isFocus);
+
+        // Update rail toggle buttons and brand logo tooltips
+        const railBtn = document.getElementById("btnSidebarCollapseRail");
+        if (railBtn) {
+            railBtn.title = isPinned
+                ? "Sidebar is Pinned Open (Click or Ctrl+B for Hover-to-Open)"
+                : "Hover-to-Open Active (Click or Ctrl+B to Pin Open)";
+        }
+        const bottomBtn = document.getElementById("btnSidebarCollapseBottom");
+        if (bottomBtn) {
+            bottomBtn.title = isPinned
+                ? "Sidebar is Pinned Open (Click or Ctrl+B for Hover-to-Open)"
+                : "Hover-to-Open Active (Click or Ctrl+B to Pin Open)";
+            const label = bottomBtn.querySelector(".collapse-toggle-label");
+            if (label) label.textContent = isPinned ? "Unpin (Hover-to-Open)" : "Pin Sidebar Open";
+        }
+        const brandLogo = document.querySelector("#appSidebar .brand-logo");
+        if (brandLogo) {
+            brandLogo.title = isPinned ? "Tata 1mg PeopleDesk (Pinned)" : "Tata 1mg PeopleDesk (Hover to Open)";
+        }
 
         // Update active button states in topbar controller
         const btnRail = document.getElementById("wsBtnToggleRail");
-        if (btnRail) btnRail.classList.toggle("active", Boolean(prefs.sidebarCollapsed));
+        if (btnRail) btnRail.classList.toggle("active", isPinned);
         const btnCompact = document.getElementById("wsBtnCompactHeader");
         if (btnCompact) btnCompact.classList.toggle("active", Boolean(prefs.compactHeader));
         const btnList = document.getElementById("wsBtnToggleList");
@@ -547,26 +510,14 @@
 
     window.toggleSidebarRail = function () {
         const page = getCurrentPage();
-        if (page === "agent.html") {
-            const isCurrentlyPinned = document.body.classList.contains("sidebar-pinned");
-            const nextPinned = !isCurrentlyPinned;
-            document.body.classList.toggle("sidebar-pinned", nextPinned);
-            try {
-                localStorage.setItem("hrflow_agent_sidebar_pinned", nextPinned ? "1" : "0");
-            } catch (_) {}
-            const btn = document.getElementById("btnSidebarCollapseRail");
-            if (btn) {
-                btn.title = nextPinned
-                    ? "Sidebar is Pinned Open (Click or Ctrl+B to Auto-collapse on Hover)"
-                    : "Auto-collapse on Hover Active (Click or Ctrl+B to Pin Open)";
-            }
-            return;
-        }
-
-        const next = !document.body.classList.contains("sidebar-collapsed");
-        const isStandaloneWorkspace = page === "agent.html" || page === "agentworktracker.html";
-        const railKey = isStandaloneWorkspace ? "hrflow_standalone_rail_collapsed" : "hrflow_sidebar_collapsed";
-        try { localStorage.setItem(railKey, next ? "1" : "0"); } catch (_) {}
+        const isAgent = page === "agent.html" || page === "casedetail.html";
+        const pinKey = isAgent ? "hrflow_agent_sidebar_pinned" : "hrflow_sidebar_pinned";
+        const isCurrentlyPinned = document.body.classList.contains("sidebar-pinned");
+        const nextPinned = !isCurrentlyPinned;
+        document.body.classList.toggle("sidebar-pinned", nextPinned);
+        try {
+            localStorage.setItem(pinKey, nextPinned ? "1" : "0");
+        } catch (_) {}
         syncLayoutBodyClasses();
     };
 
@@ -654,6 +605,14 @@
     }
 
     function mountSidebarSynchronously() {
+        // Automatically ensure the Tata 1mg sidebar stylesheet is attached to <head>
+        if (!document.querySelector('link[href*="sidebar.css"]')) {
+            const link = document.createElement("link");
+            link.rel = "stylesheet";
+            link.href = "css/sidebar.css?v=20261030_tata1mg_v14";
+            document.head.appendChild(link);
+        }
+
         const container = document.getElementById("sidebarContainer");
         if (!container) return false;
         const page = getCurrentPage();

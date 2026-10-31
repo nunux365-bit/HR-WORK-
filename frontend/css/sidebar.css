@@ -1,0 +1,729 @@
+/**
+ * TATA 1mg PeopleDesk — Enterprise Admin Sidebar Stylesheet
+ * Signature Brand Theme: Coral (#FF6F61), Crimson (#E03546), Clean Surface (#FFFFFF)
+ * Hover-to-Open Architecture: Auto-collapses to 68px rail, expands to 248px on hover or pin.
+ * Exactly 8 Modules: Dashboard, Inbox, Cases, Departments, Actions, User Management, Reports, Audit
+ */
+
+:root {
+    --tata-coral: #FF6F61;
+    --tata-coral-hover: #FF5847;
+    --tata-coral-glow: rgba(255, 111, 97, 0.28);
+    --tata-coral-light: #FFF1F0;
+    --tata-coral-border: #FDA29B;
+    --tata-crimson: #E03546;
+    --tata-text-heading: #101828;
+    --tata-text-primary: #1D2939;
+    --tata-text-secondary: #344054;
+    --tata-text-muted: #667085;
+    --tata-border-light: #EAECF0;
+    --tata-border-subtle: #F2F4F7;
+    --tata-bg-surface: #FFFFFF;
+    --tata-bg-subtle: #F8FAFC;
+    --sidebar-width: 248px;
+    --sidebar-collapsed-width: 68px;
+}
+
+/* ==========================================================================
+   1. App Layout & Stable Main Area Offset
+   The fixed sidebar rests at 68px so the main area never shifts or reflows.
+   ========================================================================== */
+.main-area,
+.inbox-main-area {
+    margin-left: var(--sidebar-collapsed-width) !important;
+    width: calc(100vw - var(--sidebar-collapsed-width)) !important;
+    max-width: calc(100vw - var(--sidebar-collapsed-width)) !important;
+    box-sizing: border-box !important;
+    transition: margin-left 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+                width 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+body.sidebar-pinned .main-area,
+body.sidebar-pinned .inbox-main-area {
+    margin-left: var(--sidebar-width) !important;
+    width: calc(100vw - var(--sidebar-width)) !important;
+    max-width: calc(100vw - var(--sidebar-width)) !important;
+}
+
+/* ==========================================================================
+   2. Sidebar Shell (Resting at 68px Rail, Expands to 248px on Hover / Pin)
+   ========================================================================== */
+.sidebar,
+#appSidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    height: 100vh !important;
+    width: var(--sidebar-collapsed-width) !important;
+    min-width: var(--sidebar-collapsed-width) !important;
+    background: var(--tata-bg-surface) !important;
+    border-right: 1px solid var(--tata-border-light) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    color: var(--tata-text-primary) !important;
+    box-shadow: 2px 0 10px rgba(16, 24, 40, 0.04) !important;
+    transition: width 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+                min-width 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.22s ease !important;
+    flex-shrink: 0 !important;
+    z-index: 1000 !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    user-select: none !important;
+}
+
+/* Hover-to-Open & Pinned State: Smoothly expand to full width with soft elevation */
+.sidebar:hover,
+#appSidebar:hover,
+body.sidebar-pinned .sidebar,
+body.sidebar-pinned #appSidebar {
+    width: var(--sidebar-width) !important;
+    min-width: var(--sidebar-width) !important;
+    box-shadow: 8px 0 32px rgba(16, 24, 40, 0.12), 2px 0 8px rgba(16, 24, 40, 0.04) !important;
+}
+
+/* ==========================================================================
+   3. Brand Header (Centered Logo at rest, expands to full title on hover)
+   ========================================================================== */
+.sidebar-brand,
+#appSidebar .sidebar-brand {
+    height: 66px !important;
+    min-height: 66px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    border-bottom: 1px solid var(--tata-border-subtle) !important;
+    background: var(--tata-bg-surface) !important;
+    position: relative !important;
+    flex-shrink: 0 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    transition: padding 0.2s ease, justify-content 0.2s ease !important;
+}
+
+.sidebar:hover .sidebar-brand,
+#appSidebar:hover .sidebar-brand,
+body.sidebar-pinned .sidebar-brand,
+body.sidebar-pinned #appSidebar .sidebar-brand {
+    justify-content: flex-start !important;
+    padding: 0 14px 0 16px !important;
+    gap: 11px !important;
+}
+
+.brand-logo,
+#appSidebar .brand-logo {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 9px !important;
+    background: linear-gradient(135deg, var(--tata-coral) 0%, var(--tata-crimson) 100%) !important;
+    box-shadow: 0 3px 10px var(--tata-coral-glow) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    color: #FFFFFF !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    cursor: pointer !important;
+    margin: 0 auto !important;
+    transition: transform 0.15s ease, margin 0.2s ease !important;
+}
+
+.brand-logo:hover,
+#appSidebar .brand-logo:hover {
+    transform: scale(1.05) !important;
+    box-shadow: 0 4px 14px rgba(255, 111, 97, 0.4) !important;
+}
+
+.sidebar:hover .brand-logo,
+#appSidebar:hover .brand-logo,
+body.sidebar-pinned .brand-logo,
+body.sidebar-pinned #appSidebar .brand-logo {
+    margin: 0 !important;
+}
+
+.brand-text,
+#appSidebar .brand-text {
+    display: flex !important;
+    flex-direction: column !important;
+    min-width: 0 !important;
+    flex: 1 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    transition: opacity 0.18s ease !important;
+}
+
+.sidebar:hover .brand-text,
+#appSidebar:hover .brand-text,
+body.sidebar-pinned .brand-text,
+body.sidebar-pinned #appSidebar .brand-text {
+    opacity: 1 !important;
+    visibility: visible !important;
+    width: auto !important;
+}
+
+.brand-title {
+    font-size: 0.95rem !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.015em !important;
+    color: var(--tata-text-heading) !important;
+    line-height: 1.15 !important;
+    white-space: nowrap !important;
+}
+
+.brand-title-accent {
+    color: var(--tata-coral) !important;
+    font-weight: 900 !important;
+}
+
+.brand-sub {
+    font-size: 0.62rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.05em !important;
+    color: var(--tata-crimson) !important;
+    background: var(--tata-coral-light) !important;
+    border: 1px solid var(--tata-coral-border) !important;
+    padding: 1px 6px !important;
+    border-radius: 4px !important;
+    width: fit-content !important;
+    margin-top: 2px !important;
+    white-space: nowrap !important;
+    line-height: 1.2 !important;
+}
+
+/* Header Pin / Toggle Button */
+.sidebar-rail-toggle,
+#appSidebar .sidebar-rail-toggle {
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 7px !important;
+    background: var(--tata-bg-surface) !important;
+    border: 1px solid var(--tata-border-light) !important;
+    color: var(--tata-text-muted) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+    flex-shrink: 0 !important;
+    padding: 0 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    overflow: hidden !important;
+}
+
+.sidebar:hover .sidebar-rail-toggle,
+#appSidebar:hover .sidebar-rail-toggle,
+body.sidebar-pinned .sidebar-rail-toggle,
+body.sidebar-pinned #appSidebar .sidebar-rail-toggle {
+    opacity: 1 !important;
+    visibility: visible !important;
+    width: 28px !important;
+}
+
+.sidebar-rail-toggle:hover,
+#appSidebar .sidebar-rail-toggle:hover {
+    background: var(--tata-coral-light) !important;
+    border-color: var(--tata-coral-border) !important;
+    color: var(--tata-coral) !important;
+    box-shadow: 0 1px 4px var(--tata-coral-glow) !important;
+}
+
+.rail-chevron-icon {
+    transition: transform 0.2s ease !important;
+}
+
+/* ==========================================================================
+   4. Navigation Container & Items (The 8 Modules)
+   ========================================================================== */
+.sidebar-nav,
+#appSidebar .sidebar-nav {
+    flex: 1 !important;
+    padding: 12px 6px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    align-items: center !important;
+    transition: padding 0.2s ease, align-items 0.2s ease !important;
+    box-sizing: border-box !important;
+}
+
+.sidebar:hover .sidebar-nav,
+#appSidebar:hover .sidebar-nav,
+body.sidebar-pinned .sidebar-nav,
+body.sidebar-pinned #appSidebar .sidebar-nav {
+    padding: 12px 10px !important;
+    align-items: stretch !important;
+    gap: 3px !important;
+}
+
+.sidebar-nav::-webkit-scrollbar,
+#appSidebar .sidebar-nav::-webkit-scrollbar {
+    width: 4px !important;
+}
+.sidebar-nav::-webkit-scrollbar-track,
+#appSidebar .sidebar-nav::-webkit-scrollbar-track {
+    background: transparent !important;
+}
+.sidebar-nav::-webkit-scrollbar-thumb,
+#appSidebar .sidebar-nav::-webkit-scrollbar-thumb {
+    background: #CBD5E1 !important;
+    border-radius: 999px !important;
+}
+
+.nav-group-label {
+    display: none !important;
+}
+
+/* Base Nav Item Link (COLLAPSED RAIL MODE: 44px x 44px centered square) */
+.nav-item,
+#appSidebar .nav-item,
+#appSidebar .sidebar-nav .nav-item {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 44px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    padding: 0 !important;
+    margin: 1px auto !important;
+    border-radius: 9px !important;
+    color: var(--tata-text-secondary) !important;
+    text-decoration: none !important;
+    font-size: 0.865rem !important;
+    font-weight: 550 !important;
+    position: relative !important;
+    transition: all 0.16s ease !important;
+    border: 1.5px solid transparent !important;
+    white-space: nowrap !important;
+    box-sizing: border-box !important;
+    cursor: pointer !important;
+    overflow: hidden !important;
+}
+
+/* EXPANDED NAV ITEM (Hover or Pinned: Full-width row with proper flex alignment) */
+.sidebar:hover .nav-item,
+#appSidebar:hover .nav-item,
+.sidebar:hover #appSidebar .nav-item,
+#appSidebar:hover .sidebar-nav .nav-item,
+.sidebar:hover .sidebar-nav .nav-item,
+body.sidebar-pinned .nav-item,
+body.sidebar-pinned #appSidebar .nav-item,
+body.sidebar-pinned .sidebar-nav .nav-item,
+body.sidebar-pinned #appSidebar .sidebar-nav .nav-item {
+    width: 100% !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    padding: 0 12px !important;
+    margin: 1px 0 !important;
+    justify-content: flex-start !important;
+    gap: 12px !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+}
+
+/* Clean unified outline icons */
+.nav-item svg,
+#appSidebar .nav-item svg,
+#appSidebar .sidebar-nav .nav-item svg {
+    width: 20px !important;
+    height: 20px !important;
+    color: var(--tata-text-muted) !important;
+    stroke: var(--tata-text-muted) !important;
+    flex-shrink: 0 !important;
+    transition: all 0.15s ease !important;
+    margin: 0 !important;
+}
+
+/* Nav Item Text Label */
+.nav-item span:not(.nav-badge),
+#appSidebar .nav-item span:not(.nav-badge),
+#appSidebar .sidebar-nav .nav-item span:not(.nav-badge) {
+    flex: 1 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    display: none !important;
+    font-size: 0.865rem !important;
+    font-weight: 550 !important;
+    color: inherit !important;
+    line-height: 1.2 !important;
+    letter-spacing: -0.01em !important;
+    transition: opacity 0.18s ease !important;
+}
+
+.sidebar:hover .nav-item span:not(.nav-badge),
+#appSidebar:hover .nav-item span:not(.nav-badge),
+.sidebar:hover #appSidebar .nav-item span:not(.nav-badge),
+#appSidebar:hover .sidebar-nav .nav-item span:not(.nav-badge),
+.sidebar:hover .sidebar-nav .nav-item span:not(.nav-badge),
+body.sidebar-pinned .nav-item span:not(.nav-badge),
+body.sidebar-pinned #appSidebar .nav-item span:not(.nav-badge),
+body.sidebar-pinned .sidebar-nav .nav-item span:not(.nav-badge),
+body.sidebar-pinned #appSidebar .sidebar-nav .nav-item span:not(.nav-badge) {
+    opacity: 1 !important;
+    visibility: visible !important;
+    width: auto !important;
+    display: inline-block !important;
+}
+
+/* Hover State */
+.nav-item:hover,
+#appSidebar .nav-item:hover,
+#appSidebar .sidebar-nav .nav-item:hover {
+    color: var(--tata-text-heading) !important;
+    background: var(--tata-bg-subtle) !important;
+    border-color: var(--tata-border-light) !important;
+}
+
+.nav-item:hover svg,
+#appSidebar .nav-item:hover svg,
+#appSidebar .sidebar-nav .nav-item:hover svg {
+    color: var(--tata-coral) !important;
+    stroke: var(--tata-coral) !important;
+}
+
+/* Active State: Resting (Centered symmetric 44px box) */
+.nav-item.active,
+#appSidebar .nav-item.active,
+#appSidebar .sidebar-nav .nav-item.active {
+    background: var(--tata-coral-light) !important;
+    color: var(--tata-crimson) !important;
+    font-weight: 700 !important;
+    border: 1.5px solid var(--tata-coral) !important;
+    box-shadow: 0 2px 8px rgba(255, 111, 97, 0.22) !important;
+}
+
+.nav-item.active svg,
+#appSidebar .nav-item.active svg,
+#appSidebar .sidebar-nav .nav-item.active svg {
+    color: var(--tata-crimson) !important;
+    stroke: var(--tata-crimson) !important;
+}
+
+/* Active State: Hovered / Expanded (Full card with left coral bar) */
+.sidebar:hover .nav-item.active,
+#appSidebar:hover .nav-item.active,
+.sidebar:hover #appSidebar .nav-item.active,
+#appSidebar:hover .sidebar-nav .nav-item.active,
+.sidebar:hover .sidebar-nav .nav-item.active,
+body.sidebar-pinned .nav-item.active,
+body.sidebar-pinned #appSidebar .nav-item.active,
+body.sidebar-pinned .sidebar-nav .nav-item.active,
+body.sidebar-pinned #appSidebar .sidebar-nav .nav-item.active {
+    background: var(--tata-coral-light) !important;
+    color: var(--tata-crimson) !important;
+    border: 1px solid var(--tata-coral-border) !important;
+    border-left: 3.5px solid var(--tata-coral) !important;
+    box-shadow: 0 1px 3px rgba(224, 53, 70, 0.08) !important;
+    font-weight: 700 !important;
+}
+
+.sidebar:hover .nav-item.active svg,
+#appSidebar:hover .nav-item.active svg,
+.sidebar:hover #appSidebar .nav-item.active svg,
+#appSidebar:hover .sidebar-nav .nav-item.active svg,
+.sidebar:hover .sidebar-nav .nav-item.active svg,
+body.sidebar-pinned .nav-item.active svg,
+body.sidebar-pinned #appSidebar .nav-item.active svg,
+body.sidebar-pinned .sidebar-nav .nav-item.active svg,
+body.sidebar-pinned #appSidebar .sidebar-nav .nav-item.active svg {
+    color: var(--tata-coral) !important;
+    stroke: var(--tata-coral) !important;
+}
+
+/* ==========================================================================
+   5. Notification Badges
+   ========================================================================== */
+.nav-badge,
+#appSidebar .nav-badge {
+    padding: 1.5px 5px !important;
+    border-radius: 999px !important;
+    font-size: 0.6rem !important;
+    font-weight: 750 !important;
+    background: var(--tata-coral) !important;
+    border: 1px solid var(--tata-coral) !important;
+    color: #FFFFFF !important;
+    line-height: 1 !important;
+    min-width: 15px !important;
+    text-align: center !important;
+    transition: all 0.14s ease !important;
+    letter-spacing: 0.01em !important;
+    position: absolute !important;
+    top: 4px !important;
+    right: 4px !important;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 4px var(--tata-coral-glow) !important;
+    z-index: 2 !important;
+    box-sizing: border-box !important;
+}
+
+.nav-badge[data-count]:not([data-count="0"]) {
+    display: inline-flex !important;
+}
+
+/* In Expanded View: Badges float cleanly to the right edge */
+.sidebar:hover .nav-badge,
+#appSidebar:hover .nav-badge,
+.sidebar:hover #appSidebar .nav-badge,
+#appSidebar:hover .sidebar-nav .nav-badge,
+body.sidebar-pinned .nav-badge,
+body.sidebar-pinned #appSidebar .nav-badge,
+body.sidebar-pinned #appSidebar .sidebar-nav .nav-badge {
+    position: static !important;
+    margin-left: auto !important;
+    padding: 2px 7.5px !important;
+    font-size: 0.68rem !important;
+    min-width: 18px !important;
+    flex-shrink: 0 !important;
+}
+
+.nav-item.active .nav-badge,
+#appSidebar .nav-item.active .nav-badge {
+    background: var(--tata-crimson) !important;
+    border-color: var(--tata-crimson) !important;
+}
+
+/* ==========================================================================
+   6. Sidebar Footer (Compact icons at rest, full labels on hover)
+   ========================================================================== */
+.sidebar-footer,
+#appSidebar .sidebar-footer {
+    padding: 12px 6px 14px 6px !important;
+    border-top: 1px solid var(--tata-border-light) !important;
+    background: var(--tata-bg-surface) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-shrink: 0 !important;
+    transition: padding 0.2s ease !important;
+    box-sizing: border-box !important;
+}
+
+.sidebar:hover .sidebar-footer,
+#appSidebar:hover .sidebar-footer,
+body.sidebar-pinned .sidebar-footer,
+body.sidebar-pinned #appSidebar .sidebar-footer {
+    padding: 12px 12px 14px 12px !important;
+    align-items: stretch !important;
+}
+
+/* Pin / Toggle Row in Footer */
+.sidebar-collapse-toggle-btn,
+#appSidebar .sidebar-collapse-toggle-btn {
+    width: 42px !important;
+    height: 36px !important;
+    padding: 0 !important;
+    justify-content: center !important;
+    border-radius: 8px !important;
+    background: var(--tata-bg-surface) !important;
+    border: 1px solid var(--tata-border-light) !important;
+    color: var(--tata-text-secondary) !important;
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    box-sizing: border-box !important;
+    transition: all 0.15s ease !important;
+}
+
+.sidebar:hover .sidebar-collapse-toggle-btn,
+#appSidebar:hover .sidebar-collapse-toggle-btn,
+body.sidebar-pinned .sidebar-collapse-toggle-btn,
+body.sidebar-pinned #appSidebar .sidebar-collapse-toggle-btn {
+    width: 100% !important;
+    height: 38px !important;
+    padding: 0 12px !important;
+    justify-content: flex-start !important;
+    border-radius: 7px !important;
+}
+
+.sidebar-collapse-toggle-btn svg,
+#appSidebar .sidebar-collapse-toggle-btn svg {
+    color: var(--tata-text-muted) !important;
+    flex-shrink: 0 !important;
+    transform: rotate(180deg) !important; /* points right (>) when resting */
+    transition: transform 0.2s ease, color 0.15s ease !important;
+}
+
+.sidebar:hover .sidebar-collapse-toggle-btn svg,
+#appSidebar:hover .sidebar-collapse-toggle-btn svg,
+body.sidebar-pinned .sidebar-collapse-toggle-btn svg,
+body.sidebar-pinned #appSidebar .sidebar-collapse-toggle-btn svg {
+    transform: none !important; /* points left (<) when open */
+}
+
+.sidebar-collapse-toggle-btn:hover,
+#appSidebar .sidebar-collapse-toggle-btn:hover {
+    background: var(--tata-coral-light) !important;
+    border-color: var(--tata-coral-border) !important;
+    color: var(--tata-coral) !important;
+}
+
+.sidebar-collapse-toggle-btn:hover svg,
+#appSidebar .sidebar-collapse-toggle-btn:hover svg {
+    color: var(--tata-coral) !important;
+}
+
+.collapse-toggle-label,
+#appSidebar .collapse-toggle-label {
+    display: none !important;
+    white-space: nowrap !important;
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+}
+
+.sidebar:hover .collapse-toggle-label,
+#appSidebar:hover .collapse-toggle-label,
+body.sidebar-pinned .collapse-toggle-label,
+body.sidebar-pinned #appSidebar .collapse-toggle-label {
+    display: inline !important;
+}
+
+/* Sign Out Button */
+.sidebar-signout-btn,
+#appSidebar .sidebar-signout-btn {
+    width: 42px !important;
+    height: 36px !important;
+    padding: 0 !important;
+    justify-content: center !important;
+    border-radius: 8px !important;
+    background: var(--tata-bg-surface) !important;
+    border: 1px solid var(--tata-border-light) !important;
+    color: var(--tata-text-secondary) !important;
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    box-sizing: border-box !important;
+    transition: all 0.15s ease !important;
+}
+
+.sidebar:hover .sidebar-signout-btn,
+#appSidebar:hover .sidebar-signout-btn,
+body.sidebar-pinned .sidebar-signout-btn,
+body.sidebar-pinned #appSidebar .sidebar-signout-btn {
+    width: 100% !important;
+    height: 38px !important;
+    padding: 0 12px !important;
+    justify-content: flex-start !important;
+    border-radius: 7px !important;
+}
+
+.sidebar-signout-btn svg,
+#appSidebar .sidebar-signout-btn svg {
+    color: var(--tata-text-muted) !important;
+    flex-shrink: 0 !important;
+    transition: color 0.15s ease !important;
+}
+
+.sidebar-signout-btn:hover,
+#appSidebar .sidebar-signout-btn:hover {
+    background: #FEF2F2 !important;
+    border-color: #FEE2E2 !important;
+    color: #DC2626 !important;
+}
+
+.sidebar-signout-btn:hover svg,
+#appSidebar .sidebar-signout-btn:hover svg {
+    color: #DC2626 !important;
+}
+
+.signout-label,
+#appSidebar .signout-label {
+    display: none !important;
+    white-space: nowrap !important;
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+}
+
+.sidebar:hover .signout-label,
+#appSidebar:hover .signout-label,
+body.sidebar-pinned .signout-label,
+body.sidebar-pinned #appSidebar .signout-label {
+    display: inline !important;
+}
+
+/* Engine Telemetry Status */
+.engine-status,
+#appSidebar .engine-status {
+    width: 42px !important;
+    height: 26px !important;
+    padding: 0 !important;
+    justify-content: center !important;
+    border-radius: 6px !important;
+    background: transparent !important;
+    border: none !important;
+    font-size: 0.72rem !important;
+    color: var(--tata-text-secondary) !important;
+    font-weight: 600 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 7px !important;
+    transition: all 0.15s ease !important;
+    box-sizing: border-box !important;
+}
+
+.sidebar:hover .engine-status,
+#appSidebar:hover .engine-status,
+body.sidebar-pinned .engine-status,
+body.sidebar-pinned #appSidebar .engine-status {
+    width: 100% !important;
+    height: auto !important;
+    padding: 7px 11px !important;
+    justify-content: flex-start !important;
+    background: var(--tata-bg-subtle) !important;
+    border: 1px solid var(--tata-border-light) !important;
+    border-radius: 7px !important;
+}
+
+.engine-status .pulse-dot,
+#appSidebar .engine-status .pulse-dot {
+    width: 7px !important;
+    height: 7px !important;
+    border-radius: 50% !important;
+    background-color: #10B981 !important;
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.5) !important;
+    animation: enginePulse 2s infinite ease-in-out !important;
+    flex-shrink: 0 !important;
+}
+
+@keyframes enginePulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.45; transform: scale(0.85); }
+}
+
+.engine-status-text,
+#appSidebar .engine-status-text {
+    display: none !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    color: #475467 !important;
+}
+
+.sidebar:hover .engine-status-text,
+#appSidebar:hover .engine-status-text,
+body.sidebar-pinned .engine-status-text,
+body.sidebar-pinned #appSidebar .engine-status-text {
+    display: inline !important;
+}

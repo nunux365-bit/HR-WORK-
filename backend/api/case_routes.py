@@ -274,6 +274,11 @@ def create_department_route():
                     )
                 except Exception:
                     pass
+        try:
+            from backend.database.neon_sync import trigger_async_backup
+            trigger_async_backup(delay_seconds=0.5)
+        except Exception:
+            pass
         return success_response({
             "department": dept,
             "departments": list_departments_with_members(),

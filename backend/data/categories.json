@@ -786,6 +786,28 @@
         "attachment"
       ],
       "require_attachment": false
+    },
+    "RECRUITMENT": {
+      "code": "RECRUITMENT",
+      "display_name": "Recruitment HR",
+      "specialized_model": false,
+      "workflow_id": "WF-RECRUITMENT-001",
+      "workflow_name": "Recruitment Workflow",
+      "keywords_strong": [
+        "hiring",
+        "interview"
+      ],
+      "keywords_weak": [
+        "resume"
+      ],
+      "required_fields": [
+        "employee_id"
+      ],
+      "optional_fields": [
+        "description",
+        "attachment"
+      ],
+      "require_attachment": false
     }
   }
 }

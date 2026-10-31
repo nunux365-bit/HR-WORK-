@@ -125,6 +125,12 @@
       "priority": "CRITICAL",
       "sla_hours": 48,
       "auto_create_case": true
+    },
+    "RECRUITMENT": {
+      "team": "Recruitment HR",
+      "priority": "MEDIUM",
+      "sla_hours": 48,
+      "auto_create_case": true
     }
   }
 }

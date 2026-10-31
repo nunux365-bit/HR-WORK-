@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HR Flow — Executive Operational Dashboard</title>
+    <title>TATA 1mg PeopleDesk — Executive Operational Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/dashboard.css?v=20261008_standalone_v7">
-    <meta name="theme-color" content="#2563eb">
+    <link rel="stylesheet" href="css/dashboard.css?v=20261031_tata1mg_v15">
+    <link rel="stylesheet" href="css/sidebar.css?v=20261031_tata1mg_v15">
+    <meta name="theme-color" content="#FF6F61">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="img/nexus-logo-64.png">
@@ -23,9 +24,9 @@
 <body>
 
     <div class="app-shell">
-        <!-- Shared Sidebar (loaded from js/sidebar.js?v=20261008_standalone_v7 -->
+        <!-- Shared Sidebar (loaded from js/sidebar.js) -->
         <div id="sidebarContainer"></div>
-        <script src="js/sidebar.js?v=20261008_standalone_v7"></script>
+        <script src="js/sidebar.js?v=20261030_tata1mg_v14"></script>
 
         <!-- ==================================================================
              MAIN WORKSPACE AREA
@@ -38,7 +39,7 @@
                         <circle cx="11" cy="11" r="8"></circle>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
-                    <input type="text" id="globalSearch" placeholder="Search cases, employees, workflows, or events...">
+                    <input type="text" id="globalSearch" placeholder="Search cases, employees, workflows, or policies...">
                 </div>
 
                 <div class="topbar-actions">
@@ -85,7 +86,7 @@
                 <section class="greeting-row">
                     <div>
                         <h1 id="greetingTitle">Good Evening, Admin</h1>
-                        <p>Here's what's happening across HR operations today.</p>
+                        <p>Tata 1mg PeopleDesk • Executive Operations &amp; HR Intelligence Cockpit</p>
                     </div>
                     <div class="greeting-actions">
                         <a href="builder.html" class="btn-primary">
@@ -93,7 +94,7 @@
                                 <line x1="12" y1="5" x2="12" y2="19"></line>
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                             </svg>
-                            <span>New Workflow</span>
+                            <span>+ New Workflow</span>
                         </a>
                     </div>
                 </section>
@@ -143,12 +144,12 @@
                     </div>
                 </section>
 
-                <!-- 2. Process Catalog (Generic Business Areas) -->
+                <!-- 2. Process Catalog (Core Business Areas) -->
                 <section class="dashboard-section" id="process-catalog">
                     <div class="section-header">
                         <div>
                             <h2>Process Catalog</h2>
-                            <p>Select a business area to view or configure its underlying workflows.</p>
+                            <p>Core Tata 1mg business areas &amp; published workflow routing.</p>
                         </div>
                         <button type="button" class="btn-outline" id="newProcessBtn">+ Add Process</button>
                     </div>
@@ -162,7 +163,7 @@
                     <div class="section-header">
                         <div>
                             <h2>Active Workflow Runs</h2>
-                            <p>Live cases currently executing or waiting across all published workflow versions.</p>
+                            <p>Live operational cases executing or waiting across all published workflow versions.</p>
                         </div>
                         <a href="cases.html" class="section-link">View All Cases &rarr;</a>
                     </div>
@@ -339,6 +340,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="js/dashboard.js?v=20261008_standalone_v7"></script>
+    <script src="js/dashboard.js?v=20261031_tata1mg_v15"></script>
 </body>
 </html>
