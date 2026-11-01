@@ -2034,6 +2034,14 @@ def get_agent_personal_workbench():
 
     active_dept_gmail = (active_dept_record.get("dept_gmail") or "").strip().lower() if active_dept_record else ""
 
+    # Auto-scan department mailbox for any pending actionable emails that require case numbers
+    try:
+        from backend.services.cases.case_engine import scan_and_assign_cases_for_department_mail
+        scan_target = active_dept_gmail or agent_email or None
+        scan_and_assign_cases_for_department_mail(scan_target)
+    except Exception as exc_scan:
+        print(f"Auto-scan department mail notice: {exc_scan}")
+
     all_cases = list_cases(account_email="__ALL__", limit=400)
 
     my_cases = []

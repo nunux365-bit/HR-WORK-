@@ -134,13 +134,16 @@ def ensure_default_departments_seeded() -> None:
                 except Exception as exc_dept:
                     logger.debug(f"[DEPT] Error inserting department {d['dept_code']}: {exc_dept}")
 
-        # Ensure default members exist if table is empty
-        m_count = conn.execute("SELECT COUNT(*) AS cnt FROM hr_department_members").fetchone()
-        if not m_count or int(m_count["cnt"] or 0) == 0:
-            peopledesk_dept = conn.execute("SELECT id FROM hr_departments WHERE dept_code = 'DEPT-PEOPLEDESK' LIMIT 1").fetchone()
-            ops_dept = conn.execute("SELECT id FROM hr_departments WHERE dept_code = 'DEPT-OPS' LIMIT 1").fetchone()
-            p_id = int(peopledesk_dept["id"]) if peopledesk_dept else 1
-            o_id = int(ops_dept["id"]) if ops_dept else 1
+        # Ensure essential default members exist in hr_department_members
+        existing_mems = conn.execute("SELECT LOWER(email) AS em FROM hr_department_members").fetchall()
+        existing_mem_emails = {str(r["em"]).strip().lower() for r in existing_mems if r["em"]}
+
+        peopledesk_dept = conn.execute("SELECT id FROM hr_departments WHERE dept_code = 'DEPT-PEOPLEDESK' LIMIT 1").fetchone()
+        ops_dept = conn.execute("SELECT id FROM hr_departments WHERE dept_code = 'DEPT-OPS' LIMIT 1").fetchone()
+        p_id = int(peopledesk_dept["id"]) if peopledesk_dept else 1
+        o_id = int(ops_dept["id"]) if ops_dept else 1
+
+        if "nunux365@gmail.com" not in existing_mem_emails:
             try:
                 conn.execute("""
                     INSERT INTO hr_department_members (dept_id, team_name, member_name, email, role, designation, sub_department, category_scope, active)
@@ -158,6 +161,7 @@ def ensure_default_departments_seeded() -> None:
             except Exception as e_adm:
                 logger.debug(f"[DEPT] Error inserting default admin member: {e_adm}")
 
+        if "vaibhavx002@zohomail.in" not in existing_mem_emails:
             try:
                 conn.execute("""
                     INSERT INTO hr_department_members (dept_id, team_name, member_name, email, role, designation, sub_department, category_scope, active)

@@ -2510,15 +2510,15 @@ ${formatEmailBody(email.body || email.actionable_reason || "No message body prov
             return;
         }
 
-        // Validate or select active case
-        const found = items.some(c => (c.case_ref || c.id || c.case_number) === selectedCaseRef);
+        // Validate or select active case (prioritizing official case_number)
+        const found = items.some(c => (c.case_number || c.case_ref || c.id) === selectedCaseRef);
         if (!found) {
-            selectedCaseRef = items[0].case_ref || items[0].id || items[0].case_number;
+            selectedCaseRef = items[0].case_number || items[0].case_ref || items[0].id;
         }
 
         let html = "";
         items.forEach((c, idx) => {
-            const ref = c.case_ref || c.id || c.case_number || "CASE-000000";
+            const ref = c.case_number || c.case_ref || c.id || "CASE-000000";
             const subject = c.subject || c.title || "Employee Inquiry";
             const empName = c.employee_name || c.sender_name || "Employee";
             const dept = c.category || c.department || "Operations";

@@ -375,6 +375,14 @@ def sync_gmail_inbox(limit: Optional[int] = None, account_email: Optional[str] =
 
         removed_count = 0 if had_fetch_error else _reconcile_deleted_inbox_emails(active_account, stored_ids)
         sync_time = update_last_sync(inbox_total=inbox_total, account_email=active_account)
+
+        # Auto-scan to assign case numbers for any actionable emails belonging to this department
+        try:
+            from backend.services.cases.case_engine import scan_and_assign_cases_for_department_mail
+            scan_and_assign_cases_for_department_mail(active_account)
+        except Exception as scan_err:
+            logger.debug(f"Auto-scan cases notice: {scan_err}")
+
         logger.info(
             f"Gmail sync complete: fetched={fetched_count}, new={new_stored_count}, "
             f"duplicates={skipped_duplicates}, removed_deleted={removed_count}"

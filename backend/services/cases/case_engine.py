@@ -118,9 +118,8 @@ def get_routing_for_category(category: str) -> Dict[str, Any]:
 
 def is_department_intake_mailbox(account_email: Optional[str]) -> bool:
     """
-    Check if the account_email corresponds to a designated HR department intake mailbox.
-    Mailboxes explicitly registered as ADMIN in connected_mailboxes or users (such as
-    corporate personal admin accounts) are strictly excluded from generating automatic HR cases.
+    Check if the account_email corresponds to a designated HR department intake mailbox
+    or an active HR specialist/member mailbox.
     """
     if not account_email or not str(account_email).strip():
         return True  # Fallback for synthetic test data where no account_email was specified
@@ -136,15 +135,23 @@ def is_department_intake_mailbox(account_email: Optional[str]) -> bool:
         if d_row:
             return True
 
-        # 2. Check if this mailbox is marked as an ADMIN / SUPER_ADMIN in connected_mailboxes -> STRICTLY BLOCK
+        # 2. Check if registered as an active HR specialist in hr_department_members -> ALWAYS ALLOW
+        mem_row = conn.execute(
+            "SELECT id, member_name, team_name FROM hr_department_members WHERE LOWER(email) = ? AND active = 1 LIMIT 1",
+            (clean_acct,),
+        ).fetchone()
+        if mem_row:
+            return True
+
+        # 3. Check if connected mailbox has role HR_AGENT -> ALLOW
         mbox = conn.execute(
             "SELECT role FROM connected_mailboxes WHERE LOWER(email) = ? LIMIT 1",
             (clean_acct,),
         ).fetchone()
-        if mbox and str(mbox["role"]).strip().upper() in ("ADMIN", "SUPER_ADMIN"):
-            return False
+        if mbox and str(mbox["role"]).strip().upper() == "HR_AGENT":
+            return True
 
-        # 3. Check if registered as an ADMIN user in users table -> STRICTLY BLOCK
+        # 4. Check if registered as an ADMIN user in users table -> BLOCK personal corporate admin unless added as dept mail/member
         u_row = conn.execute(
             "SELECT role FROM users WHERE LOWER(email) = ? AND role IN ('ADMIN', 'SUPER_ADMIN') LIMIT 1",
             (clean_acct,),
@@ -152,8 +159,7 @@ def is_department_intake_mailbox(account_email: Optional[str]) -> bool:
         if u_row:
             return False
 
-        # 4. If connected_mailboxes has this account with role != HR_AGENT -> BLOCK
-        if mbox and str(mbox["role"]).strip().upper() != "HR_AGENT":
+        if mbox and str(mbox["role"]).strip().upper() in ("ADMIN", "SUPER_ADMIN"):
             return False
 
         return True
@@ -437,6 +443,7 @@ def create_or_update_case_for_email(
     is_actionable_hr_email = bool(
         force_create
         or existing_case
+        or (is_department_intake_mailbox(account_email) and is_act)
         or (routing.get("auto_create_case", False) and is_act)
         or (emp_status == "REVIEW_REQUIRED" and category != "UNKNOWN" and is_act)
         or extracted_emp_id
@@ -792,6 +799,65 @@ def create_or_update_case_for_email(
     title = email_row.get("subject") or f"{category} Request"
     description = (email_row.get("body") or "")[:1000]
 
+    # Resolve department and specialist assignment
+    assigned_team = routing.get("team", "HR Operations")
+    assigned_user = None
+    assigned_user_email = None
+
+    conn_assign = get_connection()
+    try:
+        # 1. If account_email matches a department's dept_gmail, get department record
+        dept_record = None
+        if account_email:
+            d_r = conn_assign.execute(
+                "SELECT id, team_name, category_scope FROM hr_departments WHERE LOWER(dept_gmail) = ? LIMIT 1",
+                (account_email,),
+            ).fetchone()
+            if d_r:
+                dept_record = dict(d_r)
+        if not dept_record and category and category != "UNKNOWN":
+            d_rows = conn_assign.execute("SELECT id, team_name, category_scope FROM hr_departments ORDER BY id ASC").fetchall()
+            for dr in d_rows:
+                scopes = [s.strip().upper() for s in (dr["category_scope"] or "").split(",") if s.strip()]
+                if category.upper() in scopes:
+                    dept_record = dict(dr)
+                    break
+
+        if dept_record and dept_record.get("team_name"):
+            assigned_team = dept_record["team_name"]
+
+        # 2. Check if an active specialist member is registered matching account_email
+        matched_member = None
+        if account_email:
+            m_r = conn_assign.execute(
+                "SELECT member_name, email, team_name FROM hr_department_members WHERE LOWER(email) = ? AND active = 1 LIMIT 1",
+                (account_email,),
+            ).fetchone()
+            if m_r:
+                matched_member = dict(m_r)
+
+        if not matched_member and dept_record:
+            m_r = conn_assign.execute(
+                "SELECT member_name, email, team_name FROM hr_department_members WHERE (dept_id = ? OR LOWER(team_name) = LOWER(?)) AND active = 1 ORDER BY id ASC LIMIT 1",
+                (dept_record["id"], dept_record["team_name"]),
+            ).fetchone()
+            if m_r:
+                matched_member = dict(m_r)
+
+        if matched_member:
+            assigned_user = matched_member.get("member_name")
+            assigned_user_email = matched_member.get("email")
+            if matched_member.get("team_name"):
+                assigned_team = matched_member["team_name"]
+    except Exception as exc_assign:
+        logger.warning(f"Error resolving agent assignment for case: {exc_assign}")
+    finally:
+        conn_assign.close()
+
+    assigned_to = assigned_user or assigned_team
+    if assigned_user:
+        target_status = "IN_PROGRESS"
+
     conn = get_connection()
     try:
         cur = conn.execute(
@@ -808,12 +874,13 @@ def create_or_update_case_for_email(
                 priority,
                 assigned_team,
                 assigned_user,
+                assigned_user_email,
                 assigned_to,
                 sla_hours,
                 due_at,
                 extracted_fields,
                 validation_result
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 case_number,
@@ -826,7 +893,9 @@ def create_or_update_case_for_email(
                 target_status,
                 priority,
                 assigned_team,
-                assigned_team,
+                assigned_user,
+                assigned_user_email,
+                assigned_to,
                 sla_hours,
                 due_at_str,
                 json.dumps(extracted_fields.get("fields", {})),
@@ -908,6 +977,53 @@ def create_or_update_case_for_email(
             pass
 
     return get_case_by_id_or_number(new_case_db_id)
+
+
+def scan_and_assign_cases_for_department_mail(account_email: Optional[str] = None) -> List[Dict[str, Any]]:
+    """
+    Scan all actionable emails belonging to department mailboxes or registered HR agents.
+    If any email is missing a case, automatically generate a case number, create the case,
+    and assign it to the matching department specialist.
+    """
+    from backend.classification.ai_pipeline import process_email
+
+    conn = get_connection()
+    missing_email_ids: List[int] = []
+    try:
+        # Find all emails that have NO corresponding case in `cases` table
+        query = """
+            SELECT e.id, e.account_email
+            FROM emails e
+            LEFT JOIN cases c ON c.email_id = e.id
+            WHERE c.id IS NULL
+              AND (e.is_actionable IS NULL OR e.is_actionable = 1)
+        """
+        params = []
+        if account_email and account_email.upper() not in ("__ALL__", "ALL"):
+            query += " AND (LOWER(e.account_email) = LOWER(?) OR e.account_email IS NULL)"
+            params.append(account_email.strip())
+        query += " ORDER BY e.id ASC"
+
+        rows = conn.execute(query, tuple(params)).fetchall()
+        for r in rows:
+            em_acct = (r["account_email"] or "").strip().lower()
+            if is_department_intake_mailbox(em_acct):
+                missing_email_ids.append(int(r["id"]))
+    except Exception as exc:
+        logger.warning(f"Error querying emails missing cases: {exc}")
+    finally:
+        conn.close()
+
+    created_cases = []
+    for em_id in missing_email_ids:
+        try:
+            res = process_email(em_id, force_create_case=True)
+            if res and res.get("case"):
+                created_cases.append(res["case"])
+        except Exception as e_proc:
+            logger.warning(f"Failed to auto-create case for email {em_id}: {e_proc}")
+
+    return created_cases
 
 
 def build_employee_case_email_payload(
