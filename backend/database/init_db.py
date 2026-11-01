@@ -144,6 +144,12 @@ def initialize_database() -> None:
         cursor.execute("UPDATE hr_department_members SET role = 'ADMIN' WHERE UPPER(role) = 'SUPER_ADMIN'")
         cursor.execute("UPDATE hr_department_members SET member_name = 'Admin' WHERE LOWER(member_name) IN ('super admin', 'super_admin')")
         cursor.execute("UPDATE hr_department_members SET designation = 'Admin' WHERE LOWER(designation) IN ('super admin', 'super_admin')")
+        # Purge any legacy demo cases and demo members if present
+        cursor.execute("DELETE FROM cases WHERE case_number LIKE 'CASE-%'")
+        cursor.execute("DELETE FROM users WHERE LOWER(email) != LOWER(?)", (ADMIN_EMAIL,))
+        cursor.execute("DELETE FROM hr_department_members WHERE LOWER(email) != LOWER(?)", (ADMIN_EMAIL,))
+        cursor.execute("DELETE FROM connected_mailboxes WHERE LOWER(email) != LOWER(?)", (ADMIN_EMAIL,))
+
         cursor.execute("SELECT id FROM users WHERE email = ?", (ADMIN_EMAIL,))
         if not cursor.fetchone():
             cursor.execute("INSERT INTO users (email, role, name) VALUES (?, ?, ?)", (ADMIN_EMAIL, "ADMIN", "Admin"))
