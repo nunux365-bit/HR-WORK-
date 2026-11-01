@@ -2342,9 +2342,10 @@ ${formatEmailBody(email.body || email.actionable_reason || "No message body prov
                 const myCases = data.my_cases || [];
                 const deptCases = data.dept_cases || [];
                 const unclaimedCases = data.unclaimed_cases || [];
+                const allCasesPool = data.all_cases || [];
                 const seenKeys = new Set();
                 const dedupedList = [];
-                [...myCases, ...deptCases, ...unclaimedCases].forEach(c => {
+                [...myCases, ...deptCases, ...unclaimedCases, ...allCasesPool].forEach(c => {
                     const rawKey = c.case_number || c.case_ref || c.id || c.db_id;
                     const normKey = rawKey ? String(rawKey).trim().toUpperCase() : null;
                     if (normKey && !seenKeys.has(normKey)) {

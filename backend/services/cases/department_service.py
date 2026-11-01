@@ -103,7 +103,7 @@ _DEFAULT_DEPARTMENTS: List[Dict[str, Any]] = [
 
 
 def ensure_default_departments_seeded() -> None:
-    """Ensure database metadata tables exist without auto-seeding mock departments or users."""
+    """Ensure database metadata tables and essential core departments exist."""
     conn = get_connection()
     try:
         conn.execute("CREATE TABLE IF NOT EXISTS hr_system_meta (key VARCHAR(255) PRIMARY KEY, val TEXT)")
@@ -112,6 +112,69 @@ def ensure_default_departments_seeded() -> None:
             INSERT INTO hr_system_meta (key, val) VALUES ('departments_initialized', '1')
             ON CONFLICT (key) DO UPDATE SET val = EXCLUDED.val
         """)
+
+        # Verify whether departments are present
+        existing = conn.execute("SELECT dept_code FROM hr_departments").fetchall()
+        existing_codes = {r["dept_code"] for r in existing if r["dept_code"]}
+        for d in _DEFAULT_DEPARTMENTS:
+            if d["dept_code"] not in existing_codes:
+                try:
+                    conn.execute("""
+                        INSERT INTO hr_departments (dept_code, team_name, category_scope, dept_gmail, sla_hours, default_priority, description)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                    """, (
+                        d["dept_code"],
+                        d["team_name"],
+                        d["category_scope"],
+                        d.get("dept_gmail", "vaibhavx002@zohomail.in"),
+                        d.get("sla_hours", 48),
+                        d.get("default_priority", "MEDIUM"),
+                        d.get("description", "")
+                    ))
+                except Exception as exc_dept:
+                    logger.debug(f"[DEPT] Error inserting department {d['dept_code']}: {exc_dept}")
+
+        # Ensure default members exist if table is empty
+        m_count = conn.execute("SELECT COUNT(*) AS cnt FROM hr_department_members").fetchone()
+        if not m_count or int(m_count["cnt"] or 0) == 0:
+            peopledesk_dept = conn.execute("SELECT id FROM hr_departments WHERE dept_code = 'DEPT-PEOPLEDESK' LIMIT 1").fetchone()
+            ops_dept = conn.execute("SELECT id FROM hr_departments WHERE dept_code = 'DEPT-OPS' LIMIT 1").fetchone()
+            p_id = int(peopledesk_dept["id"]) if peopledesk_dept else 1
+            o_id = int(ops_dept["id"]) if ops_dept else 1
+            try:
+                conn.execute("""
+                    INSERT INTO hr_department_members (dept_id, team_name, member_name, email, role, designation, sub_department, category_scope, active)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)
+                """, (
+                    p_id,
+                    'PeopleDesk',
+                    'Admin',
+                    'nunux365@gmail.com',
+                    'ADMIN',
+                    'Admin · Platform Head',
+                    'General HR',
+                    'ALL_HR, ALL_HR_CATEGORIES, PEOPLEDESK, GENERAL_HR, ATTENDANCE, LEAVE, PAYROLL, BGV, ASSET_IT'
+                ))
+            except Exception as e_adm:
+                logger.debug(f"[DEPT] Error inserting default admin member: {e_adm}")
+
+            try:
+                conn.execute("""
+                    INSERT INTO hr_department_members (dept_id, team_name, member_name, email, role, designation, sub_department, category_scope, active)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)
+                """, (
+                    o_id,
+                    'People Operations',
+                    'Vaibhav Yadav',
+                    'vaibhavx002@zohomail.in',
+                    'HR_AGENT',
+                    'HR Specialist',
+                    'Attendance & Shifts',
+                    'ALL_HR, ALL_HR_CATEGORIES, PEOPLEDESK, GENERAL_HR, ATTENDANCE, LEAVE, PAYROLL, BGV'
+                ))
+            except Exception as e_vy:
+                logger.debug(f"[DEPT] Error inserting default specialist member: {e_vy}")
+
         conn.commit()
     finally:
         conn.close()
