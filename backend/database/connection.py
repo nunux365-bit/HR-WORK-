@@ -17,6 +17,7 @@ import threading
 from pathlib import Path
 from urllib.parse import urlparse
 from typing import Any, List, Optional, Tuple, Union, Dict
+from decimal import Decimal
 
 from backend.config import Config
 
@@ -62,11 +63,21 @@ class PostgresRow:
     def __init__(self, description, values):
         if description:
             self._keys = [col[0] for col in description]
-            self._map = {k.lower(): v for k, v in zip(self._keys, values)}
+            norm_values = []
+            if values is not None:
+                for v in values:
+                    if hasattr(v, "isoformat"):
+                        norm_values.append(v.isoformat())
+                    elif isinstance(v, Decimal):
+                        norm_values.append(float(v))
+                    else:
+                        norm_values.append(v)
+            self._map = {k.lower(): v for k, v in zip(self._keys, norm_values)}
+            self._values = tuple(norm_values)
         else:
             self._keys = []
             self._map = {}
-        self._values = tuple(values) if values is not None else ()
+            self._values = ()
 
     def __getitem__(self, item):
         if isinstance(item, int):

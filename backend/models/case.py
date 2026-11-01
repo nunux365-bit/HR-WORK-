@@ -25,20 +25,28 @@ VALID_PRIORITIES = {"LOW", "MEDIUM", "HIGH", "CRITICAL"}
 
 
 def compute_sla_metrics(
-    created_at_str: Optional[str],
-    due_at_str: Optional[str],
+    created_at_str: Optional[Any],
+    due_at_str: Optional[Any],
     sla_hours: int,
     case_status: str,
 ) -> Dict[str, Any]:
     now = datetime.now(timezone.utc)
     due_dt = None
+    if hasattr(created_at_str, "isoformat"):
+        created_at_str = created_at_str.isoformat()
+    elif created_at_str is not None:
+        created_at_str = str(created_at_str)
+
     if due_at_str:
-        try:
-            due_dt = datetime.fromisoformat(due_at_str.replace("Z", "+00:00"))
-            if due_dt.tzinfo is None:
-                due_dt = due_dt.replace(tzinfo=timezone.utc)
-        except Exception:
-            due_dt = None
+        if isinstance(due_at_str, datetime):
+            due_dt = due_at_str if due_at_str.tzinfo else due_at_str.replace(tzinfo=timezone.utc)
+        else:
+            try:
+                due_dt = datetime.fromisoformat(str(due_at_str).replace("Z", "+00:00"))
+                if due_dt.tzinfo is None:
+                    due_dt = due_dt.replace(tzinfo=timezone.utc)
+            except Exception:
+                due_dt = None
 
     if not due_dt:
         due_dt = now + timedelta(hours=int(sla_hours or 48))

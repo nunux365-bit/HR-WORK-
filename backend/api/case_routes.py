@@ -24,6 +24,7 @@ Endpoints:
   - POST /api/cases/<identifier>/actions
 """
 
+import logging
 from flask import Blueprint, request
 from backend.config import Config
 from backend.api import success_response, error_response
@@ -54,6 +55,7 @@ from backend.classification.ai_pipeline import accept_ai_classification
 from backend.services.audit.audit_service import get_email_and_case_activity
 
 case_bp = Blueprint("cases", __name__, url_prefix="/api/cases")
+logger = logging.getLogger("hrflow.api.cases")
 
 
 def _get_actor_and_role(payload: dict):
@@ -201,6 +203,9 @@ def get_case_detail_route(identifier: str):
         })
     except ValueError as ve:
         return error_response("CASE_NOT_FOUND", str(ve), 404)
+    except Exception as exc:
+        logger.exception("Error loading case detail for '%s': %s", identifier, exc)
+        return error_response("CASE_LOAD_ERROR", f"Failed to retrieve case: {exc}", 500)
 
 
 @case_bp.route("/<identifier>/dossier", methods=["GET"])
@@ -692,6 +697,9 @@ def reply_to_case_route(identifier: str):
         })
     except ValueError as ve:
         return error_response("CASE_NOT_FOUND", str(ve), 404)
+    except Exception as exc:
+        logger.exception("Error loading case detail for '%s': %s", identifier, exc)
+        return error_response("CASE_LOAD_ERROR", f"Failed to retrieve case: {exc}", 500)
 
 
 @case_bp.route("/<identifier>/resolve", methods=["POST"])

@@ -2157,7 +2157,14 @@ def build_case_operational_facts(case: Dict[str, Any], emp_payload: Dict[str, An
     ded_cat_val = ded_cat_m.group(1).strip() if ded_cat_m else ("Leave Without Pay (LWP)" if "LWP" in desc else "Payroll Discrepancy")
     pay_period_val = pay_period_m.group(1).strip() if pay_period_m else "October 2026"
     grade_val = grade_m.group(1).strip() if grade_m else "G6"
-    doj_val = doj_m.group(1).strip() if doj_m else (emp_payload.get("created_at") or "12/06/2022")[:10]
+    raw_created = emp_payload.get("created_at")
+    if hasattr(raw_created, "strftime"):
+        created_str = raw_created.strftime("%Y-%m-%d")
+    elif raw_created:
+        created_str = str(raw_created)[:10]
+    else:
+        created_str = "12/06/2022"
+    doj_val = doj_m.group(1).strip() if doj_m else created_str
     target_name_val = target_name_m.group(1).strip() if target_name_m else (emp_payload.get("name") or "Employee")
 
     is_payroll = cat == "PAYROLL" or "SALARY" in title.upper() or "DEDUCTION" in title.upper()

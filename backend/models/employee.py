@@ -10,6 +10,18 @@ from backend.database.connection import get_connection
 def _row_to_employee_dict(row) -> Optional[Dict[str, Any]]:
     if not row:
         return None
+    created_at = row["created_at"]
+    if hasattr(created_at, "isoformat"):
+        created_at = created_at.isoformat()
+    elif created_at is not None:
+        created_at = str(created_at)
+
+    updated_at = row["updated_at"]
+    if hasattr(updated_at, "isoformat"):
+        updated_at = updated_at.isoformat()
+    elif updated_at is not None:
+        updated_at = str(updated_at)
+
     return {
         "db_id": int(row["id"]),
         "id": row["employee_id"],
@@ -21,8 +33,8 @@ def _row_to_employee_dict(row) -> Optional[Dict[str, Any]]:
         "manager_name": row["manager_name"],
         "location": row["location"],
         "source": row["source"],
-        "created_at": row["created_at"],
-        "updated_at": row["updated_at"],
+        "created_at": created_at,
+        "updated_at": updated_at,
     }
 
 
