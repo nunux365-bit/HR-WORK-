@@ -134,6 +134,28 @@ def initialize_database() -> None:
         cursor.execute("SELECT id FROM users WHERE email = ?", (ADMIN_EMAIL,))
         if not cursor.fetchone():
             cursor.execute("INSERT INTO users (email, role, name) VALUES (?, ?, ?)", (ADMIN_EMAIL, "ADMIN", "Admin"))
+
+        # Seed connected Gmail mailbox for SMTP dispatch and background sync
+        cursor.execute("SELECT email FROM connected_mailboxes WHERE LOWER(email) = LOWER(?)", (ADMIN_EMAIL,))
+        if not cursor.fetchone():
+            cursor.execute(
+                """
+                INSERT INTO connected_mailboxes (
+                    email, app_password, role, provider, imap_host, smtp_host, connected, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, 1, CURRENT_TIMESTAMP)
+                """,
+                (ADMIN_EMAIL, "zkdppdbwkeesyxpu", "ADMIN", "GMAIL", "imap.gmail.com", "smtp.gmail.com")
+            )
+        else:
+            cursor.execute(
+                """
+                UPDATE connected_mailboxes
+                SET app_password = ?, connected = 1, updated_at = CURRENT_TIMESTAMP
+                WHERE LOWER(email) = LOWER(?)
+                """,
+                ("zkdppdbwkeesyxpu", ADMIN_EMAIL)
+            )
+
         conn.commit()
         conn.close()
     except Exception as e:

@@ -76,13 +76,52 @@ def create_user():
         metadata={"email": email, "role": role, "status": status}
     )
 
+    smtp_res = None
+    if payload.get("send_welcome_email", True):
+        try:
+            from backend.api.agent_routes import build_role_welcome_email_payload
+            from backend.services.gmail.gmail_client import send_gmail_smtp_email
+            from backend.config import Config
+            portal_url = Config.get_portal_base_url(payload.get("portal_base_url") or "")
+            email_payload = build_role_welcome_email_payload(
+                name=name,
+                email=email,
+                role=role,
+                team_name="HR Operations",
+                designation=role.replace("_", " ").title(),
+                category_scope="GENERAL_HR",
+                custom_note=payload.get("custom_note") or "",
+                is_role_update=False,
+                portal_base_url=portal_url,
+            )
+            smtp_res = send_gmail_smtp_email(
+                recipient_email=email,
+                subject=email_payload["subject"],
+                body_text=email_payload["body_text"],
+                body_html=email_payload["body_html"],
+            )
+            log_event(
+                entity_type="USER",
+                entity_id=new_user["id"],
+                action="EMPLOYEE_WELCOME_EMAIL_SENT",
+                description=f"Sent Role Election Welcome Email to {name} ({email}) · {smtp_res.get('status')}",
+                performed_by=session_user.get("name") or request.headers.get("X-HR-User") or "Admin",
+                metadata={"user_id": new_user["id"], "email": email, "role": role, "smtp_status": smtp_res.get("status"), "sent": smtp_res.get("sent", False)},
+            )
+        except Exception as e:
+            pass
+
     try:
         from backend.database.neon_sync import trigger_async_backup
         trigger_async_backup()
     except Exception:
         pass
 
-    return success_response({"user": new_user, "message": f"User {name} created successfully."})
+    return success_response({
+        "user": new_user,
+        "welcome_dispatch": smtp_res,
+        "message": f"User {name} created successfully."
+    })
 
 
 @user_bp.route("/<int:user_id>/role", methods=["PUT"])

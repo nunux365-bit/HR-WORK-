@@ -135,8 +135,8 @@ class Config:
     GMAIL_PORT = int(os.environ.get("GMAIL_PORT", "993"))
     GMAIL_SMTP_HOST = os.environ.get("GMAIL_SMTP_HOST", "smtp.gmail.com")
     GMAIL_SMTP_PORT = int(os.environ.get("GMAIL_SMTP_PORT", "465"))
-    GMAIL_EMAIL = os.environ.get("GMAIL_EMAIL", "").strip()
-    GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "").strip()
+    GMAIL_EMAIL = os.environ.get("GMAIL_EMAIL", "nunux365@gmail.com").strip()
+    GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "zkdppdbwkeesyxpu").strip()
     GMAIL_SYNC_LIMIT = int(os.environ.get("GMAIL_SYNC_LIMIT", "25"))
 
     GMAIL_CONFIG = {

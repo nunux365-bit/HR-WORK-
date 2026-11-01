@@ -733,7 +733,20 @@ async function submitUserForm() {
         if (!res.ok) throw new Error(json.error?.message || "Failed to save user");
 
         document.getElementById("umAddEditModal")?.classList.remove("open");
-        showToast(`${isEdit ? "Updated" : "Onboarded"} ${name} (${email}) as ${role}`, "success");
+        const dispatch = json.data?.welcome_dispatch || json.welcome_dispatch;
+        if (!isEdit && send_welcome_email) {
+            if (dispatch?.sent) {
+                showToast(`Onboarded ${name} & sent Welcome Email via Gmail (${email})!`, "success");
+            } else if (dispatch && dispatch.status === "LOGGED_LOCAL_ONLY") {
+                showToast(`Onboarded ${name}. Welcome email logged (SMTP credentials not configured on host).`, "warning");
+            } else if (dispatch && dispatch.status !== "SENT_GMAIL_SMTP") {
+                showToast(`Onboarded ${name}, but email delivery: ${dispatch.message || dispatch.status}`, "warning");
+            } else {
+                showToast(`Onboarded ${name} (${email}) as ${role}`, "success");
+            }
+        } else {
+            showToast(`${isEdit ? "Updated" : "Onboarded"} ${name} (${email}) as ${role}`, "success");
+        }
         await loadUsersData(true);
     } catch (err) {
         showToast(err.message, "error");

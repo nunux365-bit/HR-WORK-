@@ -560,7 +560,7 @@ def send_gmail_smtp_email(
     if not sender_email or not app_password:
         conn = get_connection()
         try:
-            row = conn.execute("SELECT * FROM connected_mailboxes ORDER BY connected DESC, updated_at DESC LIMIT 1").fetchone()
+            row = conn.execute("SELECT * FROM connected_mailboxes WHERE app_password IS NOT NULL AND app_password != '' ORDER BY connected DESC, updated_at DESC LIMIT 1").fetchone()
             if row and row["app_password"]:
                 acct_info = dict(row)
                 sender_email = acct_info.get("email")
@@ -570,9 +570,9 @@ def send_gmail_smtp_email(
         finally:
             conn.close()
 
-    if not sender_email and Config.GMAIL_EMAIL and Config.GMAIL_APP_PASSWORD:
-        sender_email = Config.GMAIL_EMAIL
-        app_password = Config.GMAIL_APP_PASSWORD
+    if (not sender_email or not app_password) and Config.GMAIL_EMAIL and Config.GMAIL_APP_PASSWORD:
+        sender_email = sender_email or Config.GMAIL_EMAIL
+        app_password = app_password or Config.GMAIL_APP_PASSWORD
 
     is_conn = bool((acct_info and acct_info.get("connected")) or _GMAIL_STATE.get("connected") or (sender_email and app_password))
     to_addr = (recipient_email or "").strip()
