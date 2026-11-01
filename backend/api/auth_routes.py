@@ -191,6 +191,11 @@ def login_with_gmail():
 
     # Non-blocking async sync: Spawn background thread so login returns in ~1 second
     import threading
+    sync_result = {
+        "status": "initiated_in_background",
+        "fetched_count": inbox_count,
+        "new_stored_count": 0,
+    }
     if str(user_profile.get("role") or "").upper() != "HR_AGENT":
         def _bg_login_sync():
             try:
