@@ -324,27 +324,8 @@ async function loadRealData() {
     try {
         let userStr = sessionStorage.getItem('hrflow_user');
         let userObj = userStr ? JSON.parse(userStr) : {};
-        const hintEmail = (userObj && userObj.email) ? `?email=${encodeURIComponent(userObj.email)}` : "";
 
-        try {
-            const profRes = await fetch(`${BACKEND_API_BASE}/api/auth/profile${hintEmail}`);
-            if (profRes.ok) {
-                const profJson = await profRes.json();
-                const freshUser = profJson?.data?.user || profJson?.user;
-                if (freshUser && freshUser.email) {
-                    userObj = { ...userObj, ...freshUser };
-                }
-            }
-        } catch (err) {
-            // fallback to sessionStorage
-        }
-
-        if (String(userObj.role || "").toUpperCase() === "HR_AGENT") {
-            sessionStorage.setItem('hrflow_user', JSON.stringify(userObj));
-            window.location.replace("agent.html");
-            return;
-        }
-
+        // 1. Immediately hydrate greeting and identity from sessionStorage (0ms instant render)
         if (!userObj.role || String(userObj.role).toUpperCase() === "SUPER_ADMIN") {
             userObj.role = "ADMIN";
         }
@@ -357,17 +338,14 @@ async function loadRealData() {
         if (userObj.role_title && String(userObj.role_title).toLowerCase().includes("super admin")) {
             userObj.role_title = "Admin";
         }
-        if (userObj.email) {
-            sessionStorage.setItem('hrflow_user', JSON.stringify(userObj));
-        }
         
         const hour = new Date().getHours();
         const timeGreeting = hour < 12 ? "Good Morning" : (hour < 17 ? "Good Afternoon" : "Good Evening");
         const greetingTitle = document.getElementById("greetingTitle") || document.querySelector(".greeting-row h1");
-        if (greetingTitle) greetingTitle.textContent = `${timeGreeting}, ${userObj.name}`;
+        if (greetingTitle) greetingTitle.textContent = `${timeGreeting}, ${userObj.name || 'Admin'}`;
         
         const userNameEl = document.getElementById("userName");
-        if (userNameEl) userNameEl.textContent = userObj.name;
+        if (userNameEl) userNameEl.textContent = userObj.name || 'Admin';
         
         const userRoleEl = document.getElementById("userRole");
         if (userRoleEl) userRoleEl.textContent = userObj.designation || userObj.role_title || "Admin";
@@ -386,6 +364,16 @@ async function loadRealData() {
             window.location.href = "agent.html";
             return;
         }
+
+        // 2. Fetch fresh profile asynchronously in background without blocking dashboard metrics
+        const hintEmail = (userObj && userObj.email) ? `?email=${encodeURIComponent(userObj.email)}` : "";
+        safeFetchJson(`${BACKEND_API_BASE}/api/auth/profile${hintEmail}`, null).then(profJson => {
+            const freshUser = profJson?.data?.user || profJson?.user;
+            if (freshUser && freshUser.email) {
+                userObj = { ...userObj, ...freshUser };
+                sessionStorage.setItem('hrflow_user', JSON.stringify(userObj));
+            }
+        }).catch(() => {});
 
         // Concurrently fetch all endpoints with robust fallback defaults
         const [

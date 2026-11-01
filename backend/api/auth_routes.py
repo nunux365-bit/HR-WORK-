@@ -189,20 +189,19 @@ def login_with_gmail():
 
     user_profile = _build_user_profile(email_addr, inbox_count)
 
-    # Sync Gmail Inbox into SQLite only for Admin/Manager intake accounts (not personal HR_AGENT logins)
-    sync_result = {}
+    # Non-blocking async sync: Spawn background thread so login returns in ~1 second
+    import threading
     if str(user_profile.get("role") or "").upper() != "HR_AGENT":
-        try:
-            sync_result = sync_gmail_inbox()
-        except Exception as exc:
-            logger.warning(f"Initial Gmail sync during login encountered an error: {exc}")
-            sync_result = {"error": str(exc)}
-    else:
-        sync_result = {"fetched_count": inbox_count, "new_stored_count": 0, "mode": "AGENT_DIRECT_PORTAL"}
+        def _bg_login_sync():
+            try:
+                sync_gmail_inbox(account_email=email_addr)
+            except Exception as exc:
+                logger.warning(f"Initial Gmail sync in background error: {exc}")
+        threading.Thread(target=_bg_login_sync, daemon=True).start()
 
     token = secrets.token_urlsafe(32)
-    user_profile["synced_count"] = sync_result.get("fetched_count", 0)
-    user_profile["new_stored_count"] = sync_result.get("new_stored_count", 0)
+    user_profile["synced_count"] = inbox_count
+    user_profile["new_stored_count"] = 0
     _ACTIVE_SESSIONS[token] = user_profile
 
     try:

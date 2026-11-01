@@ -494,19 +494,26 @@ def list_stored_emails(
 
     active_account = get_active_account_email(account_email)
 
+    # Asynchronously process any pending unclassified emails in background so GET returns instantly
     conn = get_connection()
+    unprocessed_ids = []
     try:
         unprocessed = conn.execute(
-            "SELECT id FROM emails WHERE category IS NULL ORDER BY id DESC"
+            "SELECT id FROM emails WHERE category IS NULL ORDER BY id DESC LIMIT 20"
         ).fetchall()
+        unprocessed_ids = [int(u["id"]) for u in unprocessed]
     finally:
         conn.close()
 
-    for u in unprocessed:
-        try:
-            process_email(int(u["id"]))
-        except Exception as e:
-            logger.warning(f"Auto-process warning for email {u['id']}: {e}")
+    if unprocessed_ids:
+        import threading
+        def _bg_process_unprocessed(ids):
+            for uid in ids:
+                try:
+                    process_email(uid)
+                except Exception as e:
+                    logger.debug(f"Auto-process background email {uid}: {e}")
+        threading.Thread(target=_bg_process_unprocessed, args=(unprocessed_ids,), daemon=True).start()
 
     conn = get_connection()
     try:
