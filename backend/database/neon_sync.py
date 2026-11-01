@@ -15,7 +15,7 @@ from urllib.parse import urlparse
 
 logger = logging.getLogger("hrflow.neon_sync")
 
-DEFAULT_NEON_URL = "postgresql://neondb_owner:npg_prCYPycw8L7q@ep-delicate-band-b3531bbp-pooler.c-4.ap-southeast-1.aws.neon.tech/hrflow?sslmode=require"
+DEFAULT_NEON_URL = "postgresql://neondb_owner:npg_prCYPycw8L7q@ep-delicate-band-b3531bbp-pooler.c-4.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
 
 _BACKUP_LOCK = threading.Lock()
 _LAST_BACKUP_TIME = 0

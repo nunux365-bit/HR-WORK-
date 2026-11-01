@@ -116,6 +116,33 @@
                 </div>
 
                 <div class="cases-header-actions">
+                    <!-- Sequence Status Pill (Atomic Zero-Duplicate Guarantee) -->
+                    <div class="sequence-status-pill" id="adminSequenceChip" title="Atomic duplicate-free counter status" onclick="window.fetchSequenceStatus && window.fetchSequenceStatus()">
+                        <span class="seq-status-dot"></span>
+                        <span class="seq-label">Next Case:</span>
+                        <strong id="nextCaseBadge">1MG-00003</strong>
+                    </div>
+
+                    <!-- Allot Case Prominent Button -->
+                    <button type="button" class="btn-coral-primary" id="btnOpenAllotModal" onclick="window.openAllotCaseModal && window.openAllotCaseModal()" title="Issue / Allot New Case (Guaranteed Duplicate-Free 1MG Sequence)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span>Allot Case</span>
+                    </button>
+
+                    <!-- Agent Workload Matrix Button -->
+                    <button type="button" class="btn-tata-outline" id="btnOpenWorkloadModal" onclick="window.openWorkloadModal && window.openWorkloadModal()" title="View all HR specialists and live cases they are working on">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        <span>Agent Workload</span>
+                    </button>
+
                     <button type="button" class="btn-tata-outline" id="btnRefreshCases" title="Refresh Case Queue">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
@@ -143,14 +170,6 @@
                             <rect x="3" y="14" width="7" height="7"></rect>
                         </svg>
                         <span>Dashboard</span>
-                    </a>
-
-                    <a href="builder.html" class="btn-coral-primary" title="Launch Workflow Process Studio">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
-                        <span>New Process</span>
                     </a>
                 </div>
             </div>
@@ -524,6 +543,173 @@
             <div class="case-modal-footer">
                 <button type="button" class="btn-tata-outline" onclick="closeDocketModal()">Cancel</button>
                 <button type="button" class="btn-coral-primary" id="btnSubmitDocketModal" onclick="submitDocketModal()">Save Ticket Number</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================================================================
+         ADMIN CASE ALLOTMENT MODAL (Guaranteed Zero Duplicate 1MG Engine)
+         ================================================================== -->
+    <div class="case-modal-backdrop" id="allotCaseModal">
+        <div class="case-modal-window allot-modal-window">
+            <div class="case-modal-header">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div class="header-icon-badge coral" style="width:28px; height:28px; border-radius:6px; background:var(--tata-coral-light); color:var(--tata-coral); display:flex; align-items:center; justify-content:center;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    </div>
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.05rem;">Allot New Operational Case</h3>
+                        <p style="margin: 2px 0 0 0; font-size: 0.74rem; color: var(--tata-text-muted);">Atomic Sequence Engine · Guaranteed duplicate-free numbering</p>
+                    </div>
+                </div>
+                <button type="button" class="btn-tata-outline btn-close-modal" onclick="window.closeAllotCaseModal && window.closeAllotCaseModal()" style="height: 28px; padding: 0 8px; border: none; font-size: 1rem;">✕</button>
+            </div>
+            
+            <div class="case-modal-body">
+                <!-- Sequence lookahead strip -->
+                <div class="allot-preview-banner">
+                    <div class="banner-left">
+                        <span class="pulse-ring"></span>
+                        <span class="banner-label">Guaranteed Case Number:</span>
+                        <strong class="banner-code" id="modalAllotNumberPreview">1MG-00003</strong>
+                    </div>
+                    <span class="banner-tag">Atomic Counter</span>
+                </div>
+
+                <form id="allotCaseForm" onsubmit="event.preventDefault(); window.submitAllotCaseForm && window.submitAllotCaseForm();">
+                    <!-- Title -->
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label class="form-label" style="display: block; font-size: 0.72rem; font-weight: 700; color: var(--tata-text-muted); text-transform: uppercase; margin-bottom: 6px;">Case Subject / Title <span style="color:var(--tata-danger);">*</span></label>
+                        <input type="text" id="allotCaseTitle" class="control-input" required placeholder="e.g. Salary Discrepancy — Incorrect tax deduction in Oct payroll" style="height: 38px; width: 100%; box-sizing: border-box;">
+                    </div>
+
+                    <!-- Category & Priority Row -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                        <div class="form-group">
+                            <label class="form-label" style="display: block; font-size: 0.72rem; font-weight: 700; color: var(--tata-text-muted); text-transform: uppercase; margin-bottom: 6px;">Category / Domain <span style="color:var(--tata-danger);">*</span></label>
+                            <select id="allotCaseCategory" class="control-select" style="height: 38px; width: 100%;">
+                                <option value="PAYROLL">Payroll &amp; Compensation</option>
+                                <option value="ATTENDANCE">Attendance &amp; Biometrics</option>
+                                <option value="LEAVE">Leave Operations</option>
+                                <option value="RESIGNATION">Resignation &amp; BGV</option>
+                                <option value="ONBOARDING">New Hire Onboarding</option>
+                                <option value="PROFILE_UPDATE">Profile &amp; Bank Details</option>
+                                <option value="ASSET_IT">IT &amp; Assets</option>
+                                <option value="GENERAL_HR">General HR Operations</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" style="display: block; font-size: 0.72rem; font-weight: 700; color: var(--tata-text-muted); text-transform: uppercase; margin-bottom: 6px;">Priority &amp; SLA Target</label>
+                            <select id="allotCasePriority" class="control-select" style="height: 38px; width: 100%;" onchange="window.handleAllotPriorityChange && window.handleAllotPriorityChange(this.value)">
+                                <option value="URGENT">🔥 Urgent (12h SLA)</option>
+                                <option value="HIGH">⚡ High (24h SLA)</option>
+                                <option value="MEDIUM" selected>⏱️ Medium (48h SLA)</option>
+                                <option value="LOW">🐢 Low (72h SLA)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Assignee Specialist & Team Row -->
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label class="form-label" style="display: block; font-size: 0.72rem; font-weight: 700; color: var(--tata-text-muted); text-transform: uppercase; margin-bottom: 6px;">Assign to HR Specialist / Agent</label>
+                        <select id="allotAssigneeSelect" class="control-select" style="height: 38px; width: 100%;">
+                            <option value="">⏳ Unassigned (Route to Department Pool)</option>
+                            <!-- Dynamically populated from /api/cases/admin/workload -->
+                        </select>
+                        <span style="font-size: 0.72rem; color: var(--tata-text-muted); margin-top: 3px; display: block;">Select a specialist to assign immediately or route to the general intake queue.</span>
+                    </div>
+
+                    <!-- Employee Details (Optional / Auto-matched) -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                        <div class="form-group">
+                            <label class="form-label" style="display: block; font-size: 0.72rem; font-weight: 700; color: var(--tata-text-muted); text-transform: uppercase; margin-bottom: 6px;">Employee Name</label>
+                            <input type="text" id="allotEmpName" class="control-input" placeholder="e.g. Rahul Verma" style="height: 36px; width: 100%; box-sizing: border-box;">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" style="display: block; font-size: 0.72rem; font-weight: 700; color: var(--tata-text-muted); text-transform: uppercase; margin-bottom: 6px;">Employee ID</label>
+                            <input type="text" id="allotEmpId" class="control-input" placeholder="e.g. 1MG1042" style="height: 36px; width: 100%; box-sizing: border-box;">
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="form-group" style="margin-bottom: 8px;">
+                        <label class="form-label" style="display: block; font-size: 0.72rem; font-weight: 700; color: var(--tata-text-muted); text-transform: uppercase; margin-bottom: 6px;">Operational Notes / Request Context</label>
+                        <textarea id="allotCaseDescription" class="composer-textarea" style="min-height: 75px; width: 100%; box-sizing: border-box;" placeholder="Provide context, employee complaint notes, or reason for administrative allotment..."></textarea>
+                    </div>
+                </form>
+            </div>
+
+            <div class="case-modal-footer">
+                <button type="button" class="btn-tata-outline" onclick="window.closeAllotCaseModal && window.closeAllotCaseModal()">Cancel</button>
+                <button type="button" class="btn-coral-primary" id="btnSubmitAllotCase" onclick="window.submitAllotCaseForm && window.submitAllotCaseForm()">
+                    <span id="btnSubmitAllotLabel">Confirm Allotment &amp; Dispatch</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================================================================
+         AGENT WORKLOAD MATRIX MODAL (Live "Who is working on what" view)
+         ================================================================== -->
+    <div class="case-modal-backdrop" id="workloadModal">
+        <div class="case-modal-window workload-modal-window">
+            <div class="case-modal-header">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div class="header-icon-badge blue" style="width:28px; height:28px; border-radius:6px; background:var(--tata-blue-light); color:var(--tata-blue); display:flex; align-items:center; justify-content:center;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    </div>
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.05rem;">Specialist Desk Workload &amp; Assignment Matrix</h3>
+                        <p style="margin: 2px 0 0 0; font-size: 0.74rem; color: var(--tata-text-muted);">Real-time tracking of active cases assigned to each HR Specialist</p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button type="button" class="btn-tata-outline btn-sm" onclick="window.loadWorkloadMatrix && window.loadWorkloadMatrix()" title="Refresh Workload Data">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path><path d="M16 21h5v-5"></path></svg>
+                        <span>Refresh</span>
+                    </button>
+                    <button type="button" class="btn-tata-outline btn-close-modal" onclick="window.closeWorkloadModal && window.closeWorkloadModal()" style="height: 28px; padding: 0 8px; border: none; font-size: 1rem;">✕</button>
+                </div>
+            </div>
+
+            <div class="case-modal-body" style="max-height: 75vh; overflow-y: auto;">
+                <!-- Summary KPI Row -->
+                <div class="workload-kpi-summary">
+                    <div class="kpi-mini-card">
+                        <span class="kpi-mini-val" id="wlTotalCases">--</span>
+                        <span class="kpi-mini-label">Active Cases</span>
+                    </div>
+                    <div class="kpi-mini-card">
+                        <span class="kpi-mini-val" style="color:var(--tata-success);" id="wlAvailableAgents">--</span>
+                        <span class="kpi-mini-label">Available Agents</span>
+                    </div>
+                    <div class="kpi-mini-card">
+                        <span class="kpi-mini-val" style="color:var(--tata-coral);" id="wlActiveAgents">--</span>
+                        <span class="kpi-mini-label">Handling Cases</span>
+                    </div>
+                    <div class="kpi-mini-card">
+                        <span class="kpi-mini-val" style="color:var(--tata-warning);" id="wlUnassignedCount">0</span>
+                        <span class="kpi-mini-label">Unassigned Pool</span>
+                    </div>
+                </div>
+
+                <!-- Unassigned Pool Section (if any) -->
+                <div id="wlUnassignedSection" style="display: none; margin-bottom: 16px;"></div>
+
+                <!-- Agents Workload Cards Grid -->
+                <div class="workload-agents-grid" id="wlAgentsGrid">
+                    <div style="padding: 30px; text-align: center; color: var(--tata-text-muted); font-size: 0.85rem;">
+                        Loading specialist workload distribution...
+                    </div>
+                </div>
+            </div>
+
+            <div class="case-modal-footer">
+                <button type="button" class="btn-tata-outline" onclick="window.closeWorkloadModal && window.closeWorkloadModal()">Close</button>
+                <button type="button" class="btn-coral-primary" onclick="window.openAllotCaseModal && window.openAllotCaseModal(); window.closeWorkloadModal && window.closeWorkloadModal();">
+                    <span>➕ Allot New Case</span>
+                </button>
             </div>
         </div>
     </div>

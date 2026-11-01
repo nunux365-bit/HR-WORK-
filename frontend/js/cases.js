@@ -299,6 +299,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 2. Load Admin Profile, Mailbox, and Neon DB Status in background
     loadAdminProfileAndMailbox().catch(e => console.warn("Admin profile load error:", e));
     checkNeonDatabaseStatus().catch(e => console.warn("Neon DB check error:", e));
+    if (window.fetchSequenceStatus) window.fetchSequenceStatus().catch(e => console.warn("Sequence fetch error:", e));
+
 
     // Auto-refresh cases queue every 30 seconds
     setInterval(() => {
@@ -2809,7 +2811,8 @@ function setupModals() {
     const btnSubmitReassign = document.getElementById("btnSubmitReassign");
     const btnReassignModal = document.getElementById("btnReassignModal");
 
-    window.openReassignModal = function() {
+    window.openReassignModal = function(caseIdOverride) {
+        if (caseIdOverride) currentCaseId = caseIdOverride;
         if (reassignModal) reassignModal.classList.add("active");
     };
 
@@ -2988,3 +2991,278 @@ window.showToast = function(title, message, type = 'info') {
     toast.querySelector('.toast-close').addEventListener('click', removeToast);
     setTimeout(removeToast, 4000);
 };
+
+// ==============================================================================
+// ATOMIC CASE ALLOTMENT & SPECIALIST WORKLOAD CONTROLLER (1MG Zero-Duplicate Engine)
+// ==============================================================================
+
+window.fetchSequenceStatus = async function() {
+    try {
+        const res = await fetch(`${BACKEND_API_BASE}/api/cases/admin/sequence-status?prefix=1MG`);
+        if (!res.ok) return;
+        const json = await res.json();
+        const data = json.data || json;
+        const nextNum = data.next_case_number || '1MG-00001';
+        
+        const badge = document.getElementById('nextCaseBadge');
+        if (badge) badge.textContent = nextNum;
+        
+        const preview = document.getElementById('modalAllotNumberPreview');
+        if (preview) preview.textContent = nextNum;
+        
+        return data;
+    } catch (e) {
+        console.warn("Could not fetch sequence status:", e);
+    }
+};
+
+window.openAllotCaseModal = async function() {
+    const modal = document.getElementById('allotCaseModal');
+    if (!modal) return;
+    
+    // Fetch fresh next number
+    await window.fetchSequenceStatus();
+    
+    // Populate Assignee Select with live agents from workload endpoint
+    try {
+        const res = await fetch(`${BACKEND_API_BASE}/api/cases/admin/workload`);
+        if (res.ok) {
+            const json = await res.json();
+            const data = json.data || json;
+            const select = document.getElementById('allotAssigneeSelect');
+            if (select && data.agents) {
+                let optionsHtml = `<option value="">⏳ Unassigned (Route to General Intake)</option>`;
+                data.agents.forEach(a => {
+                    const statusText = a.active_case_count === 0 ? 'Available' : `${a.active_case_count} active`;
+                    optionsHtml += `<option value="${a.name}">${a.name} (${a.team_name || 'PeopleDesk'} · ${statusText})</option>`;
+                });
+                select.innerHTML = optionsHtml;
+            }
+        }
+    } catch (e) {
+        console.warn("Could not load agents list:", e);
+    }
+    
+    modal.classList.add('active');
+    setTimeout(() => {
+        const titleInput = document.getElementById('allotCaseTitle');
+        if (titleInput) titleInput.focus();
+    }, 100);
+};
+
+window.closeAllotCaseModal = function() {
+    const modal = document.getElementById('allotCaseModal');
+    if (modal) modal.classList.remove('active');
+};
+
+window.handleAllotPriorityChange = function(prio) {
+    // Priority adjusted, default SLA targets apply automatically
+};
+
+window.submitAllotCaseForm = async function() {
+    const btn = document.getElementById('btnSubmitAllotCase');
+    const label = document.getElementById('btnSubmitAllotLabel');
+    const title = document.getElementById('allotCaseTitle')?.value?.trim();
+    if (!title) {
+        window.showToast("Validation Error", "Case title is required.", "warning");
+        return;
+    }
+    
+    const category = document.getElementById('allotCaseCategory')?.value || 'GENERAL_HR';
+    const priority = document.getElementById('allotCasePriority')?.value || 'MEDIUM';
+    const assignedUser = document.getElementById('allotAssigneeSelect')?.value || '';
+    const empName = document.getElementById('allotEmpName')?.value?.trim() || '';
+    const empId = document.getElementById('allotEmpId')?.value?.trim() || '';
+    const description = document.getElementById('allotCaseDescription')?.value?.trim() || '';
+    
+    if (btn) btn.disabled = true;
+    if (label) label.textContent = "Allotting...";
+    
+    try {
+        let userObj = {};
+        try {
+            userObj = JSON.parse(sessionStorage.getItem('hrflow_user') || '{}');
+        } catch (_) {}
+        const performedBy = userObj.name || userObj.email || "Admin";
+        
+        const payload = {
+            title,
+            category,
+            priority,
+            assigned_user: assignedUser,
+            employee_name: empName,
+            employee_id: empId,
+            description,
+            performed_by: performedBy,
+            prefix: "1MG"
+        };
+        
+        const res = await fetch(`${BACKEND_API_BASE}/api/cases/admin/allot`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+        
+        const json = await res.json();
+        if (!res.ok) {
+            throw new Error(json.message || json.error || "Failed to allot case");
+        }
+        
+        const newCase = json.data || json;
+        window.closeAllotCaseModal();
+        
+        // Reset form
+        document.getElementById('allotCaseForm')?.reset();
+        
+        window.showToast("Case Allotted", `⚡ Case ${newCase.case_number} successfully allotted & dispatched!`, "success");
+        
+        // Refresh sequence display
+        await window.fetchSequenceStatus();
+        
+        // Reload case list and select the new case
+        await fetchAndRenderCases(newCase.case_number || newCase.id);
+        
+    } catch (err) {
+        console.error("Allot error:", err);
+        window.showToast("Allotment Failed", err.message || "Failed to allot case", "error");
+    } finally {
+        if (btn) btn.disabled = false;
+        if (label) label.textContent = "Confirm Allotment & Dispatch";
+    }
+};
+
+window.openWorkloadModal = async function() {
+    const modal = document.getElementById('workloadModal');
+    if (modal) modal.classList.add('active');
+    await window.loadWorkloadMatrix();
+};
+
+window.closeWorkloadModal = function() {
+    const modal = document.getElementById('workloadModal');
+    if (modal) modal.classList.remove('active');
+};
+
+window.loadWorkloadMatrix = async function() {
+    const grid = document.getElementById('wlAgentsGrid');
+    if (!grid) return;
+    
+    grid.innerHTML = `
+        <div style="padding: 30px; text-align: center; color: var(--tata-text-muted); font-size: 0.85rem;">
+            <div style="display:inline-block; width:20px; height:20px; border:2px solid var(--tata-border); border-top-color:var(--tata-coral); border-radius:50%; animation: spin 0.8s linear infinite;"></div>
+            <div style="margin-top: 8px;">Refreshing specialist workload distribution...</div>
+        </div>
+    `;
+    
+    try {
+        const res = await fetch(`${BACKEND_API_BASE}/api/cases/admin/workload`);
+        if (!res.ok) throw new Error("Could not fetch workload data");
+        const json = await res.json();
+        const data = json.data || json;
+        
+        // Update KPI Summary
+        const elTotal = document.getElementById('wlTotalCases');
+        const elAvail = document.getElementById('wlAvailableAgents');
+        const elActive = document.getElementById('wlActiveAgents');
+        const elUnassigned = document.getElementById('wlUnassignedCount');
+        
+        const totalCases = data.total_active_cases ?? 0;
+        const agents = data.agents || [];
+        const availableCount = agents.filter(a => a.active_case_count === 0).length;
+        const activeCount = agents.filter(a => a.active_case_count > 0).length;
+        const unassignedCount = data.unassigned_count ?? 0;
+        
+        if (elTotal) elTotal.textContent = totalCases;
+        if (elAvail) elAvail.textContent = availableCount;
+        if (elActive) elActive.textContent = activeCount;
+        if (elUnassigned) elUnassigned.textContent = unassignedCount;
+        
+        // Render Unassigned Section
+        const unassignedSec = document.getElementById('wlUnassignedSection');
+        if (unassignedSec) {
+            if (unassignedCount > 0 && data.unassigned_cases && data.unassigned_cases.length > 0) {
+                unassignedSec.style.display = 'block';
+                unassignedSec.innerHTML = `
+                    <div style="background: #FFF4ED; border: 1.5px solid #FEDF89; border-radius: 8px; padding: 12px 14px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                            <div style="display: flex; align-items: center; gap: 7px; font-weight: 750; font-size: 0.82rem; color: #B54708;">
+                                <span>⚠️ Unclaimed Case Backlog (${unassignedCount})</span>
+                            </div>
+                            <span style="font-size: 0.72rem; color: #B54708;">Needs direct assignment to specialist</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            ${data.unassigned_cases.map(c => `
+                                <div style="display:flex; align-items:center; justify-content:space-between; background:#FFFFFF; border:1px solid #FEDF89; border-radius:6px; padding:7px 10px; font-size:0.75rem;">
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        <strong style="color:var(--tata-crimson); font-family:monospace;">${c.case_number}</strong>
+                                        <span style="color:var(--tata-text-primary); font-weight:500;">${c.title}</span>
+                                    </div>
+                                    <button type="button" class="btn-tata-outline btn-sm" onclick="window.closeWorkloadModal(); window.openReassignModal('${c.case_number}');" style="padding: 2px 8px; font-size: 0.7rem; border-color: #FEDF89;">
+                                        Assign Specialist
+                                    </button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } else {
+                unassignedSec.style.display = 'none';
+            }
+        }
+        
+        // Render Agents Grid
+        if (agents.length === 0) {
+            grid.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--tata-text-muted);">No active specialists registered.</div>`;
+            return;
+        }
+        
+        grid.innerHTML = agents.map(agent => {
+            const initials = agent.name.split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase();
+            const cases = agent.cases || [];
+            
+            return `
+                <div class="agent-workload-card">
+                    <div class="aw-card-header">
+                        <div class="aw-agent-info">
+                            <div class="aw-avatar">${initials}</div>
+                            <div>
+                                <div class="aw-agent-name">${agent.name}</div>
+                                <div class="aw-agent-team">${agent.team_name || 'PeopleDesk'} · ${agent.role}</div>
+                            </div>
+                        </div>
+                        <span class="aw-status-badge" style="background:${agent.workload_color}18; color:${agent.workload_color}; border: 1px solid ${agent.workload_color}40;">
+                            ${agent.workload_status}
+                        </span>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; color: var(--tata-text-muted); margin-bottom: 6px;">
+                        <span>Active Cases: <strong style="color:var(--tata-text-heading); font-size:0.8rem;">${agent.active_case_count}</strong></span>
+                        ${agent.urgent_case_count > 0 ? `<span style="color:var(--tata-danger); font-weight:700;">🔥 ${agent.urgent_case_count} Urgent</span>` : `<span style="color:var(--tata-success);">On Schedule</span>`}
+                    </div>
+                    
+                    <div class="aw-cases-list">
+                        ${cases.length === 0 ? `
+                            <div style="text-align: center; padding: 14px 6px; color: var(--tata-text-muted); font-size: 0.72rem; font-style: italic;">
+                                Available for new case assignments
+                            </div>
+                        ` : cases.map(c => `
+                            <div class="aw-case-item">
+                                <div style="display:flex; align-items:center; gap:6px; min-width:0;">
+                                    <span class="aw-case-num">${c.case_number}</span>
+                                    <span class="aw-case-title" title="${c.title}">${c.title}</span>
+                                </div>
+                                <button type="button" class="aw-btn-reassign-mini" onclick="window.closeWorkloadModal(); window.openReassignModal('${c.case_number}');" title="Reassign this case to another specialist">
+                                    Reassign
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+    } catch (err) {
+        console.error("Workload load error:", err);
+        grid.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--tata-danger); font-size: 0.8rem;">Failed to load specialist workload data.</div>`;
+    }
+};
+

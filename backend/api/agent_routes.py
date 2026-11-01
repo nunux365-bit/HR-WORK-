@@ -2501,7 +2501,8 @@ def claim_or_open_agent_email(email_id: int):
                 )
                 conn.commit()
         else:
-            case_number = f"CASE-2026-{int(datetime.now(timezone.utc).timestamp()) % 100000:05d}"
+            from backend.services.cases.case_number import allot_next_case_number
+            case_number = allot_next_case_number("1MG")
             cat = (em.get("category") or "GENERAL_HR").strip().upper()
             intent = (em.get("intent") or "general_inquiry").strip()
             title = (em.get("subject") or f"{cat} Request").strip()
@@ -2620,7 +2621,8 @@ def send_reply_from_email_api(email_id: int):
 
         if not case_id:
             # Auto-create case record so outbound communication has an active case reference
-            case_number = f"CASE-2026-{int(datetime.now(timezone.utc).timestamp()) % 100000:05d}"
+            from backend.services.cases.case_number import allot_next_case_number
+            case_number = allot_next_case_number("1MG")
             cat = (em.get("category") or "GENERAL_HR").strip().upper()
             title = (em.get("subject") or f"{cat} Request").strip()
             cur_c = conn.execute(
@@ -2988,7 +2990,8 @@ def quick_intake_case():
     ]
 
     sample = random.choice(samples)
-    case_num = f"CASE-{random.randint(100000, 999999)}"
+    from backend.services.cases.case_number import allot_next_case_number
+    case_num = allot_next_case_number("1MG")
 
     conn = get_connection()
     try:
@@ -4549,7 +4552,8 @@ def create_agent_department_case():
     extracted_json = json.dumps(payload.get("extracted_fields") or sample["extracted"])
 
     now_iso = datetime.now(timezone.utc).isoformat()
-    case_number = f"CASE-2026-{int(datetime.now(timezone.utc).timestamp()) % 100000:05d}"
+    from backend.services.cases.case_number import allot_next_case_number
+    case_number = allot_next_case_number("1MG")
 
     conn = get_connection()
     try:

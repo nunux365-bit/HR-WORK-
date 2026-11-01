@@ -111,6 +111,13 @@ def initialize_database() -> None:
         pass
 
     try:
+        from backend.services.cases.case_number import get_sequence_status
+        get_sequence_status("1MG")
+    except Exception as e:
+        print("Error initializing case sequence:", e)
+
+
+    try:
         # Seed Admin & normalize any legacy SUPER_ADMIN rows to ADMIN
         ADMIN_EMAIL = "nunux365@gmail.com"
         conn = get_connection()

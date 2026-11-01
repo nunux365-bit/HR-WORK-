@@ -575,4 +575,11 @@ CREATE TABLE IF NOT EXISTS case_feedback (
 CREATE INDEX IF NOT EXISTS idx_case_feedback_case_id ON case_feedback(case_id);
 CREATE INDEX IF NOT EXISTS idx_case_feedback_case_num ON case_feedback(case_number);
 
+CREATE TABLE IF NOT EXISTS case_sequences (
+    prefix TEXT PRIMARY KEY,
+    last_number INTEGER NOT NULL DEFAULT 0,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+
 

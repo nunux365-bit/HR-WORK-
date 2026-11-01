@@ -1238,4 +1238,85 @@ def get_neon_status_route():
         })
 
 
+# ==============================================================================
+# ADMIN CASE ALLOTMENT & AGENT WORKLOAD ROUTES (Guaranteed 0-Duplicate 1MG Engine)
+# ==============================================================================
+
+@case_bp.route("/admin/sequence-status", methods=["GET"])
+def get_admin_case_sequence_status_route():
+    """Returns sequence telemetry: current last_number, next_case_number (e.g. 1MG-00001)."""
+    from backend.services.cases.admin_case_service import get_next_case_preview
+    prefix = request.args.get("prefix", "1MG")
+    try:
+        data = get_next_case_preview(prefix=prefix)
+        return success_response(data)
+    except Exception as exc:
+        return error_response(str(exc), status_code=500)
+
+
+@case_bp.route("/admin/allot", methods=["POST"])
+def allot_admin_case_route():
+    """
+    Allots a new case with an atomic, guaranteed unique sequential case number (1MG-00001, etc.).
+    Guarantees zero duplicates across concurrent operations.
+    """
+    from backend.services.cases.admin_case_service import allot_admin_case
+    payload = request.get_json(silent=True) or {}
+    actor_user, _ = _get_actor_and_role(payload)
+    performed_by = payload.get("performed_by") or actor_user or "Admin"
+
+    try:
+        case = allot_admin_case(payload, performed_by=performed_by)
+        return success_response(case, status_code=201)
+    except ValueError as val_err:
+        return error_response(str(val_err), status_code=400)
+    except Exception as exc:
+        return error_response(f"Failed to allot case: {str(exc)}", status_code=500)
+
+
+@case_bp.route("/admin/workload", methods=["GET"])
+def get_admin_agents_workload_route():
+    """Returns full live matrix of agents, active cases assigned, and unassigned backlog."""
+    from backend.services.cases.admin_case_service import get_agents_workload_overview
+    try:
+        data = get_agents_workload_overview()
+        return success_response(data)
+    except Exception as exc:
+        return error_response(str(exc), status_code=500)
+
+
+@case_bp.route("/admin/reassign", methods=["POST"])
+def admin_reassign_case_route():
+    """Reassigns a case to another agent with audit logging and communication note."""
+    from backend.services.cases.admin_case_service import admin_reassign_case
+    payload = request.get_json(silent=True) or {}
+    actor_user, _ = _get_actor_and_role(payload)
+    performed_by = payload.get("performed_by") or actor_user or "Admin"
+
+    case_ident = payload.get("case_identifier") or payload.get("case_id") or payload.get("case_number")
+    target_user = payload.get("target_user") or payload.get("assigned_user")
+    target_team = payload.get("target_team") or payload.get("assigned_team")
+    target_email = payload.get("target_user_email") or payload.get("assigned_user_email")
+    reason = payload.get("reason", "")
+
+    if not case_ident or not target_user:
+        return error_response("Both case_identifier and target_user are required.", status_code=400)
+
+    try:
+        updated = admin_reassign_case(
+            case_identifier=str(case_ident),
+            target_user=target_user,
+            target_team=target_team,
+            target_user_email=target_email,
+            reason=reason,
+            performed_by=performed_by,
+        )
+        return success_response(updated)
+    except ValueError as val_err:
+        return error_response(str(val_err), status_code=400)
+    except Exception as exc:
+        return error_response(f"Failed to reassign case: {str(exc)}", status_code=500)
+
+
+
 
