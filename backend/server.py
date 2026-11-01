@@ -117,6 +117,12 @@ def create_app() -> Flask:
             query_token = request.args.get("token") or request.args.get("session")
             if query_token:
                 resp.set_cookie("hrflow_session", query_token, path="/", samesite="Lax")
+            # Cache static assets (JS, CSS, images, fonts) to eliminate page-load delay
+            ext = os.path.splitext(filename)[1].lower()
+            if ext in {".js", ".css", ".png", ".jpg", ".jpeg", ".svg", ".ico", ".woff", ".woff2", ".ttf"}:
+                resp.headers["Cache-Control"] = "public, max-age=86400"
+            else:
+                resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
             return resp
         return error_response("NOT_FOUND", "Resource not found", 404)
 

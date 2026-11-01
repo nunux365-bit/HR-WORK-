@@ -13,6 +13,7 @@ Directly connects to Neon PostgreSQL (or production Postgres) with:
 import os
 import re
 import logging
+import threading
 from pathlib import Path
 from urllib.parse import urlparse
 from typing import Any, List, Optional, Tuple, Union, Dict
@@ -20,6 +21,9 @@ from typing import Any, List, Optional, Tuple, Union, Dict
 from backend.config import Config
 
 logger = logging.getLogger("hrflow.database")
+
+_PG_POOL = None
+_PG_POOL_LOCK = threading.Lock()
 
 
 def get_database_path() -> Path:
@@ -279,11 +283,13 @@ class PostgresCursorWrapper:
 
 
 class PostgresConnectionWrapper:
-    """Wrapper around raw psycopg2/pg8000 connection mimicking sqlite3.Connection API."""
+    """Wrapper around raw psycopg2/pg8000 connection mimicking sqlite3.Connection API with connection pooling."""
 
-    def __init__(self, raw_connection):
+    def __init__(self, raw_connection, pool=None):
         self._raw_conn = raw_connection
+        self._pool = pool
         self._row_factory = None
+        self._closed = False
 
     @property
     def row_factory(self):
@@ -327,10 +333,29 @@ class PostgresConnectionWrapper:
             pass
 
     def close(self):
-        try:
-            self._raw_conn.close()
-        except Exception:
-            pass
+        if self._closed:
+            return
+        self._closed = True
+        if self._pool is not None:
+            # Cleanly return connection to pool
+            try:
+                if not getattr(self._raw_conn, "closed", True) and hasattr(self._raw_conn, "get_transaction_status"):
+                    if self._raw_conn.get_transaction_status() != 0:
+                        self._raw_conn.rollback()
+            except Exception:
+                pass
+            try:
+                self._pool.putconn(self._raw_conn)
+            except Exception:
+                try:
+                    self._raw_conn.close()
+                except Exception:
+                    pass
+        else:
+            try:
+                self._raw_conn.close()
+            except Exception:
+                pass
 
     def __enter__(self):
         return self
@@ -340,10 +365,61 @@ class PostgresConnectionWrapper:
             self.rollback()
         else:
             self.commit()
+        self.close()
+
+
+def _get_pg_pool(url: str):
+    """Initialize or return ThreadedConnectionPool for fast connection reuse."""
+    global _PG_POOL
+    if _PG_POOL is None:
+        with _PG_POOL_LOCK:
+            if _PG_POOL is None:
+                parsed = urlparse(url)
+                username = parsed.username
+                password = parsed.password
+                host = parsed.hostname
+                port = parsed.port or 5432
+                database = parsed.path.lstrip("/")
+
+                try:
+                    from psycopg2.pool import ThreadedConnectionPool
+                    connect_kwargs = {
+                        "dbname": database,
+                        "user": username,
+                        "password": password,
+                        "host": host,
+                        "port": port,
+                        "sslmode": "require",
+                        "connect_timeout": 8,
+                    }
+                    try:
+                        _PG_POOL = ThreadedConnectionPool(minconn=1, maxconn=10, **connect_kwargs)
+                    except Exception as pool_err:
+                        if "could not translate host name" in str(pool_err) or "Name or service not known" in str(pool_err):
+                            connect_kwargs["hostaddr"] = "52.76.212.156"
+                            _PG_POOL = ThreadedConnectionPool(minconn=1, maxconn=10, **connect_kwargs)
+                        else:
+                            raise
+                    logger.info("[POSTGRES] ✅ ThreadedConnectionPool initialized (1-10 connections).")
+                except Exception as exc:
+                    logger.debug(f"[POSTGRES] Pool init error: {exc}")
+                    _PG_POOL = None
+    return _PG_POOL
 
 
 def _connect_postgres(url: str):
-    """Attempt raw connection to PostgreSQL using psycopg2 or pg8000."""
+    """Borrow warm connection from pool, or fall back to single raw connection."""
+    pool = _get_pg_pool(url)
+    if pool is not None:
+        try:
+            raw_conn = pool.getconn()
+            if getattr(raw_conn, "closed", False):
+                pool.putconn(raw_conn, close=True)
+                raw_conn = pool.getconn()
+            return PostgresConnectionWrapper(raw_conn, pool=pool)
+        except Exception as exc:
+            logger.debug(f"[POSTGRES] Pool getconn error: {exc}; attempting direct connection.")
+
     parsed = urlparse(url)
     username = parsed.username
     password = parsed.password
@@ -351,7 +427,7 @@ def _connect_postgres(url: str):
     port = parsed.port or 5432
     database = parsed.path.lstrip("/")
 
-    # Try psycopg2
+    # Fallback to direct psycopg2
     try:
         import psycopg2
         connect_kwargs = {
@@ -375,7 +451,7 @@ def _connect_postgres(url: str):
     except ImportError:
         pass
     except Exception as exc:
-        logger.debug(f"[POSTGRES] psycopg2 connection error: {exc}")
+        logger.debug(f"[POSTGRES] psycopg2 direct connection error: {exc}")
 
     # Fallback to pg8000
     try:
