@@ -12,8 +12,15 @@
 (function () {
     "use strict";
 
-    // Cross-tab session persistence: ensure target="_blank" tabs inherit active token & user identity
+    // Cross-tab & URL param session persistence: ensure tabs inherit active token & user identity
     try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const queryToken = urlParams.get("token") || urlParams.get("session");
+        if (queryToken) {
+            sessionStorage.setItem("hrflow_token", queryToken);
+            localStorage.setItem("hrflow_last_token", queryToken);
+        }
+
         const curToken = sessionStorage.getItem("hrflow_token");
         const curUser = sessionStorage.getItem("hrflow_user");
         if (curToken) {
@@ -73,7 +80,7 @@
         </a>
 
         <!-- 3. Cases -->
-        <a href="inbox.html#cases" class="nav-item" data-module="cases" data-page="inbox.html" data-title="Cases" title="Cases">
+        <a href="cases.html" class="nav-item" data-module="cases" data-page="cases.html" data-title="Cases" title="Cases">
             <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="2" y="7" width="20" height="14" rx="2.5"></rect>
                 <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"></path>
@@ -566,7 +573,7 @@
 
     function mountWorkspaceLayoutToolbar() {
         const page = getCurrentPage();
-        const hasSplitZones = page === "agent.html" || page === "cases.html";
+        const hasSplitZones = page === "agent.html";
         if (!hasSplitZones) return;
 
         const topbar = document.querySelector(".topbar");
@@ -609,7 +616,7 @@
         if (!document.querySelector('link[href*="sidebar.css"]')) {
             const link = document.createElement("link");
             link.rel = "stylesheet";
-            link.href = "css/sidebar.css?v=20261030_tata1mg_v14";
+            link.href = "css/sidebar.css?v=20261031_tata1mg_v23";
             document.head.appendChild(link);
         }
 

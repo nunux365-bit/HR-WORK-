@@ -16,7 +16,7 @@
     <div class="app-shell">
         <!-- Shared Sidebar (loaded from js/sidebar.js) -->
         <div id="sidebarContainer"></div>
-        <script src="js/sidebar.js?v=20261030_tata1mg_v14"></script>
+        <script src="js/sidebar.js?v=20261031_tata1mg_v17"></script>
 
         <!-- ==================================================================
              MAIN OPERATIONAL WORKSPACE
@@ -283,7 +283,11 @@
             <script>
             (function () {
                 var h = (window.location.hash || "").replace("#", "").trim();
-                var ops = ["departments", "cases", "tasks", "approvals", "workflows", "actions", "reports", "users", "integrations", "audit", "builder"];
+                if (h === "cases" || h.indexOf("cases") === 0) {
+                    window.location.replace("cases.html");
+                    return;
+                }
+                var ops = ["departments", "tasks", "approvals", "workflows", "actions", "reports", "users", "integrations", "audit", "builder"];
                 if (ops.indexOf(h) !== -1) {
                     var iv = document.getElementById("moduleInboxView");
                     var ov = document.getElementById("moduleOperationalView");
@@ -306,7 +310,7 @@
         </div>
     </div>
 
-    <script src="js/inbox.js?v=20261022_collapse_v1"></script>
+    <script src="js/inbox.js?v=20261031_tata1mg_v17"></script>
     <script src="js/reports.js?v=20261019_tasks_v3"></script>
 </body>
 </html>

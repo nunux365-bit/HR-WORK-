@@ -112,10 +112,19 @@ def update_department_detection_keywords(
         },
     )
     reload_category_configs()
+    kw_s = updated.get("keywords_strong", [])
+    kw_w = updated.get("keywords_weak", [])
+    try:
+        from backend.database.neon_sync import trigger_async_backup
+        trigger_async_backup(delay_seconds=0.5)
+    except Exception:
+        pass
     return {
         "category_code": norm_code,
-        "keywords_strong": updated.get("keywords_strong", []),
-        "keywords_weak": updated.get("keywords_weak", []),
+        "keywords_strong": kw_s,
+        "keywords_weak": kw_w,
+        "keywords_strong_count": len(kw_s),
+        "keywords_weak_count": len(kw_w),
         "summary": get_category_ai_summary(norm_code),
     }
 
@@ -554,6 +563,12 @@ def train_department_intent_model(
 
     # 10. Hot-reload model registry cache
     invalidate_model_cache(cat_code)
+
+    try:
+        from backend.database.neon_sync import trigger_async_backup
+        trigger_async_backup(delay_seconds=0.5)
+    except Exception:
+        pass
 
     return {
         "category_code": cat_code,

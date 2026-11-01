@@ -349,7 +349,11 @@ document.addEventListener("DOMContentLoaded", () => {
         sessionStorage.removeItem("hrflow_builder_category");
     }
     const initialHashMod = window.location.hash.replace("#", "").trim();
-    const validHashMods = ["departments", "cases", "tasks", "approvals", "workflows", "actions", "reports", "users", "integrations", "audit", "builder"];
+    if (initialHashMod === "cases" || initialHashMod.startsWith("cases")) {
+        window.location.replace("cases.html");
+        return;
+    }
+    const validHashMods = ["departments", "tasks", "approvals", "workflows", "actions", "reports", "users", "integrations", "audit", "builder"];
     if (validHashMods.includes(initialHashMod)) {
         document.querySelectorAll(".sidebar-nav .nav-item").forEach((n) => n.classList.remove("active"));
         document.querySelector(`.sidebar-nav .nav-item[data-module="${initialHashMod}"]`)?.classList.add("active");
@@ -6565,8 +6569,8 @@ async function switchWorkspaceModule(mod) {
     } else if (mod === "users") {
         await renderUsersWorkspaceView(opView);
     } else if (mod === "cases") {
-
-        await renderCasesWorkspaceView(opView);
+        window.location.href = "cases.html";
+        return;
     } else if (mod === "tasks") {
         await renderTasksWorkspaceView(opView);
     } else if (mod === "approvals") {
@@ -6790,6 +6794,32 @@ function buildStarterDatasetForDepartment(d, targetCategory) {
                 { text: "Subject: Request to withdraw my resignation - EMP1003\nDear HR and Manager, after discussion I would like to formally withdraw my resignation and continue in my role.", intent: "R06" },
                 { text: "Subject: Revoking resignation submission (EMP1006)\nHi HR Operations, please cancel my resignation request as I wish to stay with the organization.", intent: "R06" }
             ]
+        },
+        RECRUITMENT: {
+            category_code: "RECRUITMENT",
+            display_name: "Recruitment & Talent Acquisition HR",
+            keywords_strong: ["job application", "resume submission", "cv attached", "interview schedule", "interview reschedule", "technical interview", "hr discussion", "offer letter", "ctc breakup", "candidate referral", "date of joining"],
+            keywords_weak: ["recruitment", "hiring", "interview", "resume", "cv", "candidate", "referral", "shortlist", "screening", "offer", "requisition"],
+            required_fields: ["employee_id", "candidate_name"],
+            default_intent_id: "RC01",
+            intents: {
+                RC01: "Job Application & Resume Submission",
+                RC02: "Interview Scheduling & Status Inquiry",
+                RC03: "Offer Letter, CTC & Pre-Joining Formalities",
+                RC04: "Employee Candidate Referral Submission",
+                RC05: "Hiring Requisition & Vacancy Status"
+            },
+            training_samples: [
+                { text: "Subject: Application for Senior HR Executive role\nDear Recruitment Team, please find attached my updated resume and portfolio for the Senior HR Executive position.", intent: "RC01" },
+                { text: "Subject: Submission of resume for Frontend Engineer opening\nHi Hiring Team, submitting my CV for the React Frontend position. Available for immediate interview.", intent: "RC01" },
+                { text: "Subject: Reschedule technical interview round\nDear HR, can I request to reschedule my technical round scheduled for today to tomorrow 3 PM due to personal emergency?", intent: "RC02" },
+                { text: "Subject: Status inquiry on final managerial interview\nHi Recruitment Desk, could you please provide feedback or next steps on my interview held on Monday?", intent: "RC02" },
+                { text: "Subject: Query regarding revised offer letter and CTC breakup\nHello Hiring Team, thank you for the offer. Could you clarify the variable pay component in the attached CTC breakup?", intent: "RC03" },
+                { text: "Subject: Date of joining confirmation and offer acceptance\nHi HR, I formally accept the employment offer and confirm my date of joining as 1st of next month.", intent: "RC03" },
+                { text: "Subject: Candidate referral for Senior Backend Developer (EMP1004)\nHi Recruitment, I am EMP1004. Submitting my former colleague's profile for the open Python backend developer role.", intent: "RC04" },
+                { text: "Subject: Referral bonus policy and payout status\nHello HR, EMP1002 here. My referred candidate completed 90 days with the firm last week. Kindly check my referral bonus payout status.", intent: "RC04" },
+                { text: "Subject: Internal job posting requisition approval status\nDear Hiring Team, EMP1008 here. When will the internal job opening for Quality Assurance Lead be published?", intent: "RC05" }
+            ]
         }
     };
 
@@ -6920,8 +6950,10 @@ async function renderDepartmentsWorkspaceView(container, skipReload = false, scr
             EMPLOYEE_PROFILE: "Profile Updates",
             GENERAL_HR: "General HR",
             PEOPLEDESK: "PeopleDesk",
+            RECRUITMENT: "Recruitment",
+            ALL_HR: "All HR Operations",
         };
-        return labelMap[cat] || cat.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+        return labelMap[cat] || cat.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
     };
 
     const getDeptAccent = (d) => {
@@ -6931,7 +6963,8 @@ async function renderDepartmentsWorkspaceView(container, skipReload = false, scr
         if (code.includes("PAYROLL")) return "linear-gradient(90deg, #6366f1 0%, #4f46e5 100%)";
         if (code.includes("BGV") || code.includes("VERIF")) return "linear-gradient(90deg, #f59e0b 0%, #d97706 100%)";
         if (code.includes("ONBOARD")) return "linear-gradient(90deg, #14b8a6 0%, #0d9488 100%)";
-        if (code.includes("ASSET") || code.includes("IT")) return "linear-gradient(90deg, #0ea5e9 0%, #0284c7 100%)";
+        if (code.includes("RECRUIT") || code.includes("HIRING") || code.includes("TALENT")) return "linear-gradient(90deg, #f97316 0%, #ea580c 100%)";
+        if (code.includes("ASSET") || /\bIT\b/.test(code)) return "linear-gradient(90deg, #0ea5e9 0%, #0284c7 100%)";
         if (code.includes("BENEFIT")) return "linear-gradient(90deg, #8b5cf6 0%, #7c3aed 100%)";
         if (code.includes("OPS") || code.includes("RESIGN")) return "linear-gradient(90deg, #ec4899 0%, #e11d48 100%)";
         return "linear-gradient(90deg, #2563eb 0%, #4f46e5 100%)";
@@ -7076,7 +7109,7 @@ async function renderDepartmentsWorkspaceView(container, skipReload = false, scr
                             ${
                                 lastKwSave
                                     ? `<div style="padding:7px 10px; border-radius:8px; background:#ecfdf5; border:1px solid #6ee7b7; color:#065f46; font-size:0.76rem; font-weight:700;">
-                                           ✅ Stage 1 Keywords Saved for ${escapeHtml(lastKwSave.category_code)} (${lastKwSave.keywords_strong_count} strong phrases, ${lastKwSave.keywords_weak_count} weak keywords active in category_classifier.py)
+                                           ✅ Stage 1 Keywords Saved for ${escapeHtml(lastKwSave.category_code)} (${lastKwSave.keywords_strong_count ?? lastKwSave.keywords_strong?.length ?? 0} strong phrases, ${lastKwSave.keywords_weak_count ?? lastKwSave.keywords_weak?.length ?? 0} weak keywords active in category_classifier.py)
                                        </div>`
                                     : ""
                             }
@@ -7853,7 +7886,7 @@ async function renderDepartmentsWorkspaceView(container, skipReload = false, scr
 
         const res = await fetch(`${BACKEND_API_BASE}/api/cases/departments`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: buildAuthHeaders(),
             body: JSON.stringify({
                 team_name: teamName,
                 dept_code: deptCode || undefined,
@@ -7921,14 +7954,7 @@ async function renderDepartmentsWorkspaceView(container, skipReload = false, scr
         pill.addEventListener("click", () => {
             const selectedCat = pill.getAttribute("data-dept-cat") || "ALL";
             deptCategoryFilter = selectedCat;
-            if (selectedCat !== "ALL") {
-                const match = allDepts.find((d) =>
-                    (d.categories || []).map((c) => c.toUpperCase()).includes(selectedCat.toUpperCase())
-                );
-                activeCenterModalDeptId = match ? Number(match.id) : null;
-            } else {
-                activeCenterModalDeptId = null;
-            }
+            activeCenterModalDeptId = null;
             renderDepartmentsWorkspaceView(container, true);
         });
     });
@@ -7982,6 +8008,30 @@ async function renderDepartmentsWorkspaceView(container, skipReload = false, scr
         });
     });
 
+    // Reactive category switch in AI Trainer Studio
+    container.querySelectorAll(".train-target-category").forEach((sel) => {
+        sel.addEventListener("change", (e) => {
+            const deptId = Number(sel.getAttribute("data-dept-id"));
+            const targetCat = sel.value;
+            const deptObj = allDepts.find((d) => Number(d.id) === deptId);
+            if (!deptObj) return;
+            const scopeRoot = sel.closest(".dept-card") || container;
+            const catAi = (deptObj.ai_models || []).find((m) => m.category === targetCat) || {};
+            const strongInput = scopeRoot.querySelector(`.train-kw-strong[data-dept-id="${deptId}"]`);
+            const weakInput = scopeRoot.querySelector(`.train-kw-weak[data-dept-id="${deptId}"]`);
+            if (strongInput && Array.isArray(catAi.keywords_strong)) {
+                strongInput.value = catAi.keywords_strong.join(", ");
+                const labelStrong = strongInput.parentElement?.querySelector(".case-ws-cell-label");
+                if (labelStrong) labelStrong.textContent = `Strong Multi-Word Phrases (${catAi.keywords_strong.length} active)`;
+            }
+            if (weakInput && Array.isArray(catAi.keywords_weak)) {
+                weakInput.value = catAi.keywords_weak.join(", ");
+                const labelWeak = weakInput.parentElement?.querySelector(".case-ws-cell-label");
+                if (labelWeak) labelWeak.textContent = `Weak Single-Word Keywords (${catAi.keywords_weak.length} active)`;
+            }
+        });
+    });
+
     // Stage 1: Copy ChatGPT Keyword Prompt for Department
     container.querySelectorAll(".btn-copy-kw-prompt").forEach((btn) => {
         btn.addEventListener("click", async (e) => {
@@ -8023,7 +8073,7 @@ async function renderDepartmentsWorkspaceView(container, skipReload = false, scr
             try {
                 const res = await fetch(`${BACKEND_API_BASE}/api/classification/keywords`, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: buildAuthHeaders(),
                     body: JSON.stringify({
                         category_code: targetCat,
                         display_name: deptObj?.team_name,
@@ -8171,7 +8221,7 @@ async function renderDepartmentsWorkspaceView(container, skipReload = false, scr
             try {
                 const res = await fetch(`${BACKEND_API_BASE}/api/classification/train`, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: buildAuthHeaders(),
                     body: JSON.stringify({
                         dataset: rawJson,
                         category_code: targetCat,
@@ -8266,7 +8316,7 @@ async function renderDepartmentsWorkspaceView(container, skipReload = false, scr
 
             const res = await fetch(`${BACKEND_API_BASE}/api/cases/departments/${id}`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: buildAuthHeaders(),
                 body: JSON.stringify({
                     team_name: teamName,
                     dept_gmail: deptGmail,
@@ -8349,7 +8399,7 @@ async function renderDepartmentsWorkspaceView(container, skipReload = false, scr
 
             const res = await fetch(`${BACKEND_API_BASE}/api/cases/departments/${id}/members`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: buildAuthHeaders(),
                 body: JSON.stringify({
                     member_name: mName,
                     email: mEmail,
@@ -8393,7 +8443,7 @@ async function renderDepartmentsWorkspaceView(container, skipReload = false, scr
 
             await fetch(`${BACKEND_API_BASE}/api/cases/departments/members/${mid}`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: buildAuthHeaders(),
                 body: JSON.stringify({
                     member_name: newName,
                     email: newEmail,
@@ -8414,7 +8464,8 @@ async function renderDepartmentsWorkspaceView(container, skipReload = false, scr
             const memName = btn.getAttribute("data-member-name");
             if (!confirm(`Remove ${memName} from this HR department?`)) return;
             await fetch(`${BACKEND_API_BASE}/api/cases/departments/members/${memId}`, {
-                method: "DELETE"
+                method: "DELETE",
+                headers: buildAuthHeaders()
             });
             await renderDepartmentsWorkspaceView(container);
         });

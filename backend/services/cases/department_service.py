@@ -207,14 +207,16 @@ def list_departments_with_members() -> List[Dict[str, Any]]:
                 m_dict["sub_department"] = "Salary & Payroll"
             elif "BENEFIT" in cat_scope or "COMP" in desig or "BENEFIT" in team:
                 m_dict["sub_department"] = "Benefits & Wellness"
-            elif "RESIGN" in cat_scope or "EXIT" in desig or "OPS" in team:
+            elif "RESIGN" in cat_scope or "EXIT" in desig or ("OPS" in team and "HR" in team):
                 m_dict["sub_department"] = "HR Operations & Exit"
-            elif "ASSET" in cat_scope or "IT" in team:
+            elif "RECRUIT" in cat_scope or "RECRUIT" in team or "HIRING" in team or "TALENT" in team:
+                m_dict["sub_department"] = "Talent Acquisition & Hiring"
+            elif "ASSET" in cat_scope or "IT ASSET" in team or "IT DESK" in team or (" IT" in team or team.startswith("IT ")):
                 m_dict["sub_department"] = "IT Asset Desk"
             elif "BGV" in cat_scope or "BGV" in team:
                 m_dict["sub_department"] = "Background Verification"
             else:
-                m_dict["sub_department"] = cur_sub or "Salary & Payroll"
+                m_dict["sub_department"] = cur_sub or "General Operations"
         else:
             m_dict["sub_department"] = cur_sub
 
@@ -359,9 +361,16 @@ def add_department_member(
         new_id = int(cur.lastrowid)
         conn.commit()
         row = conn.execute("SELECT * FROM hr_department_members WHERE id = ?", (new_id,)).fetchone()
-        return dict(row)
+        out = dict(row)
     finally:
         conn.close()
+
+    try:
+        from backend.database.neon_sync import trigger_async_backup
+        trigger_async_backup(delay_seconds=0.5)
+    except Exception:
+        pass
+    return out
 
 
 def update_department_member(
@@ -392,9 +401,16 @@ def update_department_member(
         )
         conn.commit()
         row = conn.execute("SELECT * FROM hr_department_members WHERE id = ?", (int(member_id),)).fetchone()
-        return dict(row)
+        out = dict(row)
     finally:
         conn.close()
+
+    try:
+        from backend.database.neon_sync import trigger_async_backup
+        trigger_async_backup(delay_seconds=0.5)
+    except Exception:
+        pass
+    return out
 
 
 def delete_department_member(member_id: int) -> bool:
@@ -402,9 +418,15 @@ def delete_department_member(member_id: int) -> bool:
     try:
         conn.execute("DELETE FROM hr_department_members WHERE id = ?", (int(member_id),))
         conn.commit()
-        return True
     finally:
         conn.close()
+
+    try:
+        from backend.database.neon_sync import trigger_async_backup
+        trigger_async_backup(delay_seconds=0.5)
+    except Exception:
+        pass
+    return True
 
 
 def create_department(
@@ -485,6 +507,12 @@ def create_department(
         )
     except Exception:
         pass
+
+    try:
+        from backend.database.neon_sync import trigger_async_backup
+        trigger_async_backup(delay_seconds=0.5)
+    except Exception:
+        pass
     return dept_out
 
 
@@ -539,6 +567,12 @@ def update_department_info(
         )
     except Exception:
         pass
+
+    try:
+        from backend.database.neon_sync import trigger_async_backup
+        trigger_async_backup(delay_seconds=0.5)
+    except Exception:
+        pass
     return dept_out
 
 
@@ -553,7 +587,13 @@ def delete_department(dept_id: int) -> bool:
         conn.execute("DELETE FROM hr_department_members WHERE dept_id = ?", (int(dept_id),))
         conn.execute("DELETE FROM hr_departments WHERE id = ?", (int(dept_id),))
         conn.commit()
-        return True
     finally:
         conn.close()
+
+    try:
+        from backend.database.neon_sync import trigger_async_backup
+        trigger_async_backup(delay_seconds=0.5)
+    except Exception:
+        pass
+    return True
 

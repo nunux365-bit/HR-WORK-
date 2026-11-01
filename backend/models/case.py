@@ -209,11 +209,16 @@ def format_case_row(row) -> Optional[Dict[str, Any]]:
     )
 
     assigned_team = d.get("assigned_team") or d.get("assigned_to") or "HR Operations"
+    docket_code = d.get("docket_code") or d.get("case_number")
     return {
         "db_id": d["id"],
-        "id": d["case_number"],
-        "case_id": d["case_number"],
+        "id": docket_code or d["case_number"],
+        "case_id": docket_code or d["case_number"],
         "case_number": d["case_number"],
+        "docket_code": docket_code,
+        "agent_code": d.get("agent_code"),
+        "agent_type": d.get("agent_type") or "AI_AUTONOMOUS",
+        "pending_agent_draft": d.get("pending_agent_draft"),
         "email_id": d.get("email_id"),
         "employee_db_id": d.get("employee_id"),
         "employee_id": emp_code,
@@ -311,7 +316,8 @@ _CASE_SELECT_SQL = """
 def get_case_by_id_or_number(identifier: Union[int, str]) -> Optional[Dict[str, Any]]:
     conn = get_connection()
     try:
-        if isinstance(identifier, int) or (isinstance(identifier, str) and identifier.isdigit()):
+        ident_str = str(identifier).strip()
+        if isinstance(identifier, int) or ident_str.isdigit():
             row = conn.execute(
                 f"{_CASE_SELECT_SQL} WHERE c.id = ?",
                 (int(identifier),),
@@ -320,8 +326,8 @@ def get_case_by_id_or_number(identifier: Union[int, str]) -> Optional[Dict[str, 
                 return format_case_row(row)
 
         row = conn.execute(
-            f"{_CASE_SELECT_SQL} WHERE UPPER(c.case_number) = UPPER(?)",
-            (str(identifier).strip(),),
+            f"{_CASE_SELECT_SQL} WHERE UPPER(c.case_number) = UPPER(?) OR UPPER(c.docket_code) = UPPER(?)",
+            (ident_str, ident_str),
         ).fetchone()
         return format_case_row(row)
     finally:

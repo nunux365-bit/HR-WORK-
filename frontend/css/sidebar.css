@@ -727,3 +727,117 @@ body.sidebar-pinned .engine-status-text,
 body.sidebar-pinned #appSidebar .engine-status-text {
     display: inline !important;
 }
+
+/* ==========================================================================
+   WORKSPACE LAYOUT SEGMENTED CONTROLLER (TOPBAR)
+   Modern, sleek pill controller matching Tata 1mg Design System
+   ========================================================================== */
+.ws-layout-bar,
+#hrflowWorkspaceLayoutBar {
+    display: inline-flex !important;
+    align-items: center !important;
+    background: #F1F3F5 !important;
+    border: 1px solid #EAECF0 !important;
+    border-radius: 8px !important;
+    padding: 3px !important;
+    gap: 3px !important;
+    height: 32px !important;
+    box-sizing: border-box !important;
+    margin: 0 12px !important;
+    flex-shrink: 0 !important;
+}
+
+.ws-layout-btn,
+#hrflowWorkspaceLayoutBar .ws-layout-btn {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    border-radius: 6px !important;
+    color: #475467 !important;
+    font-family: inherit !important;
+    font-size: 0.74rem !important;
+    font-weight: 600 !important;
+    height: 24px !important;
+    padding: 0 10px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 5px !important;
+    cursor: pointer !important;
+    outline: none !important;
+    user-select: none !important;
+    white-space: nowrap !important;
+    line-height: 1 !important;
+    box-shadow: none !important;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.ws-layout-btn svg,
+#hrflowWorkspaceLayoutBar .ws-layout-btn svg {
+    color: #667085 !important;
+    width: 13px !important;
+    height: 13px !important;
+    flex-shrink: 0 !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
+    transition: color 0.15s ease !important;
+}
+
+.ws-layout-btn:hover,
+#hrflowWorkspaceLayoutBar .ws-layout-btn:hover {
+    background: #FFFFFF !important;
+    color: #101828 !important;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06) !important;
+}
+
+.ws-layout-btn:hover svg,
+#hrflowWorkspaceLayoutBar .ws-layout-btn:hover svg {
+    color: #FF6F61 !important;
+}
+
+/* Active State (Selected Segment) */
+.ws-layout-btn.active,
+#hrflowWorkspaceLayoutBar .ws-layout-btn.active {
+    background: #FFFFFF !important;
+    border: 1px solid #FFD5D0 !important;
+    color: #FF6F61 !important;
+    font-weight: 700 !important;
+    box-shadow: 0 1px 3px rgba(16, 24, 40, 0.08), 0 1px 2px rgba(255, 111, 97, 0.12) !important;
+}
+
+.ws-layout-btn.active svg,
+#hrflowWorkspaceLayoutBar .ws-layout-btn.active svg {
+    color: #FF6F61 !important;
+}
+
+/* Special Focus Mode Button */
+.ws-layout-btn.focus-btn:hover,
+#hrflowWorkspaceLayoutBar .ws-layout-btn.focus-btn:hover {
+    background: #FFF1F0 !important;
+    color: #E03546 !important;
+    border-color: #FFD5D0 !important;
+}
+
+.ws-layout-btn.focus-btn.active,
+#hrflowWorkspaceLayoutBar .ws-layout-btn.focus-btn.active {
+    background: linear-gradient(135deg, #FF6F61, #E03546) !important;
+    border: 1px solid transparent !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 2px 6px rgba(255, 111, 97, 0.3) !important;
+}
+
+.ws-layout-btn.focus-btn.active svg,
+#hrflowWorkspaceLayoutBar .ws-layout-btn.focus-btn.active svg {
+    color: #FFFFFF !important;
+}
+
+/* Subtle Vertical Divider */
+.ws-layout-sep,
+#hrflowWorkspaceLayoutBar .ws-layout-sep {
+    width: 1px !important;
+    height: 14px !important;
+    background-color: #D0D5DD !important;
+    margin: 0 2px !important;
+    display: inline-block !important;
+}

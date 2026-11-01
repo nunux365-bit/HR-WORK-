@@ -40,6 +40,11 @@ _MIGRATION_COLUMNS = {
         ("merged_into", "TEXT"),
         ("linked_cases", "TEXT"),
         ("followers", "TEXT"),
+        ("docket_code", "TEXT"),
+        ("agent_code", "TEXT"),
+        ("agent_type", "TEXT DEFAULT 'AI_AUTONOMOUS'"),
+        ("pending_agent_draft", "TEXT"),
+        ("pending_draft_created_at", "TEXT"),
     ],
     "tasks": [
         ("task_type", "TEXT NOT NULL DEFAULT 'HR_REVIEW'"),
@@ -68,8 +73,9 @@ _MIGRATION_COLUMNS = {
 def initialize_database() -> None:
     # Attempt to restore latest persistent database from Neon PostgreSQL
     try:
-        from backend.database.neon_sync import restore_db_from_neon
+        from backend.database.neon_sync import restore_db_from_neon, hydrate_departments_from_neon
         restore_db_from_neon()
+        hydrate_departments_from_neon()
     except Exception:
         pass
 

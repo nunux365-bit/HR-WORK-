@@ -135,6 +135,8 @@ def get_session_user_from_request() -> Dict[str, Any]:
         token = auth_header.replace("Bearer ", "", 1).strip()
     if not token:
         token = (request.cookies.get("hrflow_session") or "").strip()
+    if not token:
+        token = (request.args.get("token") or request.args.get("session") or "").strip()
 
     if token:
         if token in _ACTIVE_SESSIONS:
@@ -258,6 +260,8 @@ def logout_session():
         token = auth_header.replace("Bearer ", "", 1).strip()
     if not token:
         token = (request.cookies.get("hrflow_session") or "").strip()
+    if not token:
+        token = (request.args.get("token") or request.args.get("session") or "").strip()
 
     session_email = None
     if token:
@@ -336,6 +340,8 @@ def switch_active_role():
         token = auth_header.replace("Bearer ", "", 1).strip()
     if not token:
         token = (request.cookies.get("hrflow_session") or "").strip()
+    if not token:
+        token = (request.args.get("token") or request.args.get("session") or "").strip()
 
     email_clean = (session_user.get("email") or request.headers.get("X-HR-Email") or "").strip().lower()
     if not email_clean and token:

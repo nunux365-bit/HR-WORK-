@@ -109,7 +109,11 @@ def create_app() -> Flask:
                 return redirect("/login.html")
         file_path = os.path.join(FRONTEND_DIR, filename)
         if os.path.isfile(file_path):
-            return send_from_directory(FRONTEND_DIR, filename)
+            resp = send_from_directory(FRONTEND_DIR, filename)
+            query_token = request.args.get("token") or request.args.get("session")
+            if query_token:
+                resp.set_cookie("hrflow_session", query_token, path="/", samesite="Lax")
+            return resp
         return error_response("NOT_FOUND", "Resource not found", 404)
 
     @app.route("/workflow", defaults={"filename": "index.html"}, methods=["GET"], strict_slashes=False)
