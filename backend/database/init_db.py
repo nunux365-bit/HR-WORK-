@@ -75,27 +75,6 @@ _MIGRATION_COLUMNS = {
 
 
 def initialize_database() -> None:
-    # Attempt to restore latest persistent database from Neon PostgreSQL
-    try:
-        from backend.database.neon_sync import restore_db_from_neon, hydrate_departments_from_neon
-        restore_db_from_neon()
-        hydrate_departments_from_neon()
-    except Exception:
-        pass
-
-    # Verify local database file integrity before opening
-    from backend.database.connection import get_database_path
-    db_file = get_database_path()
-    if db_file.exists() and db_file.stat().st_size > 0:
-        try:
-            with open(db_file, "rb") as f:
-                hdr = f.read(16)
-            if hdr != b"SQLite format 3\x00":
-                print(f"[INIT] Non-SQLite database file detected ({hdr[:8]!r}). Resetting to clean database.")
-                db_file.unlink(missing_ok=True)
-        except Exception:
-            db_file.unlink(missing_ok=True)
-
     schema_path = Path(__file__).with_name("schema.sql")
     schema = schema_path.read_text(encoding="utf-8")
 
@@ -103,11 +82,14 @@ def initialize_database() -> None:
     try:
         connection.executescript(schema)
         for table_name, cols in _MIGRATION_COLUMNS.items():
-            existing_rows = connection.execute(f"PRAGMA table_info({table_name})").fetchall()
-            existing_names = {r["name"] for r in existing_rows}
-            for col_name, col_type in cols:
-                if col_name not in existing_names:
-                    connection.execute(f"ALTER TABLE {table_name} ADD COLUMN {col_name} {col_type}")
+            try:
+                existing_rows = connection.execute(f"PRAGMA table_info({table_name})").fetchall()
+                existing_names = {r["name"].lower() for r in existing_rows}
+                for col_name, col_type in cols:
+                    if col_name.lower() not in existing_names:
+                        connection.execute(f"ALTER TABLE {table_name} ADD COLUMN {col_name} {col_type}")
+            except Exception as mig_err:
+                pass
         connection.commit()
     finally:
         connection.close()

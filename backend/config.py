@@ -119,7 +119,9 @@ class Config:
 
         return (explicit_url or "http://127.0.0.1:5000").strip().rstrip("/")
 
-    # Phase 3 Database Configuration -> resolves to ~/Desktop/HRWork/data/hrflow.db
+    # Database Engine Configuration (Pure PostgreSQL via Neon)
+    DATABASE_URL = os.environ.get("DATABASE_URL") or os.environ.get("NEON_DATABASE_URL") or "postgresql://neondb_owner:npg_prCYPycw8L7q@ep-delicate-band-b3531bbp-pooler.c-4.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
+    DB_ENGINE = os.environ.get("DB_ENGINE", "postgres")
     DATABASE_PATH = os.environ.get("DATABASE_PATH", "data/hrflow.db")
 
     # CORS Origins (supports localhost, local Wi-Fi IPs, tunnels, and cloud domains)

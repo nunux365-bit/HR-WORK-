@@ -12,8 +12,12 @@ services:
         value: "false"
       - key: PYTHON_VERSION
         value: "3.11.0"
+      - key: DATABASE_URL
+        value: "postgresql://neondb_owner:npg_prCYPycw8L7q@ep-delicate-band-b3531bbp-pooler.c-4.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
       - key: NEON_DATABASE_URL
         value: "postgresql://neondb_owner:npg_prCYPycw8L7q@ep-delicate-band-b3531bbp-pooler.c-4.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
+      - key: DB_ENGINE
+        value: "postgres"
       - key: GMAIL_EMAIL
         value: "nunux365@gmail.com"
       - key: GMAIL_APP_PASSWORD
