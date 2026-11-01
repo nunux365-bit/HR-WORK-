@@ -139,11 +139,25 @@ def restore_db_from_neon(db_path: Optional[str] = None) -> bool:
             logger.info("[NEON] No prior database snapshot found in Neon. Starting fresh.")
             return False
 
-        compressed_data = bytes(row[0])
+        raw_val = row[0]
+        if hasattr(raw_val, "tobytes"):
+            compressed_data = raw_val.tobytes()
+        elif isinstance(raw_val, memoryview):
+            compressed_data = bytes(raw_val)
+        elif isinstance(raw_val, str):
+            compressed_data = raw_val.encode("latin1")
+        else:
+            compressed_data = bytes(raw_val)
+
         try:
             decompressed = zlib.decompress(compressed_data)
         except Exception:
             decompressed = compressed_data
+
+        # CRITICAL SAFETY CHECK: Verify SQLite format 3 magic header
+        if not decompressed.startswith(b"SQLite format 3\x00"):
+            logger.warning("[NEON] Snapshot from Neon does not match SQLite format 3. Starting fresh.")
+            return False
 
         target_path.parent.mkdir(parents=True, exist_ok=True)
         with open(target_path, "wb") as f:
@@ -189,11 +203,16 @@ def backup_db_to_neon(db_path: Optional[str] = None) -> bool:
             compressed = zlib.compress(raw_bytes, level=6)
             cur = conn.cursor()
 
-            try:
-                import psycopg2
-                binary_param = psycopg2.Binary(compressed)
-            except Exception:
-                binary_param = compressed
+            # Ensure appropriate binary format for psycopg2 vs pg8000
+            conn_mod = str(getattr(conn, "__module__", "")).lower()
+            if "pg8000" in conn_mod:
+                binary_param = bytes(compressed)
+            else:
+                try:
+                    import psycopg2
+                    binary_param = psycopg2.Binary(compressed)
+                except Exception:
+                    binary_param = bytes(compressed)
 
             cur.execute(
                 """

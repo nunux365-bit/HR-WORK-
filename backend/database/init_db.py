@@ -83,6 +83,19 @@ def initialize_database() -> None:
     except Exception:
         pass
 
+    # Verify local database file integrity before opening
+    from backend.database.connection import get_database_path
+    db_file = get_database_path()
+    if db_file.exists() and db_file.stat().st_size > 0:
+        try:
+            with open(db_file, "rb") as f:
+                hdr = f.read(16)
+            if hdr != b"SQLite format 3\x00":
+                print(f"[INIT] Non-SQLite database file detected ({hdr[:8]!r}). Resetting to clean database.")
+                db_file.unlink(missing_ok=True)
+        except Exception:
+            db_file.unlink(missing_ok=True)
+
     schema_path = Path(__file__).with_name("schema.sql")
     schema = schema_path.read_text(encoding="utf-8")
 
