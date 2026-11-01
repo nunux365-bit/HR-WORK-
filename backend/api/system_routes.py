@@ -43,3 +43,20 @@ def get_system_status():
             "status": Config.CASE_ENGINE_CONFIG["status"]
         }
     }), 200
+
+
+@system_bp.route("/api/system/reset-data", methods=["POST"])
+def reset_system_data_route():
+    """Admin-only endpoint to purge all operational cases, emails, and retain only Admin."""
+    try:
+        from backend.database.reset_data import reset_all_data
+        reset_all_data(keep_admin_email="nunux365@gmail.com")
+        return jsonify({
+            "status": "success",
+            "message": "System purged successfully: 0 cases, 0 emails, Admin only retained."
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500

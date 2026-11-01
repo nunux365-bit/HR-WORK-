@@ -105,9 +105,19 @@ def reset_all_data(keep_admin_email: str = "nunux365@gmail.com"):
             neon_cur.execute("DELETE FROM case_documents;")
             neon_cur.execute("DELETE FROM hr_departments;")
             neon_cur.execute("DELETE FROM hr_department_members;")
+            neon_cur.execute("DELETE FROM hr_deleted_departments;")
             neon_cur.execute("DELETE FROM emails;")
             neon_cur.execute("DELETE FROM employees;")
             neon_cur.execute("DELETE FROM hrflow_sqlite_snapshots;")
+            neon_cur.execute("DELETE FROM users WHERE LOWER(email) != LOWER(%s);", (keep_admin_email,))
+            neon_cur.execute("DELETE FROM connected_mailboxes WHERE LOWER(email) != LOWER(%s);", (keep_admin_email,))
+            neon_cur.execute(
+                """
+                INSERT INTO users (email, role, name) VALUES (%s, 'ADMIN', 'Admin')
+                ON CONFLICT (email) DO UPDATE SET role = 'ADMIN', name = 'Admin';
+                """,
+                (keep_admin_email,)
+            )
             neon_cur.execute(
                 """
                 CREATE TABLE IF NOT EXISTS case_sequences (
@@ -122,7 +132,7 @@ def reset_all_data(keep_admin_email: str = "nunux365@gmail.com"):
             neon_conn.commit()
             neon_cur.close()
             neon_conn.close()
-            print("   ✓ Neon PostgreSQL cloud tables & snapshots cleared.")
+            print("   ✓ Neon PostgreSQL cloud tables & snapshots cleared (Preserved Admin only).")
         else:
             print("   - Direct Neon driver not present (Neon snapshot table was already purged via cloud API).")
     except Exception as e:

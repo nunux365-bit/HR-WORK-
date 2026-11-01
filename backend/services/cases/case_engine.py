@@ -813,7 +813,7 @@ def create_or_update_case_for_email(
                 due_at,
                 extracted_fields,
                 validation_result
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Vaibhav (HR)', ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?)
             """,
             (
                 case_number,
@@ -935,7 +935,7 @@ def build_employee_case_email_payload(
     status_display = status_raw.replace("_", " ").title()
     priority = (case_obj.get("priority") or "MEDIUM").upper()
     assigned_team = case_obj.get("assigned_team") or "HR Operations"
-    assigned_user = case_obj.get("assigned_user") or "Vaibhav (HR)"
+    assigned_user = case_obj.get("assigned_user") or "HR Desk"
     sla_hours = int(case_obj.get("sla_hours") or 48)
     due_display = case_obj.get("due_display") or case_obj.get("due_at") or f"Within {sla_hours} hours"
     created_at_str = case_obj.get("created_at") or datetime.now(timezone.utc).strftime("%d %b %Y, %H:%M UTC")

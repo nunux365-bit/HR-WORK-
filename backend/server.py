@@ -85,6 +85,10 @@ def create_app() -> Flask:
             return redirect("/agent.html")
         return send_from_directory(FRONTEND_DIR, "inbox.html")
 
+    @app.route("/favicon.ico", methods=["GET"])
+    def serve_favicon():
+        return send_from_directory(os.path.join(FRONTEND_DIR, "img"), "logo.png", mimetype="image/png")
+
     @app.route("/api/email/sync", methods=["POST"])
     def serve_email_sync_alias():
         from backend.api.gmail_routes import gmail_sync

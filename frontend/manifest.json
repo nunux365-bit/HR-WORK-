@@ -9,12 +9,12 @@
   "orientation": "any",
   "icons": [
     {
-      "src": "/img/nexus-logo-64.png",
-      "sizes": "64x64",
+      "src": "/img/logo.png",
+      "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/img/nexus-logo-512.png",
+      "src": "/img/logo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"

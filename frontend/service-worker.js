@@ -9,7 +9,7 @@ const STATIC_ASSETS = [
   '/agent.html',
   '/casedetail.html',
   '/css/casedetail.css',
-  '/img/nexus-logo-512.png',
+  '/img/logo.png',
   '/manifest.json'
 ];
 
