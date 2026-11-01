@@ -513,9 +513,9 @@ def list_stored_emails(
         clauses: List[str] = []
         params: List[Any] = []
         if actionable_only is True:
-            clauses.append("COALESCE(e.is_actionable, 1) = 1")
+            clauses.append("(e.is_actionable IS NULL OR e.is_actionable = 1)")
         elif actionable_only is False:
-            clauses.append("COALESCE(e.is_actionable, 1) = 0")
+            clauses.append("e.is_actionable = 0")
 
         if active_account and active_account.upper() not in ("__ALL__", "ALL"):
             clauses.append("(LOWER(e.account_email) = LOWER(?) OR e.account_email IS NULL)")
@@ -547,7 +547,7 @@ def list_stored_emails(
             FROM emails e
             LEFT JOIN employees emp ON e.employee_id = emp.id
             {where_sql}
-            ORDER BY COALESCE(datetime(e.received_at), e.received_at) DESC, e.id DESC
+            ORDER BY e.received_at DESC, e.id DESC
             LIMIT ?
             """,
             tuple(params)

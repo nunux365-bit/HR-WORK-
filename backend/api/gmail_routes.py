@@ -140,7 +140,7 @@ def gmail_list_messages():
         try:
             total_stored = conn.execute("SELECT COUNT(*) FROM emails").fetchone()[0]
             filtered_noise = conn.execute("SELECT COUNT(*) FROM emails WHERE is_actionable = 0").fetchone()[0]
-            actionable_total = conn.execute("SELECT COUNT(*) FROM emails WHERE COALESCE(is_actionable, 1) = 1").fetchone()[0]
+            actionable_total = conn.execute("SELECT COUNT(*) FROM emails WHERE (is_actionable IS NULL OR is_actionable = 1)").fetchone()[0]
         finally:
             conn.close()
 

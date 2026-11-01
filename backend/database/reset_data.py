@@ -68,8 +68,8 @@ def reset_all_data(keep_admin_email: str = "nunux365@gmail.com"):
 
     # 3. Mark Departments as Initialized
     try:
-        cur.execute("CREATE TABLE IF NOT EXISTS hr_system_meta (key TEXT PRIMARY KEY, val TEXT)")
-        cur.execute("INSERT OR REPLACE INTO hr_system_meta (key, val) VALUES ('departments_initialized', '1')")
+        cur.execute("CREATE TABLE IF NOT EXISTS hr_system_meta (key VARCHAR(255) PRIMARY KEY, val TEXT)")
+        cur.execute("INSERT INTO hr_system_meta (key, val) VALUES ('departments_initialized', '1') ON CONFLICT (key) DO UPDATE SET val = EXCLUDED.val")
         print("   ✓ Department auto-seeding flag locked (prevents auto-recreation)")
     except Exception as e:
         print(f"   ! Error setting meta flag: {e}")

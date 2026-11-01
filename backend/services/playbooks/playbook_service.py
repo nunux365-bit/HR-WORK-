@@ -519,9 +519,20 @@ def seed_default_playbooks(conn) -> None:
 
     for d in defaults:
         conn.execute("""
-            INSERT OR REPLACE INTO category_playbooks 
+            INSERT INTO category_playbooks 
             (category, display_name, icon, badge_color, default_tasks, inquiry_presets, diagnostic_keywords, proof_config, sla_config, intake_rules, is_custom, created_at, updated_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)
+            ON CONFLICT (category) DO UPDATE SET
+                display_name = EXCLUDED.display_name,
+                icon = EXCLUDED.icon,
+                badge_color = EXCLUDED.badge_color,
+                default_tasks = EXCLUDED.default_tasks,
+                inquiry_presets = EXCLUDED.inquiry_presets,
+                diagnostic_keywords = EXCLUDED.diagnostic_keywords,
+                proof_config = EXCLUDED.proof_config,
+                sla_config = EXCLUDED.sla_config,
+                intake_rules = EXCLUDED.intake_rules,
+                updated_at = EXCLUDED.updated_at
         """, (
             d["category"],
             d["display_name"],

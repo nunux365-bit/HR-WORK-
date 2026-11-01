@@ -106,9 +106,12 @@ def ensure_default_departments_seeded() -> None:
     """Ensure database metadata tables exist without auto-seeding mock departments or users."""
     conn = get_connection()
     try:
-        conn.execute("CREATE TABLE IF NOT EXISTS hr_system_meta (key TEXT PRIMARY KEY, val TEXT)")
-        conn.execute("CREATE TABLE IF NOT EXISTS hr_deleted_departments (dept_code TEXT PRIMARY KEY, deleted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)")
-        conn.execute("INSERT OR REPLACE INTO hr_system_meta (key, val) VALUES ('departments_initialized', '1')")
+        conn.execute("CREATE TABLE IF NOT EXISTS hr_system_meta (key VARCHAR(255) PRIMARY KEY, val TEXT)")
+        conn.execute("CREATE TABLE IF NOT EXISTS hr_deleted_departments (dept_code VARCHAR(255) PRIMARY KEY, deleted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)")
+        conn.execute("""
+            INSERT INTO hr_system_meta (key, val) VALUES ('departments_initialized', '1')
+            ON CONFLICT (key) DO UPDATE SET val = EXCLUDED.val
+        """)
         conn.commit()
     finally:
         conn.close()
@@ -540,7 +543,7 @@ def delete_department(dept_id: int) -> bool:
         conn.execute("CREATE TABLE IF NOT EXISTS hr_deleted_departments (dept_code TEXT PRIMARY KEY, deleted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)")
         row = conn.execute("SELECT dept_code FROM hr_departments WHERE id = ?", (int(dept_id),)).fetchone()
         if row and row["dept_code"]:
-            conn.execute("INSERT OR REPLACE INTO hr_deleted_departments (dept_code) VALUES (?)", (row["dept_code"],))
+            conn.execute("INSERT INTO hr_deleted_departments (dept_code) VALUES (?) ON CONFLICT (dept_code) DO NOTHING", (row["dept_code"],))
         conn.execute("DELETE FROM hr_department_members WHERE dept_id = ?", (int(dept_id),))
         conn.execute("DELETE FROM hr_departments WHERE id = ?", (int(dept_id),))
         conn.commit()

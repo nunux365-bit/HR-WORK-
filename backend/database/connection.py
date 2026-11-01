@@ -161,7 +161,27 @@ def _adapt_sqlite_syntax(sql: str) -> Tuple[Optional[str], str]:
         if "ON CONFLICT" not in s.upper():
             s = s.rstrip(";").strip() + " ON CONFLICT DO NOTHING"
 
-    # 5. Convert ? placeholders to %s
+    # 4b. INSERT OR REPLACE INTO -> Map known unique keys or ON CONFLICT
+    if re.match(r"^\s*INSERT\s+OR\s+REPLACE\s+INTO\s+", s, re.IGNORECASE):
+        m_rep = re.match(r"^\s*INSERT\s+OR\s+REPLACE\s+INTO\s+([a-zA-Z0-9_]+)", s, re.IGNORECASE)
+        tbl = m_rep.group(1).lower() if m_rep else ""
+        s = re.sub(r"^\s*INSERT\s+OR\s+REPLACE\s+INTO\s+", "INSERT INTO ", s, flags=re.IGNORECASE)
+        if "ON CONFLICT" not in s.upper():
+            if tbl == "hr_system_meta":
+                s = s.rstrip(";").strip() + " ON CONFLICT (key) DO UPDATE SET val = EXCLUDED.val"
+            elif tbl == "hr_deleted_departments":
+                s = s.rstrip(";").strip() + " ON CONFLICT (dept_code) DO NOTHING"
+            elif tbl == "category_playbooks":
+                s = s.rstrip(";").strip() + " ON CONFLICT (category) DO UPDATE SET display_name = EXCLUDED.display_name, updated_at = EXCLUDED.updated_at"
+            elif tbl in ("cases", "workflows", "tasks", "approvals", "users", "employees"):
+                s = s.rstrip(";").strip() + " ON CONFLICT (id) DO NOTHING"
+            else:
+                s = s.rstrip(";").strip() + " ON CONFLICT DO NOTHING"
+
+    # 5. datetime('now') -> CURRENT_TIMESTAMP
+    s = re.sub(r"datetime\s*\(\s*['\"]now['\"]\s*\)", "CURRENT_TIMESTAMP", s, flags=re.IGNORECASE)
+
+    # 6. Convert ? placeholders to %s
     converted = _adapt_sql_placeholders(s)
     return converted, "QUERY"
 
