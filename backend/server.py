@@ -176,7 +176,7 @@ try:
     from backend.services.gmail.sync_scheduler import start_background_sync
     # Launch in worker process when Werkzeug reloader is active, or directly when reloader is disabled
     if not Config.DEBUG or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
-        start_background_sync(interval_seconds=30)
+        start_background_sync(interval_seconds=120)
 except Exception as sync_exc:
     logger.warning(f"Failed to start background sync scheduler: {sync_exc}")
 

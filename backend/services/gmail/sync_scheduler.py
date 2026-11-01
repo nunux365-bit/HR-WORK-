@@ -99,11 +99,11 @@ def _run_sync_cycle() -> None:
         _sync_lock.release()
 
 
-def _background_sync_loop(interval_seconds: int = 30) -> None:
+def _background_sync_loop(interval_seconds: int = 120) -> None:
     """Worker loop that sleeps for `interval_seconds` between sync passes."""
     logger.info(f"[BackgroundSync] Daemon thread started (polling every {interval_seconds}s).")
-    # Small initial delay of 4s on startup to let DB initialize and app settle
-    if _stop_event.wait(4.0):
+    # Defer initial background sync by 60s so startup & user login are completely unblocked
+    if _stop_event.wait(60.0):
         return
 
     while not _stop_event.is_set():
