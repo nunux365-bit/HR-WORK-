@@ -372,6 +372,9 @@ def _sync_users_and_members() -> List[Dict[str, Any]]:
         combined_cats = ", ".join(sorted(all_cats)) if all_cats else (dept_info.get("category_scope") or "GENERAL_HR")
         combined_teams = " & ".join([ad["team_name"] for ad in assigned_depts]) if len(assigned_depts) > 1 else (m.get("team_name") or dept_info["team_name"])
 
+        load_status = "AVAILABLE" if act_cnt == 0 else ("OPTIMAL" if act_cnt <= 3 else ("BUSY" if act_cnt <= 6 else "OVERLOADED"))
+        user_status = (u_info.get("status") or ("ACTIVE" if int(m.get("active", 1) or 1) else "DEACTIVATED")).upper()
+
         directory.append({
             "id": int(m["id"]),
             "member_id": int(m["id"]),
@@ -381,6 +384,10 @@ def _sync_users_and_members() -> List[Dict[str, Any]]:
             "email": em,
             "role": norm_role,
             "role_title": role_meta["title"],
+            "status": user_status,
+            "active": 1 if user_status == "ACTIVE" else 0,
+            "last_login_at": u_info.get("last_login_at"),
+            "workload_status": load_status,
             "sub_department": m.get("sub_department") or "",
             "designation": raw_desig,
             "dept_id": assigned_depts[0]["id"],
@@ -430,6 +437,9 @@ def _sync_users_and_members() -> List[Dict[str, Any]]:
             while non_colliding_id in existing_ids:
                 non_colliding_id += 1
 
+        load_status = "AVAILABLE" if act_cnt == 0 else ("OPTIMAL" if act_cnt <= 3 else ("BUSY" if act_cnt <= 6 else "OVERLOADED"))
+        user_status = (u_info.get("status") or "ACTIVE").upper()
+
         directory.insert(0 if norm_role == "ADMIN" else len(directory), {
             "id": non_colliding_id,
             "member_id": None,
@@ -439,6 +449,10 @@ def _sync_users_and_members() -> List[Dict[str, Any]]:
             "email": em,
             "role": norm_role,
             "role_title": role_meta["title"],
+            "status": user_status,
+            "active": 1 if user_status == "ACTIVE" else 0,
+            "last_login_at": u_info.get("last_login_at"),
+            "workload_status": load_status,
             "designation": "Admin · Platform Head" if norm_role == "ADMIN" else role_meta["title"],
             "dept_id": int(default_dept["id"]),
             "team_name": "All HR Departments (Global)" if norm_role == "ADMIN" else default_dept["team_name"],
@@ -885,7 +899,7 @@ def add_managed_employee_route():
         finally:
             conn.close()
 
-        portal_url = Config.get_portal_base_url()
+        portal_url = Config.get_portal_base_url(payload.get("portal_base_url") or "")
         email_payload = build_role_welcome_email_payload(
             name=name,
             email=email,
@@ -1121,6 +1135,19 @@ def update_managed_employee_route(member_id: int):
                     "INSERT INTO users (email, role, name) VALUES (?, ?, ?)",
                     (new_email, new_role, new_name),
                 )
+
+            if "status" in payload or "active" in payload:
+                st_val = str(payload.get("status") if "status" in payload else ("ACTIVE" if payload.get("active") else "DEACTIVATED")).upper()
+                new_st = "ACTIVE" if st_val in ("ACTIVE", "1", "TRUE") else "DEACTIVATED"
+                new_act = 1 if new_st == "ACTIVE" else 0
+                conn.execute("UPDATE hr_department_members SET active = ? WHERE id = ?", (new_act, target_mid))
+                if u_row:
+                    conn.execute("UPDATE users SET status = ? WHERE id = ?", (new_st, int(u_row["id"])))
+                if payload.get("unassign_cases") and new_act == 0:
+                    conn.execute(
+                        "UPDATE cases SET assigned_user = NULL, assigned_user_email = NULL WHERE LOWER(assigned_user_email) IN (LOWER(?), LOWER(?)) AND status NOT IN ('RESOLVED', 'CLOSED')",
+                        (old_email, new_email),
+                    )
         else:
             u_only = None
             if req_email:
@@ -1148,6 +1175,10 @@ def update_managed_employee_route(member_id: int):
                 "UPDATE users SET email = ?, name = ?, role = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
                 (new_email, new_name, new_role, int(u_only["id"])),
             )
+            if "status" in payload or "active" in payload:
+                st_val = str(payload.get("status") if "status" in payload else ("ACTIVE" if payload.get("active") else "DEACTIVATED")).upper()
+                new_st = "ACTIVE" if st_val in ("ACTIVE", "1", "TRUE") else "DEACTIVATED"
+                conn.execute("UPDATE users SET status = ? WHERE id = ?", (new_st, int(u_only["id"])))
             dept_id_req = payload.get("dept_id")
             if dept_id_req and str(dept_id_req).isdigit():
                 target_dept = next((d for d in depts if int(d["id"]) == int(dept_id_req)), None)
@@ -1183,7 +1214,7 @@ def update_managed_employee_route(member_id: int):
     smtp_res = None
     email_payload = None
     if send_notify:
-        portal_url = Config.get_portal_base_url()
+        portal_url = Config.get_portal_base_url(payload.get("portal_base_url") or "")
         email_payload = build_role_welcome_email_payload(
             name=new_name,
             email=new_email,
@@ -1311,7 +1342,7 @@ def preview_welcome_email_route():
     category_scope = (payload.get("category_scope") or "ALL_HR").strip()
     custom_note = (payload.get("custom_note") or "").strip()
 
-    portal_url = Config.get_portal_base_url()
+    portal_url = Config.get_portal_base_url(payload.get("portal_base_url") or "")
     preview = build_role_welcome_email_payload(
         name=name,
         email=email,
@@ -1338,7 +1369,7 @@ def send_welcome_email_to_existing_route(member_id: int):
     if not person:
         return error_response("NOT_FOUND", f"Employee record #{member_id} not found.", 404)
 
-    portal_url = Config.get_portal_base_url()
+    portal_url = Config.get_portal_base_url(payload.get("portal_base_url") or "")
     email_payload = build_role_welcome_email_payload(
         name=person["name"],
         email=person["email"],

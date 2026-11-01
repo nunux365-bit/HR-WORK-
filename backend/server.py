@@ -96,7 +96,7 @@ def create_app() -> Flask:
         if filename.startswith("api/"):
             return error_response("NOT_FOUND", "API endpoint not found", 404)
         # Server-side guard for Admin & Agent HTML portals based on THIS browser's session cookie
-        admin_only_pages = {"inbox.html", "dashboard.html", "agentworktracker.html", "builder.html", "cases.html"}
+        admin_only_pages = {"inbox.html", "dashboard.html", "agentworktracker.html", "builder.html", "cases.html", "users.html"}
         if filename in admin_only_pages:
             role = _get_browser_session_role()
             if not role:

@@ -99,8 +99,13 @@ def test_admin_can_assign_another_role(client):
         )
         user_id = cur.lastrowid
         dept_row = conn.execute("SELECT id, team_name FROM hr_departments LIMIT 1").fetchone()
-        dept_id = int(dept_row["id"]) if dept_row else 1
-        t_name = str(dept_row["team_name"]) if dept_row else "HR Operations"
+        if not dept_row:
+            conn.execute(
+                "INSERT INTO hr_departments (dept_code, team_name, category_scope, dept_gmail) VALUES ('DEPT-TEST', 'Test HR Dept', 'GENERAL_HR', 'test.dept@example.com')"
+            )
+            dept_row = conn.execute("SELECT id, team_name FROM hr_departments WHERE dept_code = 'DEPT-TEST'").fetchone()
+        dept_id = int(dept_row["id"])
+        t_name = str(dept_row["team_name"])
         conn.execute(
             """
             INSERT INTO hr_department_members (dept_id, team_name, member_name, email, role, designation)
@@ -154,6 +159,29 @@ def test_agent_workbench_identity_and_no_admin_hijack(client):
     Verify that an HR_AGENT requesting their workbench is NEVER hijacked into Admin,
     even if ?agent_id=1 is passed or auto-refresh polls run.
     """
+    conn = get_connection()
+    try:
+        dept_row = conn.execute("SELECT id, team_name FROM hr_departments LIMIT 1").fetchone()
+        if not dept_row:
+            conn.execute(
+                "INSERT INTO hr_departments (dept_code, team_name, category_scope, dept_gmail) VALUES ('DEPT-TEST', 'Test HR Dept', 'GENERAL_HR', 'test.dept@example.com')"
+            )
+            dept_row = conn.execute("SELECT id, team_name FROM hr_departments WHERE dept_code = 'DEPT-TEST'").fetchone()
+        dept_id = int(dept_row["id"])
+        t_name = str(dept_row["team_name"])
+        existing_mem = conn.execute("SELECT id FROM hr_department_members WHERE LOWER(email) = 'vaibhavx002@zohomail.in'").fetchone()
+        if not existing_mem:
+            conn.execute(
+                """
+                INSERT INTO hr_department_members (dept_id, team_name, member_name, email, role, designation)
+                VALUES (?, ?, 'Vaibhav Yadav', 'vaibhavx002@zohomail.in', 'HR_AGENT', 'HR Specialist')
+                """,
+                (dept_id, t_name),
+            )
+        conn.commit()
+    finally:
+        conn.close()
+
     from backend.api.agent_routes import _sync_users_and_members
     roster = _sync_users_and_members()
 
@@ -245,6 +273,29 @@ def test_agent_workbench_identity_and_no_admin_hijack(client):
     Verify that an HR_AGENT requesting their workbench is NEVER hijacked into Admin,
     even if ?agent_id=1 is passed or auto-refresh polls run.
     """
+    conn = get_connection()
+    try:
+        dept_row = conn.execute("SELECT id, team_name FROM hr_departments LIMIT 1").fetchone()
+        if not dept_row:
+            conn.execute(
+                "INSERT INTO hr_departments (dept_code, team_name, category_scope, dept_gmail) VALUES ('DEPT-TEST', 'Test HR Dept', 'GENERAL_HR', 'test.dept@example.com')"
+            )
+            dept_row = conn.execute("SELECT id, team_name FROM hr_departments WHERE dept_code = 'DEPT-TEST'").fetchone()
+        dept_id = int(dept_row["id"])
+        t_name = str(dept_row["team_name"])
+        existing_mem = conn.execute("SELECT id FROM hr_department_members WHERE LOWER(email) = 'vaibhavx002@zohomail.in'").fetchone()
+        if not existing_mem:
+            conn.execute(
+                """
+                INSERT INTO hr_department_members (dept_id, team_name, member_name, email, role, designation)
+                VALUES (?, ?, 'Vaibhav Yadav', 'vaibhavx002@zohomail.in', 'HR_AGENT', 'HR Specialist')
+                """,
+                (dept_id, t_name),
+            )
+        conn.commit()
+    finally:
+        conn.close()
+
     from backend.api.agent_routes import _sync_users_and_members
     roster = _sync_users_and_members()
 

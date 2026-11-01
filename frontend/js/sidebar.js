@@ -112,7 +112,7 @@
         </a>
 
         <!-- 6. User Management -->
-        <a href="inbox.html#users" class="nav-item" data-module="users" data-page="inbox.html" id="navUsersLink" data-title="User Management" title="User Management & Governance">
+        <a href="users.html" class="nav-item" data-module="users" data-page="users.html" id="navUsersLink" data-title="User Management" title="User Management & Governance">
             <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="9" cy="7" r="4"></circle>
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -260,6 +260,7 @@
         "casedetail.html":        "cases",
         "inbox.html":             null,
         "cases.html":             "cases",
+        "users.html":             "users",
         "builder.html":           "builder"
     };
 
@@ -334,7 +335,7 @@
 
             // Enforce page-level access guard: HR_AGENT may ONLY access agent.html (and public track.html)
             if (role === "HR_AGENT") {
-                const restrictedPages = ["dashboard.html", "agentworktracker.html", "inbox.html", "builder.html", "cases.html"];
+                const restrictedPages = ["dashboard.html", "agentworktracker.html", "inbox.html", "builder.html", "cases.html", "users.html"];
                 if (restrictedPages.includes(page)) {
                     window.location.replace("agent.html" + (window.location.hash || ""));
                     return;

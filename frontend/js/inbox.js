@@ -353,6 +353,10 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.replace("cases.html");
         return;
     }
+    if (initialHashMod === "users" || initialHashMod.startsWith("users")) {
+        window.location.replace("users.html");
+        return;
+    }
     const validHashMods = ["departments", "tasks", "approvals", "workflows", "actions", "reports", "users", "integrations", "audit", "builder"];
     if (validHashMods.includes(initialHashMod)) {
         document.querySelectorAll(".sidebar-nav .nav-item").forEach((n) => n.classList.remove("active"));
@@ -6567,7 +6571,8 @@ async function switchWorkspaceModule(mod) {
     if (mod === "departments") {
         await renderDepartmentsWorkspaceView(opView);
     } else if (mod === "users") {
-        await renderUsersWorkspaceView(opView);
+        window.location.href = "users.html";
+        return;
     } else if (mod === "cases") {
         window.location.href = "cases.html";
         return;

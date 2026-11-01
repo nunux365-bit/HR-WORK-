@@ -432,6 +432,65 @@ def sync_case_tables_to_neon(neon_conn=None) -> bool:
         except Exception as d_exc:
             logger.debug(f"[NEON] Could not sync departments to Neon: {d_exc}")
 
+        # 6. Users
+        try:
+            neon_cur.execute("""
+                CREATE TABLE IF NOT EXISTS users (
+                    id SERIAL PRIMARY KEY,
+                    email TEXT NOT NULL UNIQUE,
+                    role TEXT NOT NULL DEFAULT 'HR_AGENT',
+                    name TEXT,
+                    status TEXT NOT NULL DEFAULT 'ACTIVE',
+                    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+                );
+            """)
+            sqlite_cur.execute("SELECT id, email, role, name, status FROM users")
+            u_rows = sqlite_cur.fetchall()
+            for u in u_rows:
+                neon_cur.execute("""
+                    INSERT INTO users (id, email, role, name, status)
+                    VALUES (%s, %s, %s, %s, %s)
+                    ON CONFLICT (id) DO UPDATE SET
+                        email = EXCLUDED.email,
+                        role = EXCLUDED.role,
+                        name = EXCLUDED.name,
+                        status = EXCLUDED.status,
+                        updated_at = CURRENT_TIMESTAMP;
+                """, u)
+        except Exception as u_exc:
+            logger.debug(f"[NEON] Could not sync users to Neon: {u_exc}")
+
+        # 7. Connected Mailboxes
+        try:
+            neon_cur.execute("""
+                CREATE TABLE IF NOT EXISTS connected_mailboxes (
+                    email TEXT PRIMARY KEY,
+                    app_password TEXT NOT NULL,
+                    role TEXT DEFAULT 'ADMIN',
+                    provider TEXT DEFAULT 'GMAIL',
+                    imap_host TEXT DEFAULT 'imap.gmail.com',
+                    smtp_host TEXT DEFAULT 'smtp.gmail.com',
+                    connected SMALLINT DEFAULT 1,
+                    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+                );
+            """)
+            sqlite_cur.execute("SELECT email, app_password, role, provider, imap_host, smtp_host, connected FROM connected_mailboxes")
+            mb_rows = sqlite_cur.fetchall()
+            for mb in mb_rows:
+                neon_cur.execute("""
+                    INSERT INTO connected_mailboxes (email, app_password, role, provider, imap_host, smtp_host, connected)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    ON CONFLICT (email) DO UPDATE SET
+                        app_password = EXCLUDED.app_password,
+                        role = EXCLUDED.role,
+                        provider = EXCLUDED.provider,
+                        connected = EXCLUDED.connected,
+                        updated_at = CURRENT_TIMESTAMP;
+                """, mb)
+        except Exception as mb_exc:
+            logger.debug(f"[NEON] Could not sync mailboxes to Neon: {mb_exc}")
+
         neon_conn.commit()
         neon_cur.close()
         sqlite_cur.close()
@@ -531,6 +590,40 @@ def hydrate_departments_from_neon(sqlite_conn=None) -> bool:
 
             sqlite_conn.commit()
             logger.info(f"[NEON] Hydrated {len(dept_rows)} departments and {len(mem_rows)} members from Neon to local SQLite.")
+
+        # Hydrate users from Neon if local has fewer
+        try:
+            sq_cur.execute("SELECT COUNT(*) FROM users")
+            local_user_cnt = sq_cur.fetchone()[0]
+            neon_cur.execute("SELECT id, email, role, name, status FROM users")
+            neon_users = neon_cur.fetchall()
+            if local_user_cnt <= 1 and len(neon_users) > local_user_cnt:
+                for u in neon_users:
+                    sq_cur.execute(
+                        "INSERT OR REPLACE INTO users (id, email, role, name, status) VALUES (?, ?, ?, ?, ?)",
+                        u
+                    )
+                sqlite_conn.commit()
+                logger.info(f"[NEON] Hydrated {len(neon_users)} users from Neon PostgreSQL.")
+        except Exception as u_h_exc:
+            logger.debug(f"[NEON] Hydrate users error: {u_h_exc}")
+
+        # Hydrate connected mailboxes from Neon if local has none
+        try:
+            sq_cur.execute("SELECT COUNT(*) FROM connected_mailboxes")
+            local_mb_cnt = sq_cur.fetchone()[0]
+            neon_cur.execute("SELECT email, app_password, role, provider, imap_host, smtp_host, connected FROM connected_mailboxes")
+            neon_mbs = neon_cur.fetchall()
+            if local_mb_cnt == 0 and len(neon_mbs) > 0:
+                for mb in neon_mbs:
+                    sq_cur.execute(
+                        "INSERT OR REPLACE INTO connected_mailboxes (email, app_password, role, provider, imap_host, smtp_host, connected) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                        mb
+                    )
+                sqlite_conn.commit()
+                logger.info(f"[NEON] Hydrated {len(neon_mbs)} connected mailboxes from Neon PostgreSQL.")
+        except Exception as mb_h_exc:
+            logger.debug(f"[NEON] Hydrate mailboxes error: {mb_h_exc}")
 
         neon_cur.close()
         sq_cur.close()

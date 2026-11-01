@@ -287,6 +287,10 @@
                     window.location.replace("cases.html");
                     return;
                 }
+                if (h === "users" || h.indexOf("users") === 0) {
+                    window.location.replace("users.html");
+                    return;
+                }
                 var ops = ["departments", "tasks", "approvals", "workflows", "actions", "reports", "users", "integrations", "audit", "builder"];
                 if (ops.indexOf(h) !== -1) {
                     var iv = document.getElementById("moduleInboxView");

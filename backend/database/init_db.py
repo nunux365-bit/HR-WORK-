@@ -67,6 +67,10 @@ _MIGRATION_COLUMNS = {
         ("imap_host", "TEXT DEFAULT 'imap.gmail.com'"),
         ("smtp_host", "TEXT DEFAULT 'smtp.gmail.com'"),
     ],
+    "users": [
+        ("status", "TEXT NOT NULL DEFAULT 'ACTIVE'"),
+        ("last_login_at", "TEXT"),
+    ],
 }
 
 

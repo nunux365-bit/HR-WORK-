@@ -221,6 +221,11 @@ def login_with_gmail():
             ),
             commit=True,
         )
+        execute_query(
+            "UPDATE users SET last_login_at = CURRENT_TIMESTAMP WHERE LOWER(email) = LOWER(?)",
+            (email_addr,),
+            commit=True,
+        )
     except Exception as exc:
         logger.warning(f"Could not persist user_session in SQLite: {exc}")
 

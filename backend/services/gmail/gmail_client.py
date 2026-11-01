@@ -556,7 +556,25 @@ def send_gmail_smtp_email(
             conn.close()
     sender_email = (acct_info.get("email") if acct_info and acct_info.get("app_password") else None) or _GMAIL_STATE.get("email")
     app_password = (acct_info.get("app_password") if acct_info and acct_info.get("app_password") else None) or _GMAIL_STATE.get("app_password")
-    is_conn = bool((acct_info and acct_info.get("connected")) or _GMAIL_STATE.get("connected"))
+
+    if not sender_email or not app_password:
+        conn = get_connection()
+        try:
+            row = conn.execute("SELECT * FROM connected_mailboxes ORDER BY connected DESC, updated_at DESC LIMIT 1").fetchone()
+            if row and row["app_password"]:
+                acct_info = dict(row)
+                sender_email = acct_info.get("email")
+                app_password = acct_info.get("app_password")
+        except Exception:
+            pass
+        finally:
+            conn.close()
+
+    if not sender_email and Config.GMAIL_EMAIL and Config.GMAIL_APP_PASSWORD:
+        sender_email = Config.GMAIL_EMAIL
+        app_password = Config.GMAIL_APP_PASSWORD
+
+    is_conn = bool((acct_info and acct_info.get("connected")) or _GMAIL_STATE.get("connected") or (sender_email and app_password))
     to_addr = (recipient_email or "").strip()
 
     if not to_addr or "@" not in to_addr:
