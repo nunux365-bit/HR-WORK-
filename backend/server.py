@@ -58,6 +58,31 @@ def create_app() -> Flask:
     # Register API blueprints
     register_api_blueprints(app)
 
+    import gzip
+
+    @app.after_request
+    def _compress_response(response):
+        """Transparent high-speed GZIP compression for all static assets and JSON payloads."""
+        accept_encoding = request.headers.get("Accept-Encoding", "")
+        if (
+            "gzip" in accept_encoding.lower()
+            and response.status_code < 300
+            and not response.direct_passthrough
+            and response.content_type
+            and any(t in response.content_type for t in ("javascript", "text", "json", "css", "svg", "xml"))
+        ):
+            try:
+                raw_bytes = response.get_data()
+                if len(raw_bytes) > 512:
+                    gzip_buffer = gzip.compress(raw_bytes, compresslevel=6)
+                    response.set_data(gzip_buffer)
+                    response.headers["Content-Encoding"] = "gzip"
+                    response.headers["Content-Length"] = len(gzip_buffer)
+                    response.headers["Vary"] = "Accept-Encoding"
+            except Exception:
+                pass
+        return response
+
     @app.before_request
     def _remember_portal_base_url():
         Config.get_portal_base_url()
