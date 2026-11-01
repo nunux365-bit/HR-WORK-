@@ -2719,10 +2719,10 @@ def send_reply_from_email_api(email_id: int):
         try:
             from backend.services.gmail.gmail_client import send_gmail_smtp_email
             send_gmail_smtp_email(
-                to_email=recipient_email,
+                recipient_email=recipient_email,
                 subject=subject,
                 body_text=reply_text,
-                from_email=sender_email
+                account_email=sender_email
             )
         except Exception as e:
             dispatch_status = f"LOGGED ({str(e)})"
@@ -3476,6 +3476,137 @@ def toggle_case_checklist_item(case_ref: str):
             "verified_at": now_iso,
             "checklist_state": checklist_state,
             "case_number": case_number
+        })
+    finally:
+        conn.close()
+
+
+@agent_bp.route("/cases/<case_ref>/ask-details", methods=["POST"])
+def ask_details_from_employee_api(case_ref: str):
+    """
+    Send an official clarification / information request email to an employee regarding their case.
+    - Resolves case from case_ref (ID or case_number)
+    - Delivers email via Gmail SMTP to the employee
+    - Records entry in case_communications table with comm_type='REQUEST_DETAILS'
+    - Updates custom_fields.waiting_for_employee = True
+    - Logs DETAILS_REQUESTED in audit_logs
+    - Returns updated communication item
+    """
+    from backend.services.audit.audit_service import log_event
+    from backend.services.gmail.gmail_client import send_gmail_smtp_email
+
+    payload = request.get_json(silent=True) or {}
+    message_text = (payload.get("message") or payload.get("reply_text") or "").strip()
+    subject = (payload.get("subject") or "").strip()
+    recipient_email = (payload.get("recipient_email") or payload.get("recipient") or "").strip()
+    template_type = (payload.get("template_type") or "GENERAL_INQUIRY").strip()
+    performed_by = (payload.get("performed_by") or request.headers.get("X-HR-User") or "Vaibhav Yadav").strip()
+    sender_email = (payload.get("sender_email") or "vaibhavx002@zohomail.in").strip()
+    now_iso = datetime.now(timezone.utc).isoformat()
+
+    if not message_text:
+        return error_response("VALIDATION_ERROR", "Message content cannot be empty.", 400)
+
+    conn = get_connection()
+    try:
+        case_obj = _resolve_case_row_by_ref(conn, case_ref)
+        if not case_obj:
+            return error_response("NOT_FOUND", f"Case '{case_ref}' not found.", 404)
+        db_id = int(case_obj["id"])
+        case_number = case_obj["case_number"]
+
+        if not recipient_email:
+            if case_obj.get("sender_email"):
+                recipient_email = case_obj["sender_email"].strip()
+            elif case_obj.get("email_id"):
+                em_row = conn.execute("SELECT sender_email FROM emails WHERE id = ?", (case_obj["email_id"],)).fetchone()
+                if em_row and em_row["sender_email"]:
+                    recipient_email = em_row["sender_email"].strip()
+
+        if not recipient_email or "@" not in recipient_email:
+            return error_response("VALIDATION_ERROR", "Valid employee recipient email address is required.", 400)
+
+        if not subject:
+            subject = f"[Action Required · {case_number}] Additional Details Required for HR Inquiry"
+
+        # 1. Insert into case_communications
+        cur_comm = conn.execute(
+            """
+            INSERT INTO case_communications (
+                case_id, email_id, sender_type, sender_name, recipient, subject, message, comm_type, created_at
+            ) VALUES (?, ?, 'HR_AGENT', ?, ?, ?, ?, 'REQUEST_DETAILS', ?)
+            """,
+            (db_id, case_obj.get("email_id"), performed_by, recipient_email, subject, message_text, now_iso)
+        )
+        comm_id = int(cur_comm.lastrowid)
+
+        # 2. Update custom_fields with waiting_for_employee flag and timestamp
+        raw_cf = case_obj.get("custom_fields")
+        cf = json.loads(raw_cf) if isinstance(raw_cf, str) and raw_cf.strip() else (raw_cf if isinstance(raw_cf, dict) else {})
+        cf["waiting_for_employee"] = True
+        cf["last_details_requested_at"] = now_iso
+        cf["last_details_template"] = template_type
+        
+        conn.execute(
+            "UPDATE cases SET custom_fields = ?, updated_at = ? WHERE id = ?",
+            (json.dumps(cf), now_iso, db_id)
+        )
+        conn.commit()
+
+        # 3. Attempt SMTP dispatch
+        dispatch_status = "SENT"
+        try:
+            html_body = (
+                f"<div style='font-family:Inter,Arial,sans-serif;font-size:14px;line-height:1.6;color:#0f172a;max-width:620px;margin:0 auto;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;'>"
+                f"<div style='background:linear-gradient(135deg,#e03546,#b42318);color:#ffffff;padding:20px 24px;'>"
+                f"<div style='font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;opacity:0.9;'>Tata 1mg · People Operations Desk</div>"
+                f"<h2 style='margin:4px 0 0 0;font-size:18px;font-weight:800;'>Information Required for Case: {html_lib.escape(str(case_number))}</h2>"
+                f"</div>"
+                f"<div style='padding:24px;background:#ffffff;'>"
+                f"<p style='margin:0 0 16px 0;font-size:14px;color:#334155;line-height:1.6;white-space:pre-wrap;'>{html_lib.escape(message_text)}</p>"
+                f"<div style='background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px 16px;margin:18px 0;font-size:12px;color:#64748b;'>"
+                f"Please reply directly to this email to provide the requested information. Your response will automatically attach to Case {html_lib.escape(str(case_number))}."
+                f"</div>"
+                f"<hr style='border:none;border-top:1px solid #e2e8f0;margin:18px 0;'>"
+                f"<div style='font-size:11px;color:#94a3b8;'>Tata 1mg People Operations Desk · Automated Ingest Gateway</div>"
+                f"</div>"
+                f"</div>"
+            )
+            send_gmail_smtp_email(
+                recipient_email=recipient_email,
+                subject=subject,
+                body_text=message_text,
+                body_html=html_body,
+                account_email=sender_email
+            )
+        except Exception as e:
+            dispatch_status = f"LOGGED ({str(e)})"
+
+        # 4. Log immutable audit trail event
+        log_event(
+            entity_type="CASE",
+            entity_id=str(case_number),
+            action="DETAILS_REQUESTED",
+            description=f"{performed_by} sent information request email ({template_type}) to {recipient_email}",
+            performed_by=performed_by,
+            metadata={
+                "recipient": recipient_email,
+                "template": template_type,
+                "comm_id": comm_id,
+                "status": dispatch_status
+            }
+        )
+
+        return success_response({
+            "communication_id": comm_id,
+            "case_id": db_id,
+            "case_number": case_number,
+            "recipient": recipient_email,
+            "subject": subject,
+            "message": message_text,
+            "status": dispatch_status,
+            "template_type": template_type,
+            "created_at": now_iso
         })
     finally:
         conn.close()

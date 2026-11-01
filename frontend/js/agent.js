@@ -2501,7 +2501,7 @@ ${formatEmailBody(email.body || email.actionable_reason || "No message body prov
                             </svg>
                         </div>
                         <div class="inbox-empty-title">Select a Case from the Queue</div>
-                        <div class="inbox-empty-desc">Choose a case from the queue on the left to inspect the employee verification dossier, review policy checklists, and execute resolution workflows.</div>
+                        <div class="inbox-empty-desc">Choose a case from the queue on the left to inspect the employee verification dossier, request clarification details, and execute resolution workflows.</div>
                     </div>
                 `;
             }
@@ -2978,27 +2978,28 @@ ${formatEmailBody(email.body || email.actionable_reason || "No message body prov
                     </div>
 
                     <div class="dossier-deck-right">
-                        <!-- 2-Tab Navigation: Inquiry & Profile vs Audit & Actions (No workflow steppers) -->
+                        <!-- 2-Tab Navigation: Case Investigation & Details vs Ask Details from Employee -->
                         <div class="dossier-stepper-segmented" id="dossierStepperTabs">
-                            <button type="button" class="dossier-segment-btn ${currentDossierStep === 1 ? 'is-active' : ''}" onclick="switchDossierStep(1)" title="Employee Profile & Inbound Email">
+                            <button type="button" class="dossier-segment-btn ${currentDossierStep === 1 ? 'is-active' : ''}" onclick="switchDossierStep(1)" title="Case Investigation &amp; Details">
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                                     <rect width="20" height="16" x="2" y="4" rx="2"></rect>
                                     <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
                                 </svg>
-                                <span>Inquiry &amp; Profile</span>
+                                <span>Investigation &amp; Details</span>
                             </button>
-                            <button type="button" class="dossier-segment-btn ${currentDossierStep === 2 ? 'is-active' : ''}" onclick="switchDossierStep(2)" title="Case Actions, Timer & Checklist">
+                            <button type="button" class="dossier-segment-btn ${currentDossierStep === 2 ? 'is-active' : ''}" onclick="switchDossierStep(2)" title="Ask Details from Employee (Smart Email Templates)">
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                                    <polyline points="9 12 11 14 15 10"></polyline>
+                                    <polyline points="22 2 15 22 11 13 2 9 22 2"></polyline>
                                 </svg>
-                                <span>Audit &amp; Actions</span>
+                                <span>✉ Ask Details from Employee</span>
                             </button>
                         </div>
 
                         ${!isAssigned
                             ? `<button type="button" class="btn-pill-action btn-primary-action" onclick="handleClaimCase('${caseRef}')">⚡ Claim Case</button>`
-                            : `<button type="button" class="btn-pill-action ${currentDossierStep === 1 ? 'btn-primary-action' : ''}" onclick="switchDossierStep(currentDossierStep === 1 ? 2 : 1)">${currentDossierStep === 1 ? 'Audit &amp; Actions &rarr;' : '&larr; Inquiry View'}</button>`
+                            : status === 'RESOLVED' || status === 'COMPLETED'
+                                ? `<span class="badge-pill" style="background:#ECFDF3; color:#027A48; font-weight:700; font-size:12px; padding:6px 12px;">✓ RESOLVED &amp; CLOSED</span>`
+                                : `<button type="button" class="btn-audit-op btn-complete-work" onclick="openCompleteCaseModal('${caseRef}')" title="Approve and close case">✓ Approve &amp; Close Case</button>`
                         }
                     </div>
                 </div>
@@ -3097,6 +3098,363 @@ ${formatEmailBody(email.body || email.actionable_reason || "No message body prov
         }
     };
 
+    /* ==========================================================================
+       SMART EMAIL TEMPLATES FOR ASKING EMPLOYEE DETAILS
+       ========================================================================== */
+    window.EMAIL_TEMPLATES = {
+        attendance: {
+            id: "attendance",
+            label: "🕒 Missing Punch / Attendance",
+            subject: (cRef) => `[Action Required · ${cRef}] Missing Punch Details Required – Attendance Regularization`,
+            body: (cRef, empName, mgrName) => `Dear ${empName},
+
+We are reviewing your attendance regularization request for Case #${cRef}.
+
+To help us regularize your attendance record in HRMS, kindly provide the following details:
+1. Exact date(s) of the missed punch
+2. Approximate entry (in) and exit (out) times
+3. Facility turnstile location / campus entry gate (e.g. Tower A / 3rd Floor)
+4. Reason for missing biometric swipe (e.g. biometric machine glitch, badge not detected)
+5. Confirmation if your reporting manager (${mgrName}) has approved this regularization
+
+Please reply directly to this email with these details so we can update your attendance log promptly.
+
+Warm regards,
+People Operations Team
+Tata 1mg Healthcare Solutions`
+        },
+        leave: {
+            id: "leave",
+            label: "📅 Leave Request & Manager Approval",
+            subject: (cRef) => `[Action Required · ${cRef}] Manager Approval & Leave Dates Confirmation`,
+            body: (cRef, empName, mgrName) => `Dear ${empName},
+
+We are currently processing your leave inquiry under Case #${cRef}.
+
+To ensure accurate accounting against your LMS leave ledger, kindly provide:
+1. Specific leave start date and end date
+2. Leave category requested (Privilege Leave, Casual Leave, Sick Leave, or Comp-Off)
+3. Written email approval or sign-off from your reporting manager (${mgrName})
+
+Please reply directly to this email with the requested confirmation.
+
+Warm regards,
+People Operations Team
+Tata 1mg Healthcare Solutions`
+        },
+        medical: {
+            id: "medical",
+            label: "📄 Medical / Supporting Proof",
+            subject: (cRef) => `[Action Required · ${cRef}] Supporting Documents Required`,
+            body: (cRef, empName, mgrName) => `Dear ${empName},
+
+Regarding your request under Case #${cRef}, our HR policy requires supporting documentation for verification.
+
+Kindly attach and send:
+1. Medical fitness / sickness certificate or relevant physician prescription
+2. Any supporting tickets or receipts relating to this claim
+
+Please reply directly to this email with the attached documents.
+
+Warm regards,
+People Operations Team
+Tata 1mg Healthcare Solutions`
+        },
+        payroll: {
+            id: "payroll",
+            label: "💰 Payroll / Salary Discrepancy",
+            subject: (cRef) => `[Action Required · ${cRef}] Payroll Discrepancy Clarification`,
+            body: (cRef, empName, mgrName) => `Dear ${empName},
+
+Regarding your query on salary credit/deductions under Case #${cRef}:
+
+To help our Payroll & Finance team verify this in the master ledger, please specify:
+1. Specific salary month and pay period (e.g. October 2026)
+2. Claimed discrepancy amount or deduction component
+3. Copy of the bank credit transaction or salary slip reference
+
+Please reply directly to this email so we can reconcile the payroll records.
+
+Warm regards,
+People Operations Team
+Tata 1mg Healthcare Solutions`
+        },
+        custom: {
+            id: "custom",
+            label: "📝 General Clarification",
+            subject: (cRef) => `[Inquiry · ${cRef}] Additional Information Required`,
+            body: (cRef, empName, mgrName) => `Dear ${empName},
+
+We are reviewing your request under Case #${cRef}.
+
+To help us process this matter further, could you please provide additional details regarding your request?
+
+Please reply directly to this email with any relevant information.
+
+Warm regards,
+People Operations Team
+Tata 1mg Healthcare Solutions`
+        }
+    };
+
+    window.selectedAskDetailsTemplate = "attendance";
+
+    window.selectAskDetailsTemplate = function(templateKey, caseRef, empName, mgrName) {
+        window.selectedAskDetailsTemplate = templateKey;
+        const tpl = window.EMAIL_TEMPLATES[templateKey] || window.EMAIL_TEMPLATES.custom;
+
+        // Update pills active styling
+        document.querySelectorAll(".template-pill-btn").forEach(btn => {
+            if (btn.getAttribute("data-template") === templateKey) {
+                btn.classList.add("is-active");
+            } else {
+                btn.classList.remove("is-active");
+            }
+        });
+
+        const subjInput = document.getElementById("askDetailsSubject");
+        const msgInput = document.getElementById("askDetailsMessage");
+        if (subjInput) subjInput.value = tpl.subject(caseRef);
+        if (msgInput) msgInput.value = tpl.body(caseRef, empName, mgrName);
+    };
+
+    window.scrollToAskDetails = function() {
+        const el = document.getElementById("caseAskDetailsCard");
+        if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "start" });
+            el.style.boxShadow = "0 0 0 3px rgba(224, 53, 70, 0.35)";
+            setTimeout(() => {
+                el.style.boxShadow = "0 1px 3px rgba(16, 24, 40, 0.05)";
+            }, 1500);
+        } else {
+            switchDossierStep(2);
+        }
+    };
+
+    window.handleSendAskDetails = async function(caseRef) {
+        const btn = document.getElementById("btnSendAskDetails");
+        const statusEl = document.getElementById("askDetailsStatusMsg");
+        const recipient = document.getElementById("askDetailsRecipient")?.value?.trim();
+        const subject = document.getElementById("askDetailsSubject")?.value?.trim();
+        const message = document.getElementById("askDetailsMessage")?.value?.trim();
+        const templateType = window.selectedAskDetailsTemplate || "GENERAL_INQUIRY";
+
+        if (!message) {
+            alert("Please enter the message or details to ask from the employee.");
+            return;
+        }
+        if (!recipient) {
+            alert("Recipient employee email is required.");
+            return;
+        }
+
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = `<span>Sending email...</span>`;
+        }
+        if (statusEl) {
+            statusEl.innerHTML = `<span style="color:#64748B;">Connecting to Zoho mail server...</span>`;
+        }
+
+        try {
+            const userStr = sessionStorage.getItem("hrflow_user") || localStorage.getItem("hrflow_last_user");
+            let userName = "Vaibhav (HR)";
+            if (userStr) {
+                try { userName = JSON.parse(userStr).name || userName; } catch (_) {}
+            }
+
+            const res = await fetch(`${BACKEND_API_BASE}/api/agent/cases/${encodeURIComponent(caseRef)}/ask-details`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    recipient_email: recipient,
+                    subject: subject,
+                    message: message,
+                    template_type: templateType,
+                    performed_by: userName
+                })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                if (statusEl) {
+                    statusEl.innerHTML = `<span style="color:#027A48; font-weight:700;">✓ Inquiry email sent to ${escapeHtml(recipient)}! Recorded in case communications &amp; audit trail.</span>`;
+                }
+                const commsListEl = document.getElementById("caseCommsList");
+                if (commsListEl) {
+                    const newBubble = `
+                        <div class="comm-bubble" style="border-left:3px solid var(--tata-coral);">
+                            <div class="comm-bubble-header">
+                                <span class="comm-bubble-sender">${escapeHtml(userName)} (You)</span>
+                                <span class="badge-pill" style="font-size:10px; font-weight:700; background:#FFF5F5; color:var(--tata-crimson);">
+                                    ${escapeHtml(templateType)} (Clarification Requested)
+                                </span>
+                                <span>Just now</span>
+                            </div>
+                            <div style="font-weight:700; font-size:12px; margin-bottom:4px; color:#1E293B;">${escapeHtml(subject)}</div>
+                            <div class="comm-bubble-body">${escapeHtml(message)}</div>
+                        </div>
+                    `;
+                    commsListEl.insertAdjacentHTML("afterbegin", newBubble);
+                }
+                refreshCaseAuditTimeline(caseRef);
+                setTimeout(() => {
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 2 15 22 11 13 2 9 22 2"></polyline></svg><span>✉ Send Email to Employee</span>`;
+                    }
+                }, 1800);
+            } else {
+                const err = await res.json();
+                alert(err.message || "Failed to send inquiry email to employee.");
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 2 15 22 11 13 2 9 22 2"></polyline></svg><span>✉ Send Email to Employee</span>`;
+                }
+            }
+        } catch (err) {
+            console.error("Error sending ask-details email:", err);
+            alert("Network error sending inquiry email.");
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 2 15 22 11 13 2 9 22 2"></polyline></svg><span>✉ Send Email to Employee</span>`;
+            }
+        }
+    };
+
+    /**
+     * Render the Smart Email Templates Composer Component
+     */
+    function renderAskDetailsComposer(data) {
+        const c = data.case || {};
+        const emp = data.employee || {};
+        const email = data.email || {};
+        const caseRef = c.case_number || c.case_ref || selectedCaseRef;
+        const empName = emp.name || c.employee_name || "Employee";
+        const empEmail = emp.email || c.sender_email || email.sender_email || "";
+        const manager = emp.manager_name || "Department Manager";
+        const category = (c.category || "").toUpperCase();
+        const intent = (c.intent || "").toUpperCase();
+
+        let defaultKey = "custom";
+        if (category.includes("ATTEND") || intent.includes("ATTEND") || category.includes("BIOMETRIC")) {
+            defaultKey = "attendance";
+        } else if (category.includes("LEAVE") || intent.includes("LEAVE")) {
+            defaultKey = "leave";
+        } else if (category.includes("PAYROLL") || category.includes("SALARY") || intent.includes("PAYROLL")) {
+            defaultKey = "payroll";
+        } else if (category.includes("MEDICAL") || intent.includes("CLAIM")) {
+            defaultKey = "medical";
+        }
+
+        window.selectedAskDetailsTemplate = defaultKey;
+        const tpl = window.EMAIL_TEMPLATES[defaultKey] || window.EMAIL_TEMPLATES.custom;
+        const defaultSubject = tpl.subject(caseRef);
+        const defaultBody = tpl.body(caseRef, empName, manager);
+
+        const pillsHtml = Object.keys(window.EMAIL_TEMPLATES).map(k => {
+            const item = window.EMAIL_TEMPLATES[k];
+            const isActive = k === defaultKey;
+            return `
+                <button type="button" class="template-pill-btn ${isActive ? 'is-active' : ''}" data-template="${k}" onclick="selectAskDetailsTemplate('${k}', '${escapeHtml(caseRef)}', '${escapeHtml(empName)}', '${escapeHtml(manager)}')">
+                    ${item.label}
+                </button>
+            `;
+        }).join("");
+
+        const comms = data.communications || [];
+        let commsHtml = "";
+        if (comms.length > 0) {
+            commsHtml = `
+                <div class="comms-history-section">
+                    <div class="comms-history-title">Previous Communications &amp; Inquiry History (${comms.length})</div>
+                    <div id="caseCommsList">
+                        ${comms.map(cm => {
+                            const dateStr = cm.created_at ? new Date(cm.created_at).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : 'Earlier';
+                            const isHr = cm.sender_type === 'HR_AGENT';
+                            return `
+                                <div class="comm-bubble" style="${isHr ? 'border-left:3px solid var(--tata-coral);' : 'border-left:3px solid #12B76A;'}">
+                                    <div class="comm-bubble-header">
+                                        <span class="comm-bubble-sender">${escapeHtml(cm.sender_name || (isHr ? 'HR Specialist' : 'Employee'))}</span>
+                                        <span class="badge-pill" style="font-size:10px; font-weight:700; ${isHr ? 'background:#FFF5F5; color:var(--tata-crimson);' : 'background:#ECFDF3; color:#027A48;'}">
+                                            ${escapeHtml(cm.comm_type || (isHr ? 'HR Inquiry' : 'Reply'))}
+                                        </span>
+                                        <span>${dateStr}</span>
+                                    </div>
+                                    ${cm.subject ? `<div style="font-weight:700; font-size:12px; margin-bottom:4px; color:#1E293B;">${escapeHtml(cm.subject)}</div>` : ''}
+                                    <div class="comm-bubble-body">${escapeHtml(cm.message || '')}</div>
+                                </div>
+                            `;
+                        }).join("")}
+                    </div>
+                </div>
+            `;
+        } else {
+            commsHtml = `
+                <div class="comms-history-section" style="border:none;">
+                    <div id="caseCommsList"></div>
+                </div>
+            `;
+        }
+
+        return `
+            <div class="ask-details-card" id="caseAskDetailsCard">
+                <div class="ask-details-header">
+                    <div class="ask-details-title-wrap">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="color:var(--tata-coral);">
+                            <polyline points="22 2 15 22 11 13 2 9 22 2"></polyline>
+                        </svg>
+                        <span class="ask-details-title">Ask Employee for More Details</span>
+                    </div>
+                    <span class="badge-pill" style="background:#EFF8FF; color:#175CD3; font-weight:700; font-size:11px;">
+                        ✉ Connected to Corporate Zoho Mail
+                    </span>
+                </div>
+
+                <div class="ask-details-sub">
+                    Select an official Tata 1mg email template below to immediately populate an inquiry request, or customize the message to ask for specific missing documents, punch times, or manager approvals:
+                </div>
+
+                <!-- Template Pills Selector -->
+                <div class="template-pills-row">
+                    ${pillsHtml}
+                </div>
+
+                <!-- Composer Form -->
+                <div class="ask-details-form">
+                    <div class="ask-details-field-row">
+                        <div class="ask-details-field">
+                            <label class="ask-details-label">Recipient Employee Email</label>
+                            <input type="email" class="ask-details-input" id="askDetailsRecipient" value="${escapeHtml(empEmail)}" placeholder="employee@1mg.com">
+                        </div>
+                        <div class="ask-details-field" style="flex:2;">
+                            <label class="ask-details-label">Email Subject Line</label>
+                            <input type="text" class="ask-details-input" id="askDetailsSubject" value="${escapeHtml(defaultSubject)}">
+                        </div>
+                    </div>
+
+                    <div class="ask-details-field">
+                        <label class="ask-details-label">Inquiry Message Body (Fully Editable)</label>
+                        <textarea class="ask-details-textarea" id="askDetailsMessage" rows="7">${escapeHtml(defaultBody)}</textarea>
+                    </div>
+
+                    <div class="ask-details-action-bar">
+                        <div id="askDetailsStatusMsg" style="font-size:12.5px;"></div>
+                        <button type="button" class="btn-send-inquiry" id="btnSendAskDetails" onclick="handleSendAskDetails('${escapeHtml(caseRef)}')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <polyline points="22 2 15 22 11 13 2 9 22 2"></polyline>
+                            </svg>
+                            <span>✉ Send Email to Employee</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Communication History -->
+                ${commsHtml}
+            </div>
+        `;
+    }
+
     /**
      * Render Dynamic Content for Selected Stepper Step
      */
@@ -3114,14 +3472,12 @@ ${formatEmailBody(email.body || email.actionable_reason || "No message body prov
         const location = emp.location || "Corporate Hub";
         const officialEmail = emp.email || c.sender_email || "N/A";
 
-        // Compute initials dynamically from real employee name
         const empInitials = empName.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase() || "EM";
         const senderEmail = email.sender_email || officialEmail;
         const mailSubject = email.subject || c.title || c.subject || "Employee HR Inquiry";
         const mailBody = email.body || c.description || "No email content recorded.";
         const receivedDateStr = email.received_at ? new Date(email.received_at).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : new Date().toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
 
-        // Dynamic employee profile fields extracted from real text/records
         const rawText = (c.description || "") + "\n" + (email.body || "");
         const gradeMatch = rawText.match(/Grade:\s*([A-Za-z0-9]+)/i);
         const gradeVal = gradeMatch ? gradeMatch[1].trim() : (emp.grade || "G5");
@@ -3132,342 +3488,106 @@ ${formatEmailBody(email.body || email.actionable_reason || "No message body prov
         const leaveMatch = rawText.match(/Leave Balance:\s*([^\n\r]+)/i);
         const leaveBalanceVal = leaveMatch ? leaveMatch[1].trim() : null;
 
-        if (stepNum === 1) {
-            // STEP 1: Open 2-Column Grid (330px Verified Employee Profile + Open Executive Mailbox)
-            return `
-                <div class="dossier-open-grid">
-                    
-                    <!-- Left: Verified Tata 1mg Employee Profile Card -->
-                    <div class="dossier-emp-card">
-                        <!-- Profile Header -->
-                        <div class="emp-profile-banner">
-                            <div class="emp-profile-avatar-large">${empInitials}</div>
-                            <div class="emp-profile-main-meta">
-                                <div class="emp-profile-name-row">
-                                    <h2 class="emp-profile-name">${escapeHtml(empName)}</h2>
-                                    <span class="badge-active-directory" title="Active Employee in Corporate Directory">
-                                        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                                        </svg>
-                                        Active
-                                    </span>
-                                </div>
-                                <div class="emp-profile-designation">${escapeHtml(designation)}</div>
-                                <div class="emp-profile-department">${escapeHtml(dept)} • Tata 1mg</div>
-                            </div>
-                        </div>
+        // Work Session Tracking
+        const cf = c.custom_fields || {};
+        const workSession = cf.work_session || {};
+        const isSessionActive = Boolean(workSession.is_active);
+        const statusUpper = (c.status || "OPEN").toUpperCase();
+        const isResolved = statusUpper === "RESOLVED" || statusUpper === "COMPLETED";
+        const isRejected = statusUpper === "REJECTED";
 
-                        <!-- 1MG Verified Badge Card -->
-                        <div class="emp-verified-card-pill">
-                            <div class="emp-verified-shield">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                                    <polyline points="9 12 11 14 15 10"></polyline>
-                                </svg>
-                            </div>
-                            <div class="emp-verified-meta">
-                                <strong>Verified Tata 1mg Identity</strong>
-                                <span>Token: <strong style="font-family:monospace; color:#027A48;">${escapeHtml(empCode)}</strong> • Directory Matched</span>
-                            </div>
-                        </div>
+        const totalSec = parseInt(workSession.total_handling_seconds || 0, 10);
+        const mins = Math.floor(totalSec / 60);
+        const secs = totalSec % 60;
+        const timerFormatted = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        const durationDisplay = workSession.handling_display || `${mins}m ${secs}s`;
 
-                        <!-- Quick Metrics Strip -->
-                        <div class="emp-metrics-strip">
-                            <div class="emp-metric-cell">
-                                <span class="emp-metric-lbl">EMP CODE</span>
-                                <span class="emp-metric-val" style="color:var(--tata-crimson); font-family:monospace;">${escapeHtml(empCode)}</span>
-                            </div>
-                            <div class="emp-metric-cell">
-                                <span class="emp-metric-lbl">GRADE</span>
-                                <span class="emp-metric-val">${escapeHtml(gradeVal)}</span>
-                            </div>
-                            <div class="emp-metric-cell">
-                                <span class="emp-metric-lbl">LOCATION</span>
-                                <span class="emp-metric-val">${escapeHtml(location)}</span>
-                            </div>
-                        </div>
+        // Automatically start client-side timer if session is currently active
+        setTimeout(() => {
+            if (isSessionActive) {
+                startClientWorkTimer(caseRef, workSession.started_at, totalSec);
+            }
+        }, 60);
 
-                        <!-- Attributes Table -->
-                        <div class="emp-attributes-table">
-                            <div class="emp-attr-row">
-                                <span class="emp-attr-key">Reporting Manager</span>
-                                <span class="emp-attr-val">${escapeHtml(manager)}</span>
-                            </div>
-                            <div class="emp-attr-row">
-                                <span class="emp-attr-key">Corporate Email</span>
-                                <span class="emp-attr-val emp-copyable" onclick="navigator.clipboard.writeText('${officialEmail}'); alert('Copied email to clipboard!');" title="Click to copy">
-                                    <span style="color:var(--tata-crimson);">${escapeHtml(officialEmail)}</span>
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                    </svg>
-                                </span>
-                            </div>
-                            <div class="emp-attr-row">
-                                <span class="emp-attr-key">Date of Joining</span>
-                                <span class="emp-attr-val">${escapeHtml(dojVal)}</span>
-                            </div>
-                            <div class="emp-attr-row">
-                                <span class="emp-attr-key">Employment Type</span>
-                                <span class="emp-attr-val">Permanent (Full-Time)</span>
-                            </div>
-                            ${leaveBalanceVal ? `
-                            <div class="emp-attr-row">
-                                <span class="emp-attr-key">Leave Balance</span>
-                                <span class="emp-attr-val" style="color:#027A48; font-weight:700;">${escapeHtml(leaveBalanceVal)}</span>
-                            </div>` : `
-                            <div class="emp-attr-row">
-                                <span class="emp-attr-key">Directory Status</span>
-                                <span class="emp-attr-val" style="color:#027A48; font-weight:700;">Active Directory Confirmed</span>
-                            </div>`}
-                        </div>
-
-                        <!-- Quick Directory Links -->
-                        <div class="emp-card-footer-links">
-                            <a href="#action" class="emp-footer-link" onclick="window.switchView ? switchView('action') : null">
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                    <polyline points="14 2 14 8 20 8"></polyline>
-                                </svg>
-                                <span>HRMS Ledger</span>
-                            </a>
-                            <a href="#approvals" class="emp-footer-link" onclick="window.switchView ? switchView('approvals') : null">
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                                </svg>
-                                <span>Approvals</span>
-                            </a>
-                        </div>
+        // Outcome banner HTML if case has already been resolved or rejected
+        let outcomeBannerHtml = "";
+        if (isResolved) {
+            const resType = c.resolution_type || "VERIFIED_COMPLETED";
+            const refId = (c.forensic_proof && c.forensic_proof.proofId) || `1MG-${caseRef}`;
+            outcomeBannerHtml = `
+                <div class="case-outcome-card is-resolved">
+                    <div class="outcome-header">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#027A48" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span>Case Successfully Resolved &amp; Completed</span>
                     </div>
-
-                    <!-- Right: Open Executive Mailbox Letterhead -->
-                    <div class="case-mailbox-view">
-                        <!-- Mailbox Header: Sender, Recipient, Origin Badge, Timestamp -->
-                        <div class="case-mailbox-top">
-                            <div class="case-mailbox-sender">
-                                <div class="case-mailbox-avatar">${empInitials}</div>
-                                <div class="case-mailbox-sender-meta">
-                                    <div class="case-mailbox-name">
-                                        <span>${escapeHtml(empName)}</span>
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#027A48" style="vertical-align:middle;" title="Verified Tata 1mg Corporate Employee">
-                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                                        </svg>
-                                    </div>
-                                    <div class="case-mailbox-email">${escapeHtml(officialEmail)} ${senderEmail && senderEmail.toLowerCase() !== officialEmail.toLowerCase() ? `<span style="font-size:11px; color:#64748B;">(via ${escapeHtml(senderEmail)})</span>` : ''}</div>
-                                    <div class="case-mailbox-to">To: <strong>${escapeHtml(email.account_email || 'people.ops@1mg.com')}</strong> (Tata 1mg Operations Desk)</div>
-                                </div>
-                            </div>
-                            <div class="case-mailbox-badges">
-                                <span class="case-mailbox-origin-pill">
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                                        <polyline points="9 12 11 14 15 10"></polyline>
-                                    </svg>
-                                    Verified Corporate Ingest
-                                </span>
-                                <span class="case-mailbox-date">${receivedDateStr}</span>
-                                <div class="case-mailbox-toolbar-icons">
-                                    <button type="button" class="btn-mailbox-tool" onclick="navigator.clipboard.writeText(document.querySelector('.case-mailbox-body')?.innerText || ''); alert('Copied email content!');" title="Copy Email Text">
-                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                        </svg>
-                                    </button>
-                                    <button type="button" class="btn-mailbox-tool" onclick="window.print()" title="Print Inquiry">
-                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                                            <rect x="6" y="14" width="12" height="8"></rect>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Mailbox Subject Line -->
-                        <div class="case-mailbox-subject-bar">
-                            <div class="case-mailbox-subject-text">${escapeHtml(mailSubject)}</div>
-                            <span class="badge-pill" style="background:#FFF5F5; color:var(--tata-crimson); font-size:11px; font-weight:700;">${escapeHtml(c.intent || c.category || 'INQUIRY')}</span>
-                        </div>
-
-                        <!-- Formatted Body with Discrepancy Matrix & Clean Typography -->
-                        ${formatExecutiveEmailBody(mailBody, data)}
-
-                        <!-- Mailbox Action Footer -->
-                        <div class="case-mailbox-actions">
-                            <div style="font-size:12px; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#027A48;">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <polyline points="12 6 12 12 16 14"></polyline>
-                                </svg>
-                                <span>Verified against corporate Zoho Mail servers. Ready for audit &amp; operational actions.</span>
-                            </div>
-                            <button type="button" class="btn-pill-action btn-primary-action" onclick="switchDossierStep(2)">
-                                <span>Proceed to Audit &amp; Actions &rarr;</span>
-                            </button>
-                        </div>
+                    <div class="outcome-grid">
+                        <div><span>Resolution Outcome:</span> <strong>${escapeHtml(resType)}</strong></div>
+                        <div><span>Audit Reference ID:</span> <strong>${escapeHtml(refId)}</strong></div>
+                        <div><span>Resolved By:</span> <strong>${escapeHtml(c.resolved_by || 'Specialist')}</strong></div>
+                        <div><span>Total Handling Time:</span> <strong>${escapeHtml(durationDisplay)}</strong></div>
                     </div>
-
+                    ${c.resolution_notes ? `<div class="outcome-notes"><strong>Resolution Note:</strong> ${escapeHtml(c.resolution_notes)}</div>` : ''}
                 </div>
             `;
-        } else if (stepNum === 2) {
-            // STEP 2: Active Investigation Work Tracker, 3 Core Operational Options & Dynamic Policy Checklist
-            const cf = c.custom_fields || {};
-            const workSession = cf.work_session || {};
-            const checklistState = cf.checklist_state || {};
-            const isSessionActive = Boolean(workSession.is_active);
-            const statusUpper = (c.status || "OPEN").toUpperCase();
-            const isResolved = statusUpper === "RESOLVED" || statusUpper === "COMPLETED";
-            const isRejected = statusUpper === "REJECTED";
-
-            const totalSec = parseInt(workSession.total_handling_seconds || 0, 10);
-            const mins = Math.floor(totalSec / 60);
-            const secs = totalSec % 60;
-            const timerFormatted = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-            const durationDisplay = workSession.handling_display || `${mins}m ${secs}s`;
-
-            // Extract financial or discrepancy amount for dynamic checklist context
-            const rawInquiry = (c.description || "") + "\n" + (email.body || "");
-            const diffMatch = rawInquiry.match(/(?:Deduction Amount|Salary Difference|Discrepancy Amount):\s*([^\n\r]+)/i);
-            const amountContext = diffMatch ? diffMatch[1].trim() : "Reported Amount";
-
-            // Define dynamic checklist items based on category and inquiry
-            const checklistItems = [
-                {
-                    id: "check_identity",
-                    title: `Employee Identity & Corporate Token Verification (${empCode})`,
-                    sub: `Active corporate directory match verified for ${empName} in ${dept}. Token: ${empCode}`
-                },
-                {
-                    id: "check_biometric",
-                    title: "Cross-Reference LMS Leave Ledger & Biometric Access Logs",
-                    sub: "Validate facility biometric turnstile punches, attendance logs, and approved manager leaves."
-                },
-                {
-                    id: "check_discrepancy",
-                    title: `Financial Discrepancy Reconciliation (${amountContext})`,
-                    sub: `Validate calculated pay gap (${amountContext}) against payroll credit slip & salary master ledger.`
-                },
-                {
-                    id: "check_approval",
-                    title: `Department Manager Authorization (${manager})`,
-                    sub: `Confirm departmental manager authorization and policy sign-off on record.`
-                },
-                {
-                    id: "check_sla",
-                    title: `Tata 1mg Standard SLA Compliance Adherence (${c.sla_hours || 24}h Window)`,
-                    sub: `Ensure resolution workflow execution strictly complies with the committed SLA window.`
-                }
-            ];
-
-            let checkedCount = 0;
-            const rowsHtml = checklistItems.map(item => {
-                const isChecked = Boolean(checklistState[item.id] && checklistState[item.id].checked);
-                if (isChecked) checkedCount++;
-                const verifiedAt = checklistState[item.id] && checklistState[item.id].verified_at;
-                const timeStr = verifiedAt ? new Date(verifiedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
-
-                return `
-                    <div class="checklist-item-row ${isChecked ? 'is-completed' : ''}" id="chkRow_${item.id}" onclick="handleChecklistRowClick(event, '${caseRef}', '${item.id}', '${escapeHtml(item.title)}')">
-                        <div class="checklist-checkbox-col">
-                            <input type="checkbox" class="checklist-checkbox" id="chkInput_${item.id}" ${isChecked ? 'checked' : ''} onclick="event.stopPropagation(); handleChecklistInputToggle('${caseRef}', '${item.id}', '${escapeHtml(item.title)}', this)">
-                            <div class="checklist-label-group">
-                                <span class="checklist-title">${escapeHtml(item.title)}</span>
-                                <span class="checklist-sub">${escapeHtml(item.sub)}</span>
-                            </div>
-                        </div>
-                        <span class="checklist-timestamp-badge ${isChecked ? 'is-verified' : 'is-pending'}" id="chkBadge_${item.id}">
-                            ${isChecked ? `✓ Verified ${timeStr}` : 'Pending Review'}
-                        </span>
+        } else if (isRejected) {
+            const rejCat = (c.forensic_proof && c.forensic_proof.rejection_category) || "POLICY_INELIGIBLE";
+            outcomeBannerHtml = `
+                <div class="case-outcome-card is-rejected">
+                    <div class="outcome-header">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B42318" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                        <span>Case Rejected &amp; Disallowed</span>
                     </div>
-                `;
-            }).join('');
-
-            // Automatically start client-side timer if session is currently active
-            setTimeout(() => {
-                if (isSessionActive) {
-                    startClientWorkTimer(caseRef, workSession.started_at, totalSec);
-                }
-            }, 60);
-
-            // Outcome banner HTML if case has already been resolved or rejected
-            let outcomeBannerHtml = "";
-            if (isResolved) {
-                const resType = c.resolution_type || "VERIFIED_COMPLETED";
-                const refId = (c.forensic_proof && c.forensic_proof.proofId) || `1MG-${caseRef}`;
-                outcomeBannerHtml = `
-                    <div class="case-outcome-card is-resolved">
-                        <div class="outcome-header">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#027A48" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                            <span>Case Successfully Resolved &amp; Completed</span>
-                        </div>
-                        <div class="outcome-grid">
-                            <div><span>Resolution Outcome:</span> <strong>${escapeHtml(resType)}</strong></div>
-                            <div><span>Audit Reference ID:</span> <strong>${escapeHtml(refId)}</strong></div>
-                            <div><span>Resolved By:</span> <strong>${escapeHtml(c.resolved_by || 'Specialist')}</strong></div>
-                            <div><span>Total Handling Time:</span> <strong>${escapeHtml(durationDisplay)}</strong></div>
-                        </div>
-                        ${c.resolution_notes ? `<div class="outcome-notes"><strong>Resolution Note:</strong> ${escapeHtml(c.resolution_notes)}</div>` : ''}
+                    <div class="outcome-grid">
+                        <div><span>Rejection Category:</span> <strong>${escapeHtml(rejCat)}</strong></div>
+                        <div><span>Reviewed By:</span> <strong>${escapeHtml(c.resolved_by || 'Specialist')}</strong></div>
+                        <div><span>Decision Date:</span> <strong>${c.resolved_at ? new Date(c.resolved_at).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : 'Recorded'}</strong></div>
+                        <div><span>Total Handling Time:</span> <strong>${escapeHtml(durationDisplay)}</strong></div>
                     </div>
-                `;
-            } else if (isRejected) {
-                const rejCat = (c.forensic_proof && c.forensic_proof.rejection_category) || "POLICY_INELIGIBLE";
-                outcomeBannerHtml = `
-                    <div class="case-outcome-card is-rejected">
-                        <div class="outcome-header">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B42318" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
-                            <span>Case Rejected &amp; Disallowed</span>
-                        </div>
-                        <div class="outcome-grid">
-                            <div><span>Rejection Category:</span> <strong>${escapeHtml(rejCat)}</strong></div>
-                            <div><span>Reviewed By:</span> <strong>${escapeHtml(c.resolved_by || 'Specialist')}</strong></div>
-                            <div><span>Decision Date:</span> <strong>${c.resolved_at ? new Date(c.resolved_at).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : 'Recorded'}</strong></div>
-                            <div><span>Total Handling Time:</span> <strong>${escapeHtml(durationDisplay)}</strong></div>
-                        </div>
-                        ${c.resolution_notes ? `<div class="outcome-notes"><strong>Reason / Justification:</strong> ${escapeHtml(c.resolution_notes)}</div>` : ''}
-                    </div>
-                `;
-            }
+                    ${c.resolution_notes ? `<div class="outcome-notes"><strong>Reason / Justification:</strong> ${escapeHtml(c.resolution_notes)}</div>` : ''}
+                </div>
+            `;
+        }
 
-            return `
-                <!-- 1. Executive Action Command Card (The 3 Operational Options) -->
-                <div class="audit-actions-panel" id="auditActionsPanel">
-                    <div class="audit-actions-head">
-                        <div class="audit-actions-title-wrap">
-                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="color:var(--tata-coral);">
-                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                                <polyline points="9 12 11 14 15 10"></polyline>
-                            </svg>
-                            <span class="audit-actions-title">Audit Investigation &amp; Operational Actions</span>
-                        </div>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            ${isResolved
-                                ? `<span class="badge-pill" style="background:#ECFDF3; color:#027A48; font-weight:700; font-size:11px;">✓ COMPLETED</span>`
-                                : isRejected
-                                    ? `<span class="badge-pill" style="background:#FEF3F2; color:#B42318; font-weight:700; font-size:11px;">✕ REJECTED</span>`
-                                    : isSessionActive
-                                        ? `<span class="badge-pill" style="background:#ECFDF3; color:#027A48; font-weight:700; font-size:11px; display:inline-flex; align-items:center; gap:5px;"><span class="live-pulse-dot"></span> ACTIVE SESSION</span>`
-                                        : `<span class="badge-pill" style="background:#F2F4F7; color:#344054; font-weight:700; font-size:11px;">READY FOR AUDIT</span>`
-                            }
-                            <span class="badge-pill" style="background:#FEF3F2; color:#B42318; font-size:11px; font-weight:700;">⚡ SLA: ${c.sla_hours || 24}h Window</span>
-                        </div>
+        // Top Action Command Panel (NO CHECKLIST - Action Buttons & Stopwatch)
+        const commandPanelHtml = `
+            <div class="audit-actions-panel" id="auditActionsPanel">
+                <div class="audit-actions-head">
+                    <div class="audit-actions-title-wrap">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="color:var(--tata-coral);">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                        <span class="audit-actions-title">Case Handling &amp; Operational Actions</span>
                     </div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        ${isResolved
+                            ? `<span class="badge-pill" style="background:#ECFDF3; color:#027A48; font-weight:700; font-size:11px;">✓ RESOLVED &amp; CLOSED</span>`
+                            : isRejected
+                                ? `<span class="badge-pill" style="background:#FEF3F2; color:#B42318; font-weight:700; font-size:11px;">✕ REJECTED</span>`
+                                : isSessionActive
+                                    ? `<span class="badge-pill" style="background:#ECFDF3; color:#027A48; font-weight:700; font-size:11px; display:inline-flex; align-items:center; gap:5px;"><span class="live-pulse-dot"></span> ACTIVE INVESTIGATION</span>`
+                                    : `<span class="badge-pill" style="background:#F2F4F7; color:#344054; font-weight:700; font-size:11px;">READY FOR INVESTIGATION</span>`
+                        }
+                        <span class="badge-pill" style="background:#FEF3F2; color:#B42318; font-size:11px; font-weight:700;">⚡ SLA: ${c.sla_hours || 24}h Window</span>
+                    </div>
+                </div>
 
-                    <div class="audit-actions-body">
-                        <!-- Left: Live Stopwatch & Handling Duration -->
-                        <div class="audit-timer-wrap">
-                            <div class="audit-timer-display" id="auditSessionTimerDisplay">${timerFormatted}</div>
-                            <div class="audit-timer-sub">
-                                ${isSessionActive
-                                    ? `Investigation active • Started by <strong>${escapeHtml(workSession.started_by || 'Specialist')}</strong>`
+                <div class="audit-actions-body">
+                    <!-- Live Stopwatch & Handling Duration -->
+                    <div class="audit-timer-wrap">
+                        <div class="audit-timer-display" id="auditSessionTimerDisplay">${timerFormatted}</div>
+                        <div class="audit-timer-sub">
+                            ${isSessionActive
+                                ? `Investigation active • Started by <strong>${escapeHtml(workSession.started_by || 'Specialist')}</strong>`
+                                : isResolved
+                                    ? `Case completed • Total duration: <strong>${durationDisplay}</strong>`
                                     : `Cumulative handling duration: <strong>${durationDisplay}</strong>`
-                                }
-                            </div>
+                            }
                         </div>
+                    </div>
 
-                        <!-- Right: The 3 Core Operational Options -->
-                        <div class="audit-ops-btn-group">
-                            <!-- Option 1: Start / Pause Work -->
+                    <!-- Action Command Group -->
+                    <div class="audit-ops-btn-group">
+                        ${!isResolved && !isRejected ? `
                             ${isSessionActive
                                 ? `<button type="button" class="btn-audit-op btn-pause-work" onclick="handlePauseCaseWork('${caseRef}')" title="Pause the active work timer">
                                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
@@ -3480,63 +3600,246 @@ ${formatEmailBody(email.body || email.actionable_reason || "No message body prov
                                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                                          <polygon points="5 3 19 12 5 21 5 3"></polygon>
                                      </svg>
-                                     <span>▶ Start Working</span>
+                                     <span>▶ Start Working on Case</span>
                                    </button>`
                             }
 
-                            <!-- Option 2: Completed -->
-                            <button type="button" class="btn-audit-op btn-complete-work" onclick="openCompleteCaseModal('${caseRef}')" title="Complete case and update status to RESOLVED">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
+                            <!-- Ask Employee for Details Action Button -->
+                            <button type="button" class="btn-ask-details-top" onclick="scrollToAskDetails()" title="Open Smart Email Templates to request missing information from employee">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <polyline points="22 2 15 22 11 13 2 9 22 2"></polyline>
                                 </svg>
-                                <span>✓ Completed</span>
+                                <span>✉ Ask Employee for Details</span>
                             </button>
 
-                            <!-- Option 3: Rejected -->
-                            <button type="button" class="btn-audit-op btn-reject-work" onclick="openRejectCaseModal('${caseRef}')" title="Reject case with reason and record in audit log">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <!-- Approve and Close Option -->
+                            <button type="button" class="btn-audit-op btn-complete-work" onclick="openCompleteCaseModal('${caseRef}')" title="Approve and close case with resolution notes">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                <span>✓ Approve &amp; Close</span>
+                            </button>
+
+                            <!-- Reject Option -->
+                            <button type="button" class="btn-audit-op btn-reject-work" onclick="openRejectCaseModal('${caseRef}')" title="Reject case with justification">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                     <line x1="18" y1="6" x2="6" y2="18"></line>
                                     <line x1="6" y1="6" x2="18" y2="18"></line>
                                 </svg>
-                                <span>✕ Rejected</span>
+                                <span>✕ Reject</span>
                             </button>
-                        </div>
+                        ` : ''}
                     </div>
                 </div>
+            </div>
+        `;
 
-                <!-- Case Outcome Banner (If already Completed or Rejected) -->
-                ${outcomeBannerHtml}
+        // Employee Card & Inbound Mailbox 2-Column Grid
+        const detailsGridHtml = `
+            <div class="dossier-open-grid">
+                <!-- Left: Verified Tata 1mg Employee Profile Card -->
+                <div class="dossier-emp-card">
+                    <div class="emp-profile-banner">
+                        <div class="emp-profile-avatar-large">${empInitials}</div>
+                        <div class="emp-profile-main-meta">
+                            <div class="emp-profile-name-row">
+                                <h2 class="emp-profile-name">${escapeHtml(empName)}</h2>
+                                <span class="badge-active-directory" title="Active Employee in Corporate Directory">
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                    </svg>
+                                    Active
+                                </span>
+                            </div>
+                            <div class="emp-profile-designation">${escapeHtml(designation)}</div>
+                            <div class="emp-profile-department">${escapeHtml(dept)} • Tata 1mg</div>
+                        </div>
+                    </div>
 
-                <!-- 2. Tata 1mg Compliance Checklist -->
-                <div class="checklist-card">
-                    <div class="emp-card-header">
-                        <div class="emp-card-title">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--tata-coral);">
-                                <polyline points="9 11 12 14 22 4"></polyline>
-                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    <div class="emp-verified-card-pill">
+                        <div class="emp-verified-shield">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                <polyline points="9 12 11 14 15 10"></polyline>
                             </svg>
-                            <span>Tata 1mg Policy &amp; SLA Compliance Verification Checklist</span>
                         </div>
-                        <span class="badge-pill" id="checklistProgressBadge" style="background:#ECFDF3; color:#027A48; font-size:11px; font-weight:700;">
-                            ${checkedCount} / ${checklistItems.length} VERIFIED
-                        </span>
+                        <div class="emp-verified-meta">
+                            <strong>Verified Tata 1mg Identity</strong>
+                            <span>Token: <strong style="font-family:monospace; color:#027A48;">${escapeHtml(empCode)}</strong> • Directory Matched</span>
+                        </div>
                     </div>
 
-                    <div style="display:flex; flex-direction:column; gap:10px;">
-                        ${rowsHtml}
+                    <div class="emp-metrics-strip">
+                        <div class="emp-metric-cell">
+                            <span class="emp-metric-lbl">EMP CODE</span>
+                            <span class="emp-metric-val" style="color:var(--tata-crimson); font-family:monospace;">${escapeHtml(empCode)}</span>
+                        </div>
+                        <div class="emp-metric-cell">
+                            <span class="emp-metric-lbl">GRADE</span>
+                            <span class="emp-metric-val">${escapeHtml(gradeVal)}</span>
+                        </div>
+                        <div class="emp-metric-cell">
+                            <span class="emp-metric-lbl">LOCATION</span>
+                            <span class="emp-metric-val">${escapeHtml(location)}</span>
+                        </div>
                     </div>
 
-                    <div style="display:flex; align-items:center; justify-content:space-between; margin-top:16px; padding-top:14px; border-top:1px solid var(--border-light);">
-                        <button type="button" class="btn-pill-action" onclick="switchDossierStep(1)">&larr; Back to Inquiry &amp; Profile</button>
-                        <span style="font-size:12px; color:var(--text-muted);">
-                            ${checkedCount === checklistItems.length ? '✓ All compliance items verified' : `${checklistItems.length - checkedCount} pending verification`}
-                        </span>
+                    <div class="emp-attributes-table">
+                        <div class="emp-attr-row">
+                            <span class="emp-attr-key">Reporting Manager</span>
+                            <span class="emp-attr-val">${escapeHtml(manager)}</span>
+                        </div>
+                        <div class="emp-attr-row">
+                            <span class="emp-attr-key">Corporate Email</span>
+                            <span class="emp-attr-val emp-copyable" onclick="navigator.clipboard.writeText('${officialEmail}'); alert('Copied email to clipboard!');" title="Click to copy">
+                                <span style="color:var(--tata-crimson);">${escapeHtml(officialEmail)}</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="emp-attr-row">
+                            <span class="emp-attr-key">Date of Joining</span>
+                            <span class="emp-attr-val">${escapeHtml(dojVal)}</span>
+                        </div>
+                        <div class="emp-attr-row">
+                            <span class="emp-attr-key">Employment Type</span>
+                            <span class="emp-attr-val">Permanent (Full-Time)</span>
+                        </div>
+                        ${leaveBalanceVal ? `
+                        <div class="emp-attr-row">
+                            <span class="emp-attr-key">Leave Balance</span>
+                            <span class="emp-attr-val" style="color:#027A48; font-weight:700;">${escapeHtml(leaveBalanceVal)}</span>
+                        </div>` : `
+                        <div class="emp-attr-row">
+                            <span class="emp-attr-key">Directory Status</span>
+                            <span class="emp-attr-val" style="color:#027A48; font-weight:700;">Active Directory Confirmed</span>
+                        </div>`}
+                    </div>
+
+                    <div class="emp-card-footer-links">
+                        <a href="#action" class="emp-footer-link" onclick="window.switchView ? switchView('action') : null">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                            <span>HRMS Ledger</span>
+                        </a>
+                        <a href="#approvals" class="emp-footer-link" onclick="window.switchView ? switchView('approvals') : null">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                            <span>Approvals</span>
+                        </a>
                     </div>
                 </div>
+
+                <!-- Right: Open Executive Mailbox Letterhead -->
+                <div class="case-mailbox-view">
+                    <div class="case-mailbox-top">
+                        <div class="case-mailbox-sender">
+                            <div class="case-mailbox-avatar">${empInitials}</div>
+                            <div class="case-mailbox-sender-meta">
+                                <div class="case-mailbox-name">
+                                    <span>${escapeHtml(empName)}</span>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="#027A48" style="vertical-align:middle;" title="Verified Tata 1mg Corporate Employee">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                    </svg>
+                                </div>
+                                <div class="case-mailbox-email">${escapeHtml(officialEmail)} ${senderEmail && senderEmail.toLowerCase() !== officialEmail.toLowerCase() ? `<span style="font-size:11px; color:#64748B;">(via ${escapeHtml(senderEmail)})</span>` : ''}</div>
+                                <div class="case-mailbox-to">To: <strong>${escapeHtml(email.account_email || 'people.ops@1mg.com')}</strong> (Tata 1mg Operations Desk)</div>
+                            </div>
+                        </div>
+                        <div class="case-mailbox-badges">
+                            <span class="case-mailbox-origin-pill">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                    <polyline points="9 12 11 14 15 10"></polyline>
+                                </svg>
+                                Verified Corporate Ingest
+                            </span>
+                            <span class="case-mailbox-date">${receivedDateStr}</span>
+                            <div class="case-mailbox-toolbar-icons">
+                                <button type="button" class="btn-mailbox-tool" onclick="navigator.clipboard.writeText(document.querySelector('.case-mailbox-body')?.innerText || ''); alert('Copied email content!');" title="Copy Email Text">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                </button>
+                                <button type="button" class="btn-mailbox-tool" onclick="window.print()" title="Print Inquiry">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                                        <rect x="6" y="14" width="12" height="8"></rect>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="case-mailbox-subject-bar">
+                        <div class="case-mailbox-subject-text">${escapeHtml(mailSubject)}</div>
+                        <span class="badge-pill" style="background:#FFF5F5; color:var(--tata-crimson); font-size:11px; font-weight:700;">${escapeHtml(c.intent || c.category || 'INQUIRY')}</span>
+                    </div>
+
+                    <!-- Formatted Body with Discrepancy Matrix & Clean Typography -->
+                    ${formatExecutiveEmailBody(mailBody, data)}
+
+                    <div class="case-mailbox-actions">
+                        <div style="font-size:12px; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#027A48;">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            <span>Verified against corporate Zoho Mail servers. Ready for investigation &amp; response.</span>
+                        </div>
+                        <button type="button" class="btn-pill-action btn-primary-action" onclick="scrollToAskDetails()">
+                            <span>✉ Ask Employee for Details &darr;</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Executive Resolution Deck at Bottom
+        const resolutionFooterHtml = !isResolved && !isRejected ? `
+            <div style="background:#FFFFFF; border:1px solid #EAECF0; border-radius:12px; padding:18px 20px; margin-top:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; box-shadow:0 1px 3px rgba(16,24,40,0.05);">
+                <div>
+                    <div style="font-size:13.5px; font-weight:800; color:#1E293B;">Resolution &amp; Case Finalization</div>
+                    <div style="font-size:12px; color:#64748B;">Once required details are verified or clarified, conclude and close the case with official notice to employee.</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <button type="button" class="btn-audit-op btn-reject-work" onclick="openRejectCaseModal('${caseRef}')">✕ Reject Case</button>
+                    <button type="button" class="btn-audit-op btn-complete-work" onclick="openCompleteCaseModal('${caseRef}')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span>✓ Approve &amp; Close Case</span>
+                    </button>
+                </div>
+            </div>
+        ` : '';
+
+        if (stepNum === 2) {
+            // STEP 2: Focused Direct Email Composer & History View
+            return `
+                ${commandPanelHtml}
+                ${outcomeBannerHtml}
+                <div style="margin-bottom:14px;">
+                    <button type="button" class="btn-pill-action" onclick="switchDossierStep(1)">&larr; Back to Case Investigation &amp; Details</button>
+                </div>
+                ${renderAskDetailsComposer(data)}
+                ${resolutionFooterHtml}
             `;
-        } else {
-            return renderDossierStepContent(2, data);
         }
+
+        // STEP 1: Unified Complete Workspace (Command bar + Employee Card + Inbound Mail + Email Composer + Resolution Footer)
+        return `
+            ${commandPanelHtml}
+            ${outcomeBannerHtml}
+            ${detailsGridHtml}
+            ${renderAskDetailsComposer(data)}
+            ${resolutionFooterHtml}
+        `;
     }
 
     /**
@@ -3626,7 +3929,7 @@ ${formatEmailBody(email.body || email.actionable_reason || "No message body prov
             });
 
             if (res.ok) {
-                currentDossierStep = 2;
+                currentDossierStep = 1;
                 await selectCase(caseRef);
                 refreshCaseAuditTimeline(caseRef);
             } else {
@@ -3653,7 +3956,7 @@ ${formatEmailBody(email.body || email.actionable_reason || "No message body prov
             });
 
             if (res.ok) {
-                currentDossierStep = 2;
+                currentDossierStep = 1;
                 await selectCase(caseRef);
                 refreshCaseAuditTimeline(caseRef);
             } else {
@@ -3781,7 +4084,7 @@ ${formatEmailBody(email.body || email.actionable_reason || "No message body prov
                     <div class="audit-modal-header">
                         <div class="audit-modal-title">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#027A48" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                            <span>Mark Case as Completed: <strong>${escapeHtml(caseRef)}</strong></span>
+                            <span>✓ Approve &amp; Close Case: <strong>${escapeHtml(caseRef)}</strong></span>
                         </div>
                         <button type="button" class="audit-modal-close-btn" onclick="closeAuditActionModal()">&times;</button>
                     </div>
@@ -3790,8 +4093,9 @@ ${formatEmailBody(email.body || email.actionable_reason || "No message body prov
                         <div class="audit-modal-field">
                             <label class="audit-modal-label">Resolution Action Outcome</label>
                             <select class="audit-modal-select" id="modalResolutionAction">
+                                <option value="ATTENDANCE_REGULARIZED">Attendance Regularized / Biometric Punch Override</option>
+                                <option value="LEAVE_APPROVED">Leave Request Approved &amp; LMS Ledger Updated</option>
                                 <option value="PAYROLL_ADJUSTED">Payroll Discrepancy Adjusted / Arrear Scheduled</option>
-                                <option value="ATTENDANCE_REGULARIZED">Attendance Regularized / Biometric In-Punch Override</option>
                                 <option value="RECORD_UPDATED">HRMS Employee Records Updated &amp; Corrected</option>
                                 <option value="POLICY_CLARIFIED">General HR Policy Clarified &amp; Resolved</option>
                                 <option value="SERVICE_CLOSED">Service Request Approved &amp; Executed</option>
@@ -3818,7 +4122,7 @@ ${formatEmailBody(email.body || email.actionable_reason || "No message body prov
                         <button type="button" class="btn-pill-action" onclick="closeAuditActionModal()">Cancel</button>
                         <button type="button" class="btn-audit-op btn-complete-work" id="btnSubmitCompleteCase" onclick="submitCompleteCaseWork('${caseRef}')">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                            <span>✓ Confirm &amp; Mark Completed</span>
+                            <span>✓ Confirm &amp; Close Case</span>
                         </button>
                     </div>
                 </div>
@@ -3863,7 +4167,7 @@ ${formatEmailBody(email.body || email.actionable_reason || "No message body prov
 
             if (res.ok) {
                 closeAuditActionModal();
-                currentDossierStep = 2;
+                currentDossierStep = 1;
                 await selectCase(caseRef);
                 loadWorkbench(false);
                 refreshCaseAuditTimeline(caseRef);
@@ -3872,9 +4176,18 @@ ${formatEmailBody(email.body || email.actionable_reason || "No message body prov
                 alert(err.message || "Failed to mark case as completed. Please try again.");
                 if (btn) {
                     btn.disabled = false;
-                    btn.innerHTML = `<span>✓ Confirm &amp; Mark Completed</span>`;
+                    btn.innerHTML = `<span>✓ Confirm &amp; Close Case</span>`;
                 }
             }
+        } catch (err) {
+            console.error("Error completing case:", err);
+            alert("Network error completing case.");
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = `<span>✓ Confirm &amp; Close Case</span>`;
+            }
+        }
+    };
         } catch (err) {
             console.error("Error completing case:", err);
             alert("Network error completing case.");
@@ -3984,7 +4297,7 @@ ${formatEmailBody(email.body || email.actionable_reason || "No message body prov
 
             if (res.ok) {
                 closeAuditActionModal();
-                currentDossierStep = 2;
+                currentDossierStep = 1;
                 await selectCase(caseRef);
                 loadWorkbench(false);
                 refreshCaseAuditTimeline(caseRef);
