@@ -90,25 +90,29 @@ def gmail_sync():
             )
 
     status_info = get_gmail_status()
-    if not status_info["connected"]:
+    if not status_info.get("connected"):
         return error_response(
             code="GMAIL_NOT_CONNECTED",
             message="Gmail is not connected. Call POST /api/gmail/connect or sign in first.",
             status_code=400,
         )
 
-    try:
-        sync_result = sync_gmail_inbox(limit=limit, account_email=target_account or None)
-        return success_response({
-            "sync": sync_result,
-            "gmail": get_gmail_status(),
-        })
-    except Exception as exc:
-        return error_response(
-            code="GMAIL_SYNC_ERROR",
-            message=str(exc),
-            status_code=500,
-        )
+    # Non-blocking async sync: Run IMAP fetch in background thread so Gunicorn worker is NEVER locked
+    import threading
+    def _run_bg_sync():
+        try:
+            sync_gmail_inbox(limit=limit, account_email=target_account or None)
+        except Exception as bg_err:
+            pass
+
+    t = threading.Thread(target=_run_bg_sync, daemon=True)
+    t.start()
+
+    return success_response({
+        "message": "Mailbox synchronization initiated in background.",
+        "syncing": True,
+        "gmail": get_gmail_status(),
+    })
 
 
 @gmail_bp.get("/messages")

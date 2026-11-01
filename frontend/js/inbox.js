@@ -947,8 +947,9 @@ let _autoSyncIntervalId = null;
 function startAutoGmailSyncPolling() {
     if (_autoSyncIntervalId) clearInterval(_autoSyncIntervalId);
     _autoSyncIntervalId = setInterval(() => {
-        runAutoGmailSync();
-    }, 10000);
+        // Poll stored database messages every 25s without blocking external IMAP
+        loadGmailStatusAndMessages();
+    }, 25000);
 }
 
 async function runAutoGmailSync() {

@@ -42,10 +42,13 @@ var BACKEND_API_BASE = resolveBackendApiBase();
     };
 })();
 
-// Resilient JSON fetch helper so one slow/failing endpoint never crashes the entire dashboard
+// Resilient JSON fetch helper with 4s timeout so slow/failing endpoints never hang the entire dashboard
 async function safeFetchJson(url, defaultVal = {}) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 4000);
     try {
-        const res = await fetch(url);
+        const res = await fetch(url, { signal: controller.signal });
+        clearTimeout(timeoutId);
         if (!res.ok) {
             console.warn(`Request to ${url} returned HTTP ${res.status}`);
             return defaultVal;
@@ -53,7 +56,8 @@ async function safeFetchJson(url, defaultVal = {}) {
         const data = await res.json();
         return data !== undefined && data !== null ? data : defaultVal;
     } catch (err) {
-        console.warn(`Network error fetching ${url}:`, err);
+        clearTimeout(timeoutId);
+        console.warn(`Network or timeout fetching ${url}:`, err);
         return defaultVal;
     }
 }
@@ -508,10 +512,10 @@ async function loadRealData() {
             `;
         }
 
-        // Charts
-        renderWorkloadChart(statusCounts);
-        renderCategoryChart(categoryCounts);
-        renderTrendChart();
+        // Charts (wrapped so rendering never blocks Process Catalog or Active Runs)
+        try { renderWorkloadChart(statusCounts); } catch (e) { console.warn("Workload chart skipped:", e); }
+        try { renderCategoryChart(categoryCounts); } catch (e) { console.warn("Category chart skipped:", e); }
+        try { renderTrendChart(); } catch (e) { console.warn("Trend chart skipped:", e); }
 
         // Update Connected Mailbox UI
         const mailLabel = document.getElementById("mailboxLabel");
@@ -820,6 +824,7 @@ function renderRecentEmails(emailsList) {
 }
 
 function renderWorkloadChart(statusData) {
+    if (typeof Chart === "undefined") return;
     const ctx = document.getElementById('workloadChart');
     if (!ctx) return;
 
@@ -879,6 +884,7 @@ function renderWorkloadChart(statusData) {
 }
 
 function renderCategoryChart(categoryData) {
+    if (typeof Chart === "undefined") return;
     const ctx = document.getElementById('categoryChart');
     if (!ctx) return;
 
@@ -947,6 +953,7 @@ function renderCategoryChart(categoryData) {
 }
 
 function renderTrendChart() {
+    if (typeof Chart === "undefined") return;
     const ctx = document.getElementById('trendChart');
     if (!ctx) return;
 

@@ -272,7 +272,7 @@ def verify_and_connect_gmail(email: str, app_password: str, provider: Optional[s
 
     # Attempt connection with primary resolved host
     try:
-        imap = imaplib.IMAP4_SSL(imap_host, imap_port, timeout=35)
+        imap = imaplib.IMAP4_SSL(imap_host, imap_port, timeout=8)
         imap.login(clean_email, clean_password)
         status, messages = imap.select("INBOX", readonly=True)
         inbox_total = int(messages[0]) if status == "OK" and messages and messages[0] else 0
@@ -417,7 +417,7 @@ def open_imap_session(account_email: Optional[str] = None) -> imaplib.IMAP4_SSL:
         imap_host = auto_imap
         imap_port = auto_port
 
-    imap = imaplib.IMAP4_SSL(imap_host, imap_port, timeout=35)
+    imap = imaplib.IMAP4_SSL(imap_host, imap_port, timeout=8)
     imap.login(email_to_use, pass_to_use)
     _GMAIL_STATE["connected"] = True
     return imap
