@@ -51,8 +51,17 @@ from datetime import datetime, timezone, timedelta
 IST_TZ = timezone(timedelta(hours=5, minutes=30))
 
 
-def _parse_sqlite_utc_to_local(created_at_str: str) -> Dict[str, str]:
-    raw = (created_at_str or "").strip()
+def _parse_sqlite_utc_to_local(created_at_val: Any) -> Dict[str, str]:
+    if isinstance(created_at_val, datetime):
+        dt_utc = created_at_val if created_at_val.tzinfo else created_at_val.replace(tzinfo=timezone.utc)
+        dt_loc = dt_utc.astimezone(IST_TZ)
+        return {
+            "time_hms": dt_loc.strftime("%I:%M:%S %p"),
+            "time_hm": dt_loc.strftime("%I:%M %p"),
+            "date_time_local": dt_loc.strftime("%d %b %Y, %I:%M:%S %p IST"),
+            "timestamp_iso": dt_utc.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        }
+    raw = str(created_at_val or "").strip()
     if not raw:
         now_loc = datetime.now(IST_TZ)
         return {

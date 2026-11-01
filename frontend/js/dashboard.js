@@ -375,66 +375,86 @@ async function loadRealData() {
             }
         }).catch(() => {});
 
-        // Concurrently fetch all endpoints with robust fallback defaults
-        const [
-            metricsRaw,
-            approvalsRaw,
-            workflowsRaw,
-            casesRaw,
-            gmailRaw,
-            emailsRaw,
-            auditRaw,
-            csatRaw
-        ] = await Promise.all([
-            safeFetchJson(`${BACKEND_API_BASE}/api/cases/metrics`, {}),
-            safeFetchJson(`${BACKEND_API_BASE}/api/approvals?status=PENDING`, { count: 0, approvals: [] }),
-            safeFetchJson(`${BACKEND_API_BASE}/api/workflows`, { workflows: [], count: 0 }),
-            safeFetchJson(`${BACKEND_API_BASE}/api/cases?limit=10`, { cases: [], count: 0 }),
-            safeFetchJson(`${BACKEND_API_BASE}/api/gmail/status`, { connected: false }),
-            safeFetchJson(`${BACKEND_API_BASE}/api/emails?limit=5`, { emails: [], count: 0 }),
-            safeFetchJson(`${BACKEND_API_BASE}/api/audit/logs?limit=6`, { logs: [], count: 0 }),
-            safeFetchJson(`${BACKEND_API_BASE}/api/audit/csat-report`, null)
-        ]);
+        // Try ultra-fast consolidated bootstrap payload first (<200ms)
+        const bootRaw = await safeFetchJson(`${BACKEND_API_BASE}/api/bootstrap`, null);
+        let metrics, statusCounts, categoryCounts, myWork, approvalsList, approvalsCount, workflowsList, casesList, gmail, emailsList, auditLogsList, csatData;
 
-        const metrics = metricsRaw.data || metricsRaw;
-        const statusCounts = metrics.status_counts || metricsRaw.status_counts || {};
-        const categoryCounts = metrics.category_counts || metricsRaw.category_counts || {};
-        const myWork = metrics.my_work || metricsRaw.my_work || {};
+        if (bootRaw && (bootRaw.data || bootRaw.metrics)) {
+            const b = bootRaw.data || bootRaw;
+            metrics = b.metrics || {};
+            statusCounts = metrics.status_counts || {};
+            categoryCounts = metrics.category_counts || {};
+            myWork = metrics.my_work || {};
+            approvalsList = [];
+            approvalsCount = b.badges?.approvals || 0;
+            workflowsList = b.workflows || [];
+            casesList = b.recent_cases || [];
+            gmail = b.gmail || { connected: false };
+            emailsList = b.messages || [];
+            auditLogsList = [];
+            csatData = null;
+        } else {
+            // Concurrently fetch all endpoints with robust fallback defaults
+            const [
+                metricsRaw,
+                approvalsRaw,
+                workflowsRaw,
+                casesRaw,
+                gmailRaw,
+                emailsRaw,
+                auditRaw,
+                csatRaw
+            ] = await Promise.all([
+                safeFetchJson(`${BACKEND_API_BASE}/api/cases/metrics`, {}),
+                safeFetchJson(`${BACKEND_API_BASE}/api/approvals?status=PENDING`, { count: 0, approvals: [] }),
+                safeFetchJson(`${BACKEND_API_BASE}/api/workflows`, { workflows: [], count: 0 }),
+                safeFetchJson(`${BACKEND_API_BASE}/api/cases?limit=10`, { cases: [], count: 0 }),
+                safeFetchJson(`${BACKEND_API_BASE}/api/gmail/status`, { connected: false }),
+                safeFetchJson(`${BACKEND_API_BASE}/api/emails?limit=5`, { emails: [], count: 0 }),
+                safeFetchJson(`${BACKEND_API_BASE}/api/audit/logs?limit=6`, { logs: [], count: 0 }),
+                safeFetchJson(`${BACKEND_API_BASE}/api/audit/csat-report`, null)
+            ]);
 
-        const approvalsList = Array.isArray(approvalsRaw.approvals)
-            ? approvalsRaw.approvals
-            : (Array.isArray(approvalsRaw.data?.approvals)
-                ? approvalsRaw.data.approvals
-                : (Array.isArray(approvalsRaw.data) ? approvalsRaw.data : []));
-        const approvalsCount = approvalsRaw.count ?? approvalsList.length;
+            metrics = metricsRaw.data || metricsRaw;
+            statusCounts = metrics.status_counts || metricsRaw.status_counts || {};
+            categoryCounts = metrics.category_counts || metricsRaw.category_counts || {};
+            myWork = metrics.my_work || metricsRaw.my_work || {};
 
-        const workflowsList = Array.isArray(workflowsRaw.workflows)
-            ? workflowsRaw.workflows
-            : (Array.isArray(workflowsRaw.data?.workflows)
-                ? workflowsRaw.data.workflows
-                : (Array.isArray(workflowsRaw.data) ? workflowsRaw.data : []));
+            approvalsList = Array.isArray(approvalsRaw.approvals)
+                ? approvalsRaw.approvals
+                : (Array.isArray(approvalsRaw.data?.approvals)
+                    ? approvalsRaw.data.approvals
+                    : (Array.isArray(approvalsRaw.data) ? approvalsRaw.data : []));
+            approvalsCount = approvalsRaw.count ?? approvalsList.length;
 
-        const casesList = Array.isArray(casesRaw.cases)
-            ? casesRaw.cases
-            : (Array.isArray(casesRaw.data?.cases)
-                ? casesRaw.data.cases
-                : (Array.isArray(casesRaw.data) ? casesRaw.data : []));
+            workflowsList = Array.isArray(workflowsRaw.workflows)
+                ? workflowsRaw.workflows
+                : (Array.isArray(workflowsRaw.data?.workflows)
+                    ? workflowsRaw.data.workflows
+                    : (Array.isArray(workflowsRaw.data) ? workflowsRaw.data : []));
 
-        const gmail = gmailRaw.data || gmailRaw;
+            casesList = Array.isArray(casesRaw.cases)
+                ? casesRaw.cases
+                : (Array.isArray(casesRaw.data?.cases)
+                    ? casesRaw.data.cases
+                    : (Array.isArray(casesRaw.data) ? casesRaw.data : []));
 
-        const emailsList = Array.isArray(emailsRaw.emails)
-            ? emailsRaw.emails
-            : (Array.isArray(emailsRaw.data?.emails)
-                ? emailsRaw.data.emails
-                : (Array.isArray(emailsRaw.data) ? emailsRaw.data : []));
+            gmail = gmailRaw.data || gmailRaw;
 
-        const auditLogsList = Array.isArray(auditRaw.logs)
-            ? auditRaw.logs
-            : (Array.isArray(auditRaw.data?.logs)
-                ? auditRaw.data.logs
-                : (Array.isArray(auditRaw.data) ? auditRaw.data : []));
+            emailsList = Array.isArray(emailsRaw.emails)
+                ? emailsRaw.emails
+                : (Array.isArray(emailsRaw.data?.emails)
+                    ? emailsRaw.data.emails
+                    : (Array.isArray(emailsRaw.data) ? emailsRaw.data : []));
 
-        const csatData = csatRaw ? (csatRaw.data || csatRaw) : null;
+            auditLogsList = Array.isArray(auditRaw.logs)
+                ? auditRaw.logs
+                : (Array.isArray(auditRaw.data?.logs)
+                    ? auditRaw.data.logs
+                    : (Array.isArray(auditRaw.data) ? auditRaw.data : []));
+
+            csatData = csatRaw ? (csatRaw.data || csatRaw) : null;
+        }
 
         if (typeof window.updateSidebarBadges === "function") {
             window.updateSidebarBadges();

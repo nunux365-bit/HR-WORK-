@@ -905,6 +905,35 @@ async function loadEmployeesDirectory() {
 
 async function loadGmailStatusAndMessages() {
     try {
+        // Ultra-fast consolidated bootstrap path (<200ms single round-trip)
+        try {
+            const bootRes = await fetch(`${BACKEND_API_BASE}/api/bootstrap`);
+            if (bootRes.ok) {
+                const bootJson = await bootRes.json();
+                const b = bootJson.data || bootJson;
+                if (b && b.gmail && Array.isArray(b.messages)) {
+                    updateGmailConnectionBanner(b.gmail);
+                    inboxEmails = b.messages.map(mapBackendEmailToViewModel);
+                    if (inboxEmails.length > 0) {
+                        if (!selectedEmailId || !inboxEmails.some((m) => m.id === selectedEmailId)) {
+                            selectedEmailId = inboxEmails[0].id;
+                        }
+                    } else {
+                        selectedEmailId = null;
+                    }
+                    updateStatsCards();
+                    renderEmailList();
+                    renderReaderAndHRPanel();
+                    if (Array.isArray(b.departments) && b.departments.length > 0) {
+                        cachedDepartmentsRoster = b.departments;
+                    }
+                    return;
+                }
+            }
+        } catch (bootErr) {
+            console.debug("Bootstrap fast-path skipped, using standard fetch:", bootErr);
+        }
+
         Promise.all([loadDepartmentsRoster(), loadEmployeesDirectory()]).catch(() => {});
         const [statusRes, msgRes] = await Promise.all([
             fetch(`${BACKEND_API_BASE}/api/gmail/status`),

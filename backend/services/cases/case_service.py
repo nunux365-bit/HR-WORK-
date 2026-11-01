@@ -18,8 +18,11 @@ Provides backend operations for the Operational HR Workspace:
 
 import json
 import os
+import logging
 from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional, Union
+
+logger = logging.getLogger("hrflow.cases")
 from backend.database.connection import get_connection
 from backend.models.case import (
     VALID_CASE_STATUSES,

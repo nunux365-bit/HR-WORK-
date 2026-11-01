@@ -56,6 +56,7 @@ def register_blueprints(app):
     from backend.api.user_routes import user_bp
     from backend.api.agent_routes import agent_bp
     from backend.api.attachment_routes import attachment_bp
+    from backend.api.bootstrap_routes import bootstrap_bp
 
     app.register_blueprint(health_bp)
     app.register_blueprint(system_bp)
@@ -76,6 +77,7 @@ def register_blueprints(app):
     app.register_blueprint(user_bp)
     app.register_blueprint(agent_bp)
     app.register_blueprint(attachment_bp)
+    app.register_blueprint(bootstrap_bp)
 
 
 register_api_blueprints = register_blueprints
