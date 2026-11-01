@@ -2822,6 +2822,31 @@ def get_agent_case_detail(case_ref: str):
             if e_row:
                 email_obj = dict(e_row)
 
+        if not email_obj and case_obj.get("title"):
+            e_row = conn.execute("SELECT * FROM emails WHERE subject = ? ORDER BY id DESC LIMIT 1", (case_obj["title"],)).fetchone()
+            if e_row:
+                email_obj = dict(e_row)
+
+        if not email_obj and case_obj.get("sender_email"):
+            e_row = conn.execute("SELECT * FROM emails WHERE LOWER(sender_email) = LOWER(?) ORDER BY id DESC LIMIT 1", (case_obj["sender_email"].strip(),)).fetchone()
+            if e_row:
+                email_obj = dict(e_row)
+
+        if not email_obj:
+            email_obj = {
+                "id": case_obj.get("email_id"),
+                "sender_name": case_obj.get("sender_name") or case_obj.get("employee_name") or "Employee",
+                "sender_email": case_obj.get("sender_email") or case_obj.get("employee_email") or "",
+                "account_email": case_obj.get("account_email") or "vaibhavx002@zohomail.in",
+                "subject": case_obj.get("title") or case_obj.get("subject") or "HR Inquiry",
+                "body": case_obj.get("description") or case_obj.get("email_body") or "",
+                "received_at": case_obj.get("created_at"),
+            }
+
+        # Ensure case_obj description is populated from source email body if missing
+        if not case_obj.get("description") and email_obj.get("body"):
+            case_obj["description"] = email_obj["body"]
+
         emp_obj = None
         c_emp_ref = case_obj.get("employee_id") or case_obj.get("employee_db_id")
         if c_emp_ref:
@@ -2875,10 +2900,15 @@ def get_agent_case_detail(case_ref: str):
 
         if emp_obj:
             emp_obj["is_in_db"] = True
+            emp_obj["department"] = emp_obj.get("department") or case_obj.get("department") or case_obj.get("category") or "Operations"
+            emp_obj["designation"] = emp_obj.get("designation") or "Staff Specialist"
+            emp_obj["location"] = emp_obj.get("location") or "Corporate Headquarters"
+            emp_obj["manager_name"] = emp_obj.get("manager_name") or "Department Manager"
+            emp_obj["email"] = emp_obj.get("email") or case_obj.get("employee_email") or case_obj.get("sender_email") or (email_obj and email_obj.get("sender_email")) or ""
         else:
             emp_name = case_obj.get("employee_name") or (email_obj and email_obj.get("sender_name")) or "Employee"
             emp_code = case_obj.get("employee_id") or case_obj.get("employee_code") or (email_obj and email_obj.get("employee_code")) or ""
-            emp_dept = case_obj.get("department") or case_obj.get("employee_department") or (email_obj and email_obj.get("department")) or "Operations"
+            emp_dept = case_obj.get("department") or case_obj.get("employee_department") or (email_obj and email_obj.get("department")) or case_obj.get("category") or "Operations"
             emp_email = case_obj.get("employee_email") or case_obj.get("sender_email") or (email_obj and email_obj.get("sender_email")) or ""
             emp_obj = {
                 "id": None,
