@@ -103,55 +103,12 @@ _DEFAULT_DEPARTMENTS: List[Dict[str, Any]] = [
 
 
 def ensure_default_departments_seeded() -> None:
+    """Ensure database metadata tables exist without auto-seeding mock departments or users."""
     conn = get_connection()
     try:
         conn.execute("CREATE TABLE IF NOT EXISTS hr_system_meta (key TEXT PRIMARY KEY, val TEXT)")
         conn.execute("CREATE TABLE IF NOT EXISTS hr_deleted_departments (dept_code TEXT PRIMARY KEY, deleted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)")
-        
-        meta = conn.execute("SELECT val FROM hr_system_meta WHERE key = 'departments_initialized'").fetchone()
-        deleted_rows = conn.execute("SELECT dept_code FROM hr_deleted_departments").fetchall()
-        deleted_codes = {r["dept_code"] for r in deleted_rows}
-
-        if not meta:
-            for dept in _DEFAULT_DEPARTMENTS:
-                if dept["dept_code"] not in deleted_codes:
-                    conn.execute(
-                        """
-                        INSERT OR IGNORE INTO hr_departments (
-                            dept_code, team_name, category_scope, dept_gmail, sla_hours, default_priority, description
-                        ) VALUES (?, ?, ?, ?, ?, ?, ?)
-                        """,
-                        (
-                            dept["dept_code"],
-                            dept["team_name"],
-                            dept["category_scope"],
-                            dept["dept_gmail"],
-                            int(dept["sla_hours"]),
-                            dept["default_priority"],
-                            dept["description"],
-                        ),
-                    )
-            conn.execute("INSERT OR REPLACE INTO hr_system_meta (key, val) VALUES ('departments_initialized', '1')")
-
-        # Ensure vaibhavx002@zohomail.in is registered as specialist in PeopleDesk if PeopleDesk exists
-        p_row = conn.execute("SELECT id FROM hr_departments WHERE dept_code = 'DEPT-PEOPLEDESK'").fetchone()
-        if p_row:
-            p_id = int(p_row["id"])
-            m_check = conn.execute("SELECT id FROM hr_department_members WHERE LOWER(email) = 'vaibhavx002@zohomail.in'").fetchone()
-            if not m_check:
-                conn.execute(
-                    """
-                    INSERT INTO hr_department_members (
-                        dept_id, dept_ids, team_name, member_name, email, role, designation, sub_department, category_scope, active
-                    ) VALUES (
-                        ?, ?, 'PeopleDesk', 'Vaibhav Yadav', 'vaibhavx002@zohomail.in', 'HR_AGENT',
-                        'HR Specialist / Agent', 'Leave Management',
-                        'ALL_HR, PAYROLL, LEAVE, ATTENDANCE, RESIGNATION, ONBOARDING, BGV, DOCUMENTS, ASSET_IT, EMPLOYEE_PROFILE, BENEFITS, PERFORMANCE, GENERAL_HR, PEOPLEDESK',
-                        1
-                    )
-                    """,
-                    (p_id, str(p_id)),
-                )
+        conn.execute("INSERT OR REPLACE INTO hr_system_meta (key, val) VALUES ('departments_initialized', '1')")
         conn.commit()
     finally:
         conn.close()
